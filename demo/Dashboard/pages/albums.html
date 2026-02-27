@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Albums - PhotoPro Admin</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="sidebar-logo">
+          <i data-lucide="camera"></i>
+          PhotoPro Admin
+        </a>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Tổng quan</div>
+          <a href="../index.html" class="nav-item">
+            <i data-lucide="layout-dashboard"></i>
+            Dashboard
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Quản lý</div>
+          <a href="albums.html" class="nav-item active">
+            <i data-lucide="folder-open"></i>
+            Albums
+          </a>
+          <a href="orders.html" class="nav-item">
+            <i data-lucide="shopping-bag"></i>
+            Đơn hàng
+          </a>
+          <a href="staff.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="users"></i>
+            Nhân viên
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Kinh doanh</div>
+          <a href="pricing.html" class="nav-item" data-role="admin-system,admin-sales">
+            <i data-lucide="tag"></i>
+            Bảng giá
+          </a>
+          <a href="revenue.html" class="nav-item">
+            <i data-lucide="trending-up"></i>
+            Doanh thu
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a href="settings.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="settings"></i>
+            Cài đặt
+          </a>
+        </div>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1 class="header-title">Quản lý Albums</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="openCreateAlbumModal()" data-role="admin-system,admin-sales">
+            <i data-lucide="plus"></i>
+            Tạo Album mới
+          </button>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <!-- Filters -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <input type="text" placeholder="Tìm album..." id="searchAlbum" style="flex: 1; min-width: 250px;">
+              <select id="filterStatus" onchange="filterAlbums()" style="padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;">
+                <option value="">Tất cả trạng thái</option>
+                <option value="published">Published</option>
+                <option value="ready">Ready</option>
+                <option value="processing">Processing</option>
+                <option value="draft">Draft</option>
+              </select>
+              <select id="sortBy" onchange="sortAlbums()" style="padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;">
+                <option value="date-desc">Mới nhất</option>
+                <option value="date-asc">Cũ nhất</option>
+                <option value="name-asc">Tên A-Z</option>
+                <option value="photos-desc">Nhiều ảnh nhất</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Albums Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;" id="albumsGrid">
+          <!-- Album Card -->
+          <div class="card">
+            <div style="height: 200px; background: linear-gradient(135deg, #1a6b4e 0%, #134a36 100%); position: relative;">
+              <div style="position: absolute; top: 12px; right: 12px;">
+                <span class="badge badge-success">Published</span>
+              </div>
+              <div style="position: absolute; bottom: 12px; left: 12px; color: white;">
+                <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">
+                  <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+                  20/02/2026
+                </div>
+                <h3 style="margin: 0; font-size: 18px; display: block;">Bà Nà Hills 20/02</h3>
+              </div>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 13px; color: var(--text-secondary);">
+                <div>
+                  <i data-lucide="image" style="width: 14px; height: 14px;"></i>
+                  150 ảnh
+                </div>
+                <div>
+                  <i data-lucide="shopping-cart" style="width: 14px; height: 14px;"></i>
+                  120 đơn
+                </div>
+                <div>
+                  <i data-lucide="dollar-sign" style="width: 14px; height: 14px;"></i>
+                  6M
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="viewAlbum('album-1')">
+                  <i data-lucide="eye"></i>
+                  Xem
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="editAlbum('album-1')" data-role="admin-system,admin-sales">
+                  <i data-lucide="edit"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteAlbum('album-1')" data-role="admin-system">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Album Card 2 -->
+          <div class="card">
+            <div style="height: 200px; background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); position: relative;">
+              <div style="position: absolute; top: 12px; right: 12px;">
+                <span class="badge badge-success">Published</span>
+              </div>
+              <div style="position: absolute; bottom: 12px; left: 12px; color: white;">
+                <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">
+                  <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+                  19/02/2026
+                </div>
+                <h3 style="margin: 0; font-size: 18px; display: block;">Hội An 19/02</h3>
+              </div>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 13px; color: var(--text-secondary);">
+                <div>
+                  <i data-lucide="image" style="width: 14px; height: 14px;"></i>
+                  200 ảnh
+                </div>
+                <div>
+                  <i data-lucide="shopping-cart" style="width: 14px; height: 14px;"></i>
+                  98 đơn
+                </div>
+                <div>
+                  <i data-lucide="dollar-sign" style="width: 14px; height: 14px;"></i>
+                  4.9M
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="viewAlbum('album-2')">
+                  <i data-lucide="eye"></i>
+                  Xem
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="editAlbum('album-2')" data-role="admin-system,admin-sales">
+                  <i data-lucide="edit"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteAlbum('album-2')" data-role="admin-system">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Album Card 3 -->
+          <div class="card">
+            <div style="height: 200px; background: linear-gradient(135deg, #d4870e 0%, #92400e 100%); position: relative;">
+              <div style="position: absolute; top: 12px; right: 12px;">
+                <span class="badge badge-warning">Processing</span>
+              </div>
+              <div style="position: absolute; bottom: 12px; left: 12px; color: white;">
+                <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">
+                  <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+                  18/02/2026
+                </div>
+                <h3 style="margin: 0; font-size: 18px; display: block;">Cầu Rồng 18/02</h3>
+              </div>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 13px; color: var(--text-secondary);">
+                <div>
+                  <i data-lucide="image" style="width: 14px; height: 14px;"></i>
+                  120 ảnh
+                </div>
+                <div>
+                  <i data-lucide="shopping-cart" style="width: 14px; height: 14px;"></i>
+                  75 đơn
+                </div>
+                <div>
+                  <i data-lucide="dollar-sign" style="width: 14px; height: 14px;"></i>
+                  3.75M
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="viewAlbum('album-3')">
+                  <i data-lucide="eye"></i>
+                  Xem
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="editAlbum('album-3')" data-role="admin-system,admin-sales">
+                  <i data-lucide="edit"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteAlbum('album-3')" data-role="admin-system">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Create Album Modal -->
+  <div class="modal-overlay" id="createAlbumModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Tạo Album mới</h3>
+        <button class="modal-close" onclick="closeCreateAlbumModal()">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Tên Album *</label>
+          <input type="text" placeholder="VD: Bà Nà Hills 20/02/2026" id="albumName">
+        </div>
+        <div class="form-group">
+          <label>Địa điểm</label>
+          <input type="text" placeholder="VD: Bà Nà Hills, Đà Nẵng" id="albumLocation">
+        </div>
+        <div class="form-group">
+          <label>Ngày chụp *</label>
+          <input type="date" id="albumDate" value="2026-02-27">
+        </div>
+        <div class="form-group">
+          <label>Mô tả</label>
+          <textarea placeholder="Mô tả về album..." id="albumDescription"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeCreateAlbumModal()">Hủy</button>
+        <button class="btn btn-primary" onclick="createAlbum()">
+          <i data-lucide="plus"></i>
+          Tạo Album
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/dashboardManager.js"></script>
+  <script>
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+    
+    function openCreateAlbumModal() {
+      document.getElementById('createAlbumModal').classList.add('active');
+      lucide.createIcons();
+    }
+    
+    function closeCreateAlbumModal() {
+      document.getElementById('createAlbumModal').classList.remove('active');
+    }
+    
+    function createAlbum() {
+      const name = document.getElementById('albumName').value;
+      const location = document.getElementById('albumLocation').value;
+      const date = document.getElementById('albumDate').value;
+      const description = document.getElementById('albumDescription').value;
+      
+      if (!name || !date) {
+        alert('Vui lòng nhập tên album và ngày chụp');
+        return;
+      }
+      
+      console.log('Creating album:', { name, location, date, description });
+      alert('Album đã được tạo thành công!');
+      closeCreateAlbumModal();
+    }
+    
+    function viewAlbum(id) {
+      console.log('View album:', id);
+      alert('Chức năng xem album - Sẽ chuyển đến trang chi tiết album');
+    }
+    
+    function editAlbum(id) {
+      console.log('Edit album:', id);
+      alert('Chức năng sửa album');
+    }
+    
+    function deleteAlbum(id) {
+      if (confirm('Bạn có chắc muốn xóa album này? Tất cả ảnh trong album sẽ bị xóa vĩnh viễn.')) {
+        console.log('Delete album:', id);
+        alert('Album đã được xóa');
+      }
+    }
+    
+    function filterAlbums() {
+      console.log('Filter albums');
+    }
+    
+    function sortAlbums() {
+      console.log('Sort albums');
+    }
+    
+    // Role-based visibility
+    const currentRole = 'admin-system';
+    document.querySelectorAll('[data-role]').forEach(el => {
+      const allowedRoles = el.dataset.role.split(',');
+      if (!allowedRoles.includes(currentRole)) {
+        el.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

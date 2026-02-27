@@ -62,14 +62,21 @@
 
 <!-- Sticky Cart Bar (Mobile) -->
 <div class="sticky-bottom-bar">
-  <div class="flex-between">
-    <div>
-      <div style="font-size: 14px; color: var(--text-secondary);">Đã chọn</div>
-      <div style="font-size: 20px; font-weight: 700;" id="stickySelectedCount">0 ảnh</div>
+  <div class="sticky-cart-content">
+    <div class="sticky-info">
+      <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 2px;">Đã chọn</div>
+      <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;" id="stickySelectedCount">0 ảnh</div>
+      <div style="font-size: 12px; color: var(--text-secondary);" id="stickyPackageInfo">Chưa có gói</div>
     </div>
-    <button class="btn btn-primary" onclick="navigationManager.goToCart()">
-      <i data-lucide="arrow-right"></i> Tiếp Tục
-    </button>
+    <div class="sticky-price-action">
+      <div class="sticky-price">
+        <div style="font-size: 12px; color: var(--text-secondary);">Tổng</div>
+        <div style="font-size: 20px; font-weight: 700; color: var(--primary);" id="stickyTotalPrice">0₫</div>
+      </div>
+      <button class="btn btn-primary" onclick="navigationManager.goToCart()">
+        <i data-lucide="arrow-right"></i> <span class="hide-mobile-text">Tiếp Tục</span>
+      </button>
+    </div>
   </div>
 </div>
   </div>

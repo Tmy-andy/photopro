@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - PhotoPro Admin</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="sidebar-logo">
+          <i data-lucide="camera"></i>
+          PhotoPro Admin
+        </a>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Tổng quan</div>
+          <a href="index.html" class="nav-item active">
+            <i data-lucide="layout-dashboard"></i>
+            Dashboard
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Quản lý</div>
+          <a href="pages/albums.html" class="nav-item">
+            <i data-lucide="folder-open"></i>
+            Albums
+          </a>
+          <a href="pages/orders.html" class="nav-item">
+            <i data-lucide="shopping-bag"></i>
+            Đơn hàng
+          </a>
+          <a href="pages/staff.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="users"></i>
+            Nhân viên
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Kinh doanh</div>
+          <a href="pages/pricing.html" class="nav-item" data-role="admin-system,admin-sales">
+            <i data-lucide="tag"></i>
+            Bảng giá
+          </a>
+          <a href="pages/revenue.html" class="nav-item">
+            <i data-lucide="trending-up"></i>
+            Doanh thu
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a href="pages/settings.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="settings"></i>
+            Cài đặt
+          </a>
+        </div>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1 class="header-title">Dashboard</h1>
+        <div class="header-actions">
+          <div class="user-menu" onclick="toggleUserMenu()">
+            <div class="user-avatar">AS</div>
+            <div class="user-info">
+              <div class="user-name">Admin System</div>
+              <div class="user-role" id="userRole">Admin System</div>
+            </div>
+            <i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i>
+          </div>
+          
+          <div class="dropdown-menu" id="userMenu">
+            <a href="#" class="dropdown-item">
+              <i data-lucide="user"></i>
+              Hồ sơ
+            </a>
+            <a href="pages/settings.html" class="dropdown-item">
+              <i data-lucide="settings"></i>
+              Cài đặt
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="../FE/index.html" class="dropdown-item">
+              <i data-lucide="log-out"></i>
+              Đăng xuất
+            </a>
+          </div>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon primary">
+              <i data-lucide="image" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Tổng ảnh</div>
+              <div class="stat-value" id="totalPhotos">12,500</div>
+              <div class="stat-change positive">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+                <span>+15% so với tháng trước</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon success">
+              <i data-lucide="shopping-cart" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Đơn hàng</div>
+              <div class="stat-value" id="totalOrders">850</div>
+              <div class="stat-change positive">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+                <span>+22% so với tháng trước</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon warning">
+              <i data-lucide="dollar-sign" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Doanh thu tháng này</div>
+              <div class="stat-value" id="revenue">42,5M</div>
+              <div class="stat-change positive">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+                <span>+18% so với tháng trước</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon info">
+              <i data-lucide="users" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Khách hàng</div>
+              <div class="stat-value" id="customers">645</div>
+              <div class="stat-change positive">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+                <span>+12% so với tháng trước</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Charts Row -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Doanh thu 7 ngày qua</h3>
+              <select style="padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;">
+                <option>7 ngày</option>
+                <option>14 ngày</option>
+                <option>30 ngày</option>
+              </select>
+            </div>
+            <div class="card-body">
+              <canvas id="revenueChart" style="max-height: 300px;"></canvas>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Gói bán chạy</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="packagesChart" style="max-height: 300px;"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Orders & Top Albums -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Đơn hàng gần đây</h3>
+              <a href="pages/orders.html" class="btn btn-sm btn-outline">Xem tất cả</a>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mã đơn</th>
+                    <th>Số ảnh</th>
+                    <th>Giá</th>
+                    <th>Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody id="recentOrders">
+                  <tr>
+                    <td>#ORD-001</td>
+                    <td>3 ảnh</td>
+                    <td>50,000đ</td>
+                    <td><span class="badge badge-success">Hoàn thành</span></td>
+                  </tr>
+                  <tr>
+                    <td>#ORD-002</td>
+                    <td>8 ảnh</td>
+                    <td>100,000đ</td>
+                    <td><span class="badge badge-success">Hoàn thành</span></td>
+                  </tr>
+                  <tr>
+                    <td>#ORD-003</td>
+                    <td>1 ảnh</td>
+                    <td>20,000đ</td>
+                    <td><span class="badge badge-warning">Đang xử lý</span></td>
+                  </tr>
+                  <tr>
+                    <td>#ORD-004</td>
+                    <td>3 ảnh</td>
+                    <td>50,000đ</td>
+                    <td><span class="badge badge-success">Hoàn thành</span></td>
+                  </tr>
+                  <tr>
+                    <td>#ORD-005</td>
+                    <td>8 ảnh</td>
+                    <td>100,000đ</td>
+                    <td><span class="badge badge-success">Hoàn thành</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Album bán chạy</h3>
+              <a href="pages/albums.html" class="btn btn-sm btn-outline">Xem tất cả</a>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 4px;">Bà Nà Hills 20/02</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">150 ảnh</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; color: var(--primary);">120 đơn</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">6,000,000đ</div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 4px;">Hội An 19/02</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">200 ảnh</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; color: var(--primary);">98 đơn</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">4,900,000đ</div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 4px;">Cầu Rồng 18/02</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">120 ảnh</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; color: var(--primary);">75 đơn</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">3,750,000đ</div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 4px;">Mỹ Khê 17/02</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">180 ảnh</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; color: var(--primary);">68 đơn</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">3,400,000đ</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- System Alerts (Admin System only) -->
+        <div class="alert alert-warning mt-4" data-role="admin-system">
+          <div style="display: flex; align-items: flex-start; gap: 8px;">
+            <i data-lucide="alert-triangle" style="width: 20px; height: 20px; flex-shrink: 0;"></i>
+            <div>
+              <strong style="display: block; margin-bottom: 4px;">Cảnh báo tự động xóa</strong>
+              <span>Có <strong>250 ảnh</strong> sẽ bị xóa trong 7 ngày tới do hết hạn lưu trữ. <a href="pages/settings.html" style="color: inherit; text-decoration: underline;">Xem cài đặt</a></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/dashboardManager.js"></script>
+  <script>
+    // Initialize icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+    
+    // User menu toggle
+    function toggleUserMenu() {
+      document.getElementById('userMenu').classList.toggle('active');
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.user-menu') && !e.target.closest('.dropdown-menu')) {
+        document.getElementById('userMenu').classList.remove('active');
+      }
+    });
+    
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+      type: 'line',
+      data: {
+        labels: ['21/02', '22/02', '23/02', '24/02', '25/02', '26/02', '27/02'],
+        datasets: [{
+          label: 'Doanh thu (VNĐ)',
+          data: [1200000, 1900000, 1500000, 2100000, 1800000, 2400000, 2200000],
+          borderColor: '#1a6b4e',
+          backgroundColor: 'rgba(26, 107, 78, 0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return (value / 1000000).toFixed(1) + 'M';
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    // Packages Chart
+    const packagesCtx = document.getElementById('packagesChart').getContext('2d');
+    new Chart(packagesCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Gói 8 ảnh', 'Gói 3 ảnh', 'Gói 1 ảnh'],
+        datasets: [{
+          data: [420, 280, 150],
+          backgroundColor: ['#1a6b4e', '#d4870e', '#2563eb']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+    
+    // Role-based visibility
+    const currentRole = 'admin-system'; // This should come from auth
+    document.querySelectorAll('[data-role]').forEach(el => {
+      const allowedRoles = el.dataset.role.split(',');
+      if (!allowedRoles.includes(currentRole)) {
+        el.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

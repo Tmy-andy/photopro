@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cài đặt Hệ thống - PhotoPro Admin</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="sidebar-logo">
+          <i data-lucide="camera"></i>
+          PhotoPro Admin
+        </a>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Tổng quan</div>
+          <a href="../index.html" class="nav-item">
+            <i data-lucide="layout-dashboard"></i>
+            Dashboard
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Quản lý</div>
+          <a href="albums.html" class="nav-item">
+            <i data-lucide="folder-open"></i>
+            Albums
+          </a>
+          <a href="orders.html" class="nav-item">
+            <i data-lucide="shopping-bag"></i>
+            Đơn hàng
+          </a>
+          <a href="staff.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="users"></i>
+            Nhân viên
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Kinh doanh</div>
+          <a href="pricing.html" class="nav-item" data-role="admin-system,admin-sales">
+            <i data-lucide="tag"></i>
+            Bảng giá
+          </a>
+          <a href="revenue.html" class="nav-item">
+            <i data-lucide="trending-up"></i>
+            Doanh thu
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a href="settings.html" class="nav-item active" data-role="admin-system">
+            <i data-lucide="settings"></i>
+            Cài đặt
+          </a>
+        </div>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1 class="header-title">Cài đặt Hệ thống</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="saveAllSettings()">
+            <i data-lucide="save"></i>
+            Lưu tất cả
+          </button>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <div class="alert alert-info mb-4">
+          <div style="display: flex; align-items: flex-start; gap: 8px;">
+            <i data-lucide="info" style="width: 20px; height: 20px; flex-shrink: 0;"></i>
+            <div>
+              <strong style="display: block; margin-bottom: 4px;">Chỉ Admin System mới có quyền truy cập</strong>
+              <span>Thay đổi cài đặt hệ thống có thể ảnh hưởng đến toàn bộ hoạt động. Vui lòng cẩn thận khi điều chỉnh.</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs mb-4">
+          <button class="tab active" onclick="switchTab('retention')">
+            <i data-lucide="clock"></i>
+            Thời hạn
+          </button>
+          <button class="tab" onclick="switchTab('domain')">
+            <i data-lucide="globe"></i>
+            Domain
+          </button>
+          <button class="tab" onclick="switchTab('payment')">
+            <i data-lucide="credit-card"></i>
+            Thanh toán
+          </button>
+          <button class="tab" onclick="switchTab('appearance')">
+            <i data-lucide="palette"></i>
+            Giao diện
+          </button>
+        </div>
+        
+        <!-- Retention Tab -->
+        <div class="tab-content active" id="retentionTab">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">Thời hạn lưu trữ ảnh (Photo Retention)</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Thời gian lưu trữ ảnh (ngày) *</label>
+                <input type="number" value="30" id="photoRetention" min="7" max="365">
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
+                  Ảnh sẽ tự động bị xóa sau <strong id="retentionDays">30</strong> ngày kể từ ngày upload. (Từ 7-365 ngày)
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="autoDeleteEnabled" checked onchange="toggleAutoDelete()">
+                  <span>Bật tự động xóa ảnh hết hạn</span>
+                </label>
+              </div>
+              
+              <div class="form-group" id="autoDeleteOptions">
+                <label>Chế độ xóa</label>
+                <select id="autoDeleteMode">
+                  <option value="all">Xóa tất cả ảnh hết hạn</option>
+                  <option value="unsold" selected>Chỉ xóa ảnh chưa bán</option>
+                </select>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
+                  ⚠️ Ảnh đã bán sẽ được giữ lại thêm cho đến khi link download hết hạn.
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Thời hạn link tải ảnh (Download Link TTL)</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Thời gian hiệu lực link (giờ) *</label>
+                <input type="number" value="168" id="linkTTL" min="24" max="720">
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
+                  Link download sẽ hết hạn sau <strong id="ttlHours">168</strong> giờ (7 ngày). (Từ 24 giờ đến 720 giờ = 30 ngày)
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label>Số lần tải tối đa</label>
+                <input type="number" value="5" id="maxDownloads" min="1" max="100">
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
+                  Giới hạn số lần khách có thể tải ảnh từ link. Để trống = không giới hạn.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Domain Tab -->
+        <div class="tab-content" id="domainTab">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">Subdomain PhotoPro</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Subdomain *</label>
+                <div class="input-group">
+                  <input type="text" value="studio-abc" id="subdomain" placeholder="your-studio">
+                  <span style="padding: 10px 12px; background: var(--surface-alt); border: 1px solid var(--border); border-left: none; border-radius: 0 8px 8px 0;">.photopro.vn</span>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
+                  URL hiện tại: <strong>https://studio-abc.photopro.vn</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Custom Domain</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Domain tùy chỉnh</label>
+                <input type="text" placeholder="photos.yourstudio.com" id="customDomain">
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
+                  Cấu hình DNS CNAME: <code>photos.yourstudio.com</code> → <code>studio-abc.photopro.vn</code>
+                </div>
+              </div>
+              
+              <div class="alert alert-warning">
+                <strong>Hướng dẫn:</strong> Sau khi nhập domain, bạn cần cấu hình DNS record tại nhà cung cấp domain của mình. Liên hệ support nếu cần hỗ trợ.
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Payment Tab -->
+        <div class="tab-content" id="paymentTab">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">Cổng thanh toán</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="vnpayEnabled" checked>
+                  <span>VNPay</span>
+                </label>
+              </div>
+              
+              <div class="form-group">
+                <label>VNPay TMN Code</label>
+                <input type="text" placeholder="ABCD1234" id="vnpayTmnCode">
+              </div>
+              
+              <div class="form-group">
+                <label>VNPay Hash Secret</label>
+                <input type="password" placeholder="••••••••" id="vnpayHashSecret">
+              </div>
+              
+              <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border);">
+              
+              <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="momoEnabled" checked>
+                  <span>MoMo</span>
+                </label>
+              </div>
+              
+              <div class="form-group">
+                <label>MoMo Partner Code</label>
+                <input type="text" placeholder="MOMO1234" id="momoPartnerCode">
+              </div>
+              
+              <div class="form-group">
+                <label>MoMo Access Key</label>
+                <input type="password" placeholder="••••••••" id="momoAccessKey">
+              </div>
+              
+              <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border);">
+              
+              <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="bankEnabled" checked>
+                  <span>Chuyển khoản ngân hàng</span>
+                </label>
+              </div>
+              
+              <div class="form-group">
+                <label>Tên ngân hàng</label>
+                <input type="text" placeholder="VD: Vietcombank" id="bankName">
+              </div>
+              
+              <div class="form-group">
+                <label>Số tài khoản</label>
+                <input type="text" placeholder="1234567890" id="bankAccount">
+              </div>
+              
+              <div class="form-group">
+                <label>Chủ tài khoản</label>
+                <input type="text" placeholder="NGUYEN VAN A" id="bankOwner">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Appearance Tab -->
+        <div class="tab-content" id="appearanceTab">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Màu sắc chủ đạo</h3>
+            </div>
+            <div class="card-body">
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px;">
+                <div class="color-preset active" onclick="selectColor('green')" style="padding: 16px; border: 2px solid var(--primary); border-radius: 8px; cursor: pointer;">
+                  <div style="width: 48px; height: 48px; background: #1a6b4e; border-radius: 8px; margin-bottom: 8px;"></div>
+                  <div style="font-weight: 600;">Xanh lá</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Mặc định</div>
+                </div>
+                
+                <div class="color-preset" onclick="selectColor('blue')" style="padding: 16px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer;">
+                  <div style="width: 48px; height: 48px; background: #2563eb; border-radius: 8px; margin-bottom: 8px;"></div>
+                  <div style="font-weight: 600;">Xanh dương</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Chuyên nghiệp</div>
+                </div>
+                
+                <div class="color-preset" onclick="selectColor('purple')" style="padding: 16px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer;">
+                  <div style="width: 48px; height: 48px; background: #7c3aed; border-radius: 8px; margin-bottom: 8px;"></div>
+                  <div style="font-weight: 600;">Tím</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Sang trọng</div>
+                </div>
+                
+                <div class="color-preset" onclick="selectColor('red')" style="padding: 16px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer;">
+                  <div style="width: 48px; height: 48px; background: #dc2626; border-radius: 8px; margin-bottom: 8px;"></div>
+                  <div style="font-weight: 600;">Đỏ</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Năng động</div>
+                </div>
+              </div>
+              
+              <div class="alert alert-info mt-4">
+                Màu sắc sẽ được áp dụng cho cả Frontend (trang khách) và Dashboard (trang admin).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/dashboardManager.js"></script>
+  <script>
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+    
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(tabName + 'Tab').classList.add('active');
+      
+      lucide.createIcons();
+    }
+    
+    function toggleAutoDelete() {
+      const enabled = document.getElementById('autoDeleteEnabled').checked;
+      document.getElementById('autoDeleteOptions').style.display = enabled ? 'block' : 'none';
+    }
+    
+    function selectColor(color) {
+      document.querySelectorAll('.color-preset').forEach(p => {
+        p.style.borderColor = 'var(--border)';
+      });
+      event.currentTarget.style.borderColor = 'var(--primary)';
+      console.log('Selected color:', color);
+    }
+    
+    function saveAllSettings() {
+      const settings = {
+        photoRetention: document.getElementById('photoRetention').value,
+        autoDeleteEnabled: document.getElementById('autoDeleteEnabled').checked,
+        autoDeleteMode: document.getElementById('autoDeleteMode').value,
+        linkTTL: document.getElementById('linkTTL').value,
+        maxDownloads: document.getElementById('maxDownloads').value,
+        subdomain: document.getElementById('subdomain').value,
+        customDomain: document.getElementById('customDomain').value,
+        vnpayEnabled: document.getElementById('vnpayEnabled').checked,
+        vnpayTmnCode: document.getElementById('vnpayTmnCode').value,
+        momoEnabled: document.getElementById('momoEnabled').checked,
+        momoPartnerCode: document.getElementById('momoPartnerCode').value,
+        bankEnabled: document.getElementById('bankEnabled').checked,
+        bankName: document.getElementById('bankName').value,
+        bankAccount: document.getElementById('bankAccount').value,
+        bankOwner: document.getElementById('bankOwner').value
+      };
+      
+      console.log('Save settings:', settings);
+      alert('Đã lưu cài đặt thành công!');
+    }
+    
+    // Real-time update displays
+    document.getElementById('photoRetention')?.addEventListener('input', function() {
+      document.getElementById('retentionDays').textContent = this.value;
+    });
+    
+    document.getElementById('linkTTL')?.addEventListener('input', function() {
+      document.getElementById('ttlHours').textContent = this.value;
+    });
+    
+    // Role-based visibility
+    const currentRole = 'admin-system';
+    document.querySelectorAll('[data-role]').forEach(el => {
+      const allowedRoles = el.dataset.role.split(',');
+      if (!allowedRoles.includes(currentRole)) {
+        el.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

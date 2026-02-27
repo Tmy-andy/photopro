@@ -99,25 +99,23 @@
       <div class="cart-summary">
         <h3 class="mb-2"><i data-lucide="clipboard-list"></i> Thông Tin Đơn Hàng</h3>
         
-        <!-- Order Items -->
-        <div class="mb-2">
-          <div class="flex-between mb-1">
+        <!-- Price Summary -->
+        <div class="price-breakdown">
+          <div class="price-row">
             <span>Số lượng ảnh:</span>
             <strong id="checkoutPhotoCount">0</strong>
           </div>
-          <div class="flex-between mb-1">
-            <span>Gói:</span>
-            <strong id="checkoutPackage">-</strong>
-          </div>
-        </div>
-
-        <!-- Price Summary -->
-        <div class="price-breakdown">
           <div class="price-row">
             <span>Tạm tính:</span>
             <span id="checkoutSubtotal">0₫</span>
           </div>
-          <div class="price-row" id="checkoutDiscountRow" style="display: none;">
+          <div class="price-row package-row-header">
+            <span>Gói áp dụng:</span>
+          </div>
+          <div class="package-list-wrapper">
+            <div id="checkoutPackageList" class="package-list"></div>
+          </div>
+          <div class="price-row" id="checkoutDiscountRow" style="display: none; border-bottom: 0">
             <span>Giảm giá:</span>
             <span style="color: var(--success);" id="checkoutDiscount">-0₫</span>
           </div>
@@ -222,6 +220,51 @@
   margin: 4px 0 0 0;
   font-size: 14px;
   color: var(--text-secondary);
+}
+
+/* Package List Styles (same as cart) */
+.package-row-header {
+  padding-bottom: 12px !important;
+  border-bottom: none !important;
+}
+
+.package-list-wrapper {
+  padding: 0 0 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.package-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.package-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--surface);
+  border-radius: 8px;
+  font-size: 14px;
+  gap: 12px;
+  border: 1px solid var(--border);
+}
+
+.package-item-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.package-item-price {
+  color: var(--text-secondary);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.package-item.singles {
+  background: var(--warning-light, #fff3cd);
+  border-color: var(--warning, #ffc107);
 }
 </style>
   </div>

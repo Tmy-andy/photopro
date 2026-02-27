@@ -222,7 +222,7 @@ class DataManager {
   }
 
   /**
-   * Tính toán giá chi tiết cho số ảnh đã chọn
+   * Tính toán giá chi tiết cho số ảnh đã chọn (tối ưu với nhiều gói)
    */
   calculatePricing(photoCount) {
     console.log('💰 calculatePricing called for:', photoCount, 'photos');
@@ -233,67 +233,91 @@ class DataManager {
         finalPrice: 0,
         discount: 0,
         packageName: 'Chưa có',
+        packages: [],
         suggestion: 'Vui lòng chọn ảnh để xem giá'
       };
     }
 
     const singlePrice = this.data?.pricing?.singlePhotoPrice || 20000;
     const originalPrice = photoCount * singlePrice;
-    const tiers = this.getPricingTiers();
+    const tiers = this.getPricingTiers().sort((a, b) => b.photos - a.photos); // Sort giảm dần
     
     console.log('💰 Single price:', singlePrice);
     console.log('💰 Original price:', originalPrice);
     console.log('💰 Available tiers:', tiers);
     
-    // Tìm gói phù hợp nhất
-    let bestTier = null;
-    let finalPrice = originalPrice;
-    let packageName = 'Lẻ';
-    let suggestion = '';
+    // Tìm combination tối ưu nhất (greedy algorithm)
+    let remaining = photoCount;
+    let finalPrice = 0;
+    const packagesUsed = [];
     
-    // Tìm gói có số ảnh <= số ảnh đã chọn (apply được)
-    for (let i = tiers.length - 1; i >= 0; i--) {
-      if (photoCount >= tiers[i].photos) {
-        bestTier = tiers[i];
-        break;
+    // Duyệt từ gói lớn nhất đến nhỏ nhất
+    for (const tier of tiers) {
+      if (remaining >= tier.photos) {
+        const count = Math.floor(remaining / tier.photos);
+        if (count > 0) {
+          packagesUsed.push({
+            tier: tier,
+            count: count,
+            totalPhotos: count * tier.photos,
+            totalPrice: count * tier.price
+          });
+          finalPrice += count * tier.price;
+          remaining -= count * tier.photos;
+        }
       }
     }
     
-    if (bestTier) {
-      // Tính số gói cần mua
-      const packagesNeeded = Math.ceil(photoCount / bestTier.photos);
-      finalPrice = packagesNeeded * bestTier.price;
-      packageName = bestTier.name;
-      
-      const savedAmount = originalPrice - finalPrice;
-      const savedPercent = Math.round((savedAmount / originalPrice) * 100);
-      
-      console.log('💰 Best tier:', bestTier.name, '- Packages needed:', packagesNeeded);
-      console.log('💰 Final price:', finalPrice, '- Saved:', savedAmount);
-      
-      if (savedAmount > 0) {
-        suggestion = `Tiết kiệm ${savedPercent}% với gói ${bestTier.name}!`;
-      }
+    // Ảnh lẻ còn lại
+    if (remaining > 0) {
+      packagesUsed.push({
+        tier: { name: 'Ảnh lẻ', photos: 1, price: singlePrice },
+        count: remaining,
+        totalPhotos: remaining,
+        totalPrice: remaining * singlePrice
+      });
+      finalPrice += remaining * singlePrice;
+    }
+    
+    // Tạo package name
+    let packageName = '';
+    if (packagesUsed.length === 0) {
+      packageName = 'Chưa có';
     } else {
-      // Không đủ để mua gói, gợi ý gói nhỏ nhất
-      const smallestTier = tiers[0];
-      if (smallestTier && photoCount < smallestTier.photos) {
-        const moreNeeded = smallestTier.photos - photoCount;
-        suggestion = `Chọn thêm ${moreNeeded} ảnh để được gói ${smallestTier.name} (tiết kiệm ${smallestTier.savings}%)`;
-      }
+      packageName = packagesUsed.map(p => {
+        if (p.tier.name === 'Ảnh lẻ') {
+          return `${p.count} lẻ`;
+        }
+        return `${p.tier.name} x${p.count}`;
+      }).join(' + ');
     }
     
     const discount = originalPrice - finalPrice;
+    const savedPercent = discount > 0 ? Math.round((discount / originalPrice) * 100) : 0;
+    
+    let suggestion = '';
+    if (discount > 0) {
+      suggestion = `Tiết kiệm ${savedPercent}% với gói combo!`;
+    } else if (tiers.length > 0) {
+      const smallestTier = tiers[tiers.length - 1];
+      if (photoCount < smallestTier.photos) {
+        const moreNeeded = smallestTier.photos - photoCount;
+        suggestion = `Chọn thêm ${moreNeeded} ảnh để được ${smallestTier.name} (tiết kiệm ${smallestTier.savings}%)`;
+      }
+    }
     
     const result = {
       originalPrice,
       finalPrice,
       discount,
       packageName,
-      suggestion
+      packages: packagesUsed,
+      suggestion,
+      savedPercent
     };
     
     console.log('💰 Pricing result:', result);
+    console.log('💰 Packages breakdown:', packagesUsed);
     return result;
   }
 

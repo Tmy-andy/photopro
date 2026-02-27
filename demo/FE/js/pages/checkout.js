@@ -46,6 +46,7 @@ function updateCheckoutSummary() {
   
   if (typeof stateManager === 'undefined' || typeof dataManager === 'undefined') return;
   if (!stateManager.state || !stateManager.state.selectedPhotos || !dataManager.data) return;
+  if (typeof uiManager === 'undefined') return;
   
   const selectedCount = stateManager.state.selectedPhotos.size;
   console.log('💳 Selected photos in checkout:', selectedCount);
@@ -58,15 +59,34 @@ function updateCheckoutSummary() {
   const photoCountEl = document.getElementById('checkoutPhotoCount');
   if (photoCountEl) photoCountEl.textContent = selectedCount;
   
-  const packageEl = document.getElementById('checkoutPackage');
-  if (packageEl) packageEl.textContent = pricing.packageName || 'Lẻ';
-  
   // Update prices
   const subtotalEl = document.getElementById('checkoutSubtotal');
   if (subtotalEl) subtotalEl.textContent = pricing.originalPrice.toLocaleString('vi-VN') + '₫';
   
   const totalEl = document.getElementById('checkoutTotal');
   if (totalEl) totalEl.textContent = pricing.finalPrice.toLocaleString('vi-VN') + '₫';
+  
+  // Update package list
+  const packageListEl = document.getElementById('checkoutPackageList');
+  
+  if (packageListEl) {
+    if (selectedCount === 0 || !pricing.packages || pricing.packages.length === 0) {
+      packageListEl.innerHTML = '<div style="color: var(--text-secondary); font-size: 14px;">Chưa có</div>';
+    } else {
+      packageListEl.innerHTML = pricing.packages.map(pkg => {
+        const isSingles = pkg.tier.name === 'Ảnh lẻ';
+        const itemClass = isSingles ? 'package-item singles' : 'package-item';
+        const displayName = isSingles ? `${pkg.count} ảnh lẻ` : `${pkg.tier.name} × ${pkg.count}`;
+        
+        return `
+          <div class="${itemClass}">
+            <span class="package-item-name">${displayName}</span>
+            <span class="package-item-price">${pkg.totalPrice.toLocaleString('vi-VN')}₫</span>
+          </div>
+        `;
+      }).join('');
+    }
+  }
   
   // Discount
   const discountRow = document.getElementById('checkoutDiscountRow');

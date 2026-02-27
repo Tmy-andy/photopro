@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Đơn hàng - PhotoPro Admin</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="sidebar-logo">
+          <i data-lucide="camera"></i>
+          PhotoPro Admin
+        </a>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Tổng quan</div>
+          <a href="../index.html" class="nav-item">
+            <i data-lucide="layout-dashboard"></i>
+            Dashboard
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Quản lý</div>
+          <a href="albums.html" class="nav-item">
+            <i data-lucide="folder-open"></i>
+            Albums
+          </a>
+          <a href="orders.html" class="nav-item active">
+            <i data-lucide="shopping-bag"></i>
+            Đơn hàng
+          </a>
+          <a href="staff.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="users"></i>
+            Nhân viên
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Kinh doanh</div>
+          <a href="pricing.html" class="nav-item" data-role="admin-system,admin-sales">
+            <i data-lucide="tag"></i>
+            Bảng giá
+          </a>
+          <a href="revenue.html" class="nav-item">
+            <i data-lucide="trending-up"></i>
+            Doanh thu
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a href="settings.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="settings"></i>
+            Cài đặt
+          </a>
+        </div>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1 class="header-title">Quản lý Đơn hàng</h1>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="exportOrders()">
+            <i data-lucide="download"></i>
+            Xuất Excel
+          </button>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <!-- Stats -->
+        <div class="stats-grid mb-4">
+          <div class="stat-card">
+            <div class="stat-icon success">
+              <i data-lucide="check-circle" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Hoàn thành</div>
+              <div class="stat-value">750</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon warning">
+              <i data-lucide="clock" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Đang xử lý</div>
+              <div class="stat-value">85</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon danger">
+              <i data-lucide="x-circle" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Đã hoàn tiền</div>
+              <div class="stat-value">15</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon primary">
+              <i data-lucide="dollar-sign" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Tổng doanh thu</div>
+              <div class="stat-value">42.5M</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+              <input type="text" placeholder="Tìm theo mã, SĐT, email..." id="searchOrder">
+              
+              <select id="filterStatus" onchange="filterOrders()">
+                <option value="">Tất cả trạng thái</option>
+                <option value="completed">Hoàn thành</option>
+                <option value="processing">Đang xử lý</option>
+                <option value="refunded">Đã hoàn tiền</option>
+                <option value="expired">Hết hạn</option>
+              </select>
+              
+              <select id="filterPackage" onchange="filterOrders()">
+                <option value="">Tất cả gói</option>
+                <option value="1">Gói 1 ảnh</option>
+                <option value="3">Gói 3 ảnh</option>
+                <option value="8">Gói 8 ảnh</option>
+              </select>
+              
+              <input type="date" id="filterDate" onchange="filterOrders()">
+              
+              <button class="btn btn-outline" onclick="resetFilters()">
+                <i data-lucide="x"></i>
+                Xóa lọc
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Orders Table -->
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Khách hàng</th>
+                  <th>Album</th>
+                  <th>Số ảnh</th>
+                  <th>Tổng tiền</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày mua</th>
+                  <th>Hết hạn</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTable">
+                <tr>
+                  <td><strong>#WL2024ABC</strong></td>
+                  <td>
+                    <div>0901234567</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">customer@email.com</div>
+                  </td>
+                  <td>Bà Nà Hills 20/02</td>
+                  <td>3 ảnh</td>
+                  <td><strong>50,000đ</strong></td>
+                  <td><span class="badge badge-success">Hoàn thành</span></td>
+                  <td>20/02/2026 14:30</td>
+                  <td>27/02/2026 14:30</td>
+                  <td>
+                    <div style="display: flex; gap: 4px;">
+                      <button class="btn btn-outline btn-sm" onclick="viewOrderDetail('WL2024ABC')" title="Xem chi tiết">
+                        <i data-lucide="eye"></i>
+                      </button>
+                      <button class="btn btn-danger btn-sm" onclick="refundOrder('WL2024ABC')" data-role="admin-system,admin-sales" title="Hoàn tiền">
+                        <i data-lucide="rotate-ccw"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                
+                <tr>
+                  <td><strong>#OR8765XYZ</strong></td>
+                  <td>
+                    <div>0912345678</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">-</div>
+                  </td>
+                  <td>Hội An 19/02</td>
+                  <td>8 ảnh</td>
+                  <td><strong>100,000đ</strong></td>
+                  <td><span class="badge badge-success">Hoàn thành</span></td>
+                  <td>19/02/2026 10:15</td>
+                  <td>26/02/2026 10:15</td>
+                  <td>
+                    <div style="display: flex; gap: 4px;">
+                      <button class="btn btn-outline btn-sm" onclick="viewOrderDetail('OR8765XYZ')">
+                        <i data-lucide="eye"></i>
+                      </button>
+                      <button class="btn btn-danger btn-sm" onclick="refundOrder('OR8765XYZ')" data-role="admin-system,admin-sales">
+                        <i data-lucide="rotate-ccw"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                
+                <tr>
+                  <td><strong>#QW4321MNO</strong></td>
+                  <td>
+                    <div>0909876543</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">user@domain.com</div>
+                  </td>
+                  <td>Cầu Rồng 18/02</td>
+                  <td>1 ảnh</td>
+                  <td><strong>20,000đ</strong></td>
+                  <td><span class="badge badge-warning">Đang xử lý</span></td>
+                  <td>18/02/2026 16:45</td>
+                  <td>25/02/2026 16:45</td>
+                  <td>
+                    <div style="display: flex; gap: 4px;">
+                      <button class="btn btn-outline btn-sm" onclick="viewOrderDetail('QW4321MNO')">
+                        <i data-lucide="eye"></i>
+                      </button>
+                      <button class="btn btn-danger btn-sm" onclick="refundOrder('QW4321MNO')" data-role="admin-system,admin-sales">
+                        <i data-lucide="rotate-ccw"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                
+                <tr>
+                  <td><strong>#ER5678PQR</strong></td>
+                  <td>
+                    <div>0923456789</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">-</div>
+                  </td>
+                  <td>Mỹ Khê 17/02</td>
+                  <td>3 ảnh</td>
+                  <td><strong>50,000đ</strong></td>
+                  <td><span class="badge badge-success">Hoàn thành</span></td>
+                  <td>17/02/2026 11:20</td>
+                  <td>24/02/2026 11:20</td>
+                  <td>
+                    <div style="display: flex; gap: 4px;">
+                      <button class="btn btn-outline btn-sm" onclick="viewOrderDetail('ER5678PQR')">
+                        <i data-lucide="eye"></i>
+                      </button>
+                      <button class="btn btn-danger btn-sm" onclick="refundOrder('ER5678PQR')" data-role="admin-system,admin-sales">
+                        <i data-lucide="rotate-ccw"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                
+                <tr>
+                  <td><strong>#TY9012DEF</strong></td>
+                  <td>
+                    <div>0934567890</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">test@test.com</div>
+                  </td>
+                  <td>Bà Nà Hills 16/02</td>
+                  <td>8 ảnh</td>
+                  <td><strong>100,000đ</strong></td>
+                  <td><span class="badge badge-danger">Đã hoàn tiền</span></td>
+                  <td>16/02/2026 09:00</td>
+                  <td>-</td>
+                  <td>
+                    <div style="display: flex; gap: 4px;">
+                      <button class="btn btn-outline btn-sm" onclick="viewOrderDetail('TY9012DEF')">
+                        <i data-lucide="eye"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                
+                <tr style="opacity: 0.6;">
+                  <td><strong>#UI3456GHI</strong></td>
+                  <td>
+                    <div>0945678901</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">-</div>
+                  </td>
+                  <td>Hội An 15/02</td>
+                  <td>3 ảnh</td>
+                  <td><strong>50,000đ</strong></td>
+                  <td><span class="badge badge-muted">Hết hạn</span></td>
+                  <td>08/02/2026 15:30</td>
+                  <td>15/02/2026 15:30</td>
+                  <td>
+                    <div style="display: flex; gap: 4px;">
+                      <button class="btn btn-outline btn-sm" onclick="viewOrderDetail('UI3456GHI')">
+                        <i data-lucide="eye"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Pagination -->
+          <div style="padding: 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 13px; color: var(--text-secondary);">
+              Hiển thị 1-6 trong tổng số 850 đơn hàng
+            </div>
+            <div style="display: flex; gap: 4px;">
+              <button class="btn btn-outline btn-sm" disabled>
+                <i data-lucide="chevron-left"></i>
+              </button>
+              <button class="btn btn-primary btn-sm">1</button>
+              <button class="btn btn-outline btn-sm">2</button>
+              <button class="btn btn-outline btn-sm">3</button>
+              <button class="btn btn-outline btn-sm">...</button>
+              <button class="btn btn-outline btn-sm">142</button>
+              <button class="btn btn-outline btn-sm">
+                <i data-lucide="chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Order Detail Modal -->
+  <div class="modal-overlay" id="orderDetailModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Chi tiết đơn hàng #<span id="modalOrderCode">WL2024ABC</span></h3>
+        <button class="modal-close" onclick="closeOrderDetailModal()">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="display: grid; gap: 16px;">
+          <div>
+            <strong style="display: block; margin-bottom: 8px;">Thông tin khách hàng</strong>
+            <div style="background: var(--surface-alt); padding: 12px; border-radius: 8px;">
+              <div style="margin-bottom: 4px;">📱 Số điện thoại: <strong>0901234567</strong></div>
+              <div>📧 Email: <strong>customer@email.com</strong></div>
+            </div>
+          </div>
+          
+          <div>
+            <strong style="display: block; margin-bottom: 8px;">Thông tin đơn hàng</strong>
+            <div style="background: var(--surface-alt); padding: 12px; border-radius: 8px;">
+              <div style="margin-bottom: 4px;">📂 Album: <strong>Bà Nà Hills 20/02</strong></div>
+              <div style="margin-bottom: 4px;">📸 Số ảnh: <strong>3 ảnh</strong></div>
+              <div style="margin-bottom: 4px;">💰 Gói giá: <strong>Gói 3 ảnh - 50,000đ</strong></div>
+              <div style="margin-bottom: 4px;">📅 Ngày mua: <strong>20/02/2026 14:30</strong></div>
+              <div>⏰ Hết hạn: <strong>27/02/2026 14:30</strong> (còn 5 ngày)</div>
+            </div>
+          </div>
+          
+          <div>
+            <strong style="display: block; margin-bottom: 8px;">Danh sách ảnh</strong>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+              <div style="aspect-ratio: 3/4; background: linear-gradient(135deg, #1a6b4e 0%, #134a36 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                IMG_001.jpg
+              </div>
+              <div style="aspect-ratio: 3/4; background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                IMG_002.jpg
+              </div>
+              <div style="aspect-ratio: 3/4; background: linear-gradient(135deg, #d4870e 0%, #92400e 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                IMG_003.jpg
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <strong style="display: block; margin-bottom: 8px;">Link tải ảnh</strong>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" value="https://studio-abc.photopro.vn/d/abc123xyz" readonly style="flex: 1; font-family: monospace; font-size: 12px;">
+              <button class="btn btn-outline btn-sm" onclick="copyLink()">
+                <i data-lucide="copy"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div>
+            <strong style="display: block; margin-bottom: 8px;">Lịch sử</strong>
+            <div style="font-size: 13px; color: var(--text-secondary);">
+              <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                ✅ <strong>20/02/2026 14:30</strong> - Thanh toán thành công
+              </div>
+              <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                📧 <strong>20/02/2026 14:31</strong> - Gửi link qua SMS
+              </div>
+              <div style="padding: 8px 0;">
+                📥 <strong>20/02/2026 15:45</strong> - Khách tải ảnh (3/5 lượt)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeOrderDetailModal()">Đóng</button>
+        <button class="btn btn-danger" onclick="refundOrder('WL2024ABC')" data-role="admin-system,admin-sales">
+          <i data-lucide="rotate-ccw"></i>
+          Hoàn tiền
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Refund Modal -->
+  <div class="modal-overlay" id="refundModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Hoàn tiền đơn hàng</h3>
+        <button class="modal-close" onclick="closeRefundModal()">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          <strong>Cảnh báo:</strong> Hành động này không thể hoàn tác. Link tải ảnh sẽ bị vô hiệu hóa ngay lập tức.
+        </div>
+        
+        <div class="form-group">
+          <label>Lý do hoàn tiền *</label>
+          <select id="refundReason">
+            <option value="">Chọn lý do...</option>
+            <option value="customer_request">Khách hàng yêu cầu</option>
+            <option value="wrong_photos">Ảnh không đúng</option>
+            <option value="quality_issue">Vấn đề chất lượng</option>
+            <option value="duplicate_order">Đơn hàng trùng</option>
+            <option value="other">Lý do khác</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Ghi chú</label>
+          <textarea placeholder="Mô tả chi tiết lý do hoàn tiền..." id="refundNote"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeRefundModal()">Hủy</button>
+        <button class="btn btn-danger" onclick="confirmRefund()">
+          <i data-lucide="rotate-ccw"></i>
+          Xác nhận hoàn tiền
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/dashboardManager.js"></script>
+  <script>
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+    
+    function viewOrderDetail(orderCode) {
+      document.getElementById('modalOrderCode').textContent = orderCode;
+      document.getElementById('orderDetailModal').classList.add('active');
+      lucide.createIcons();
+    }
+    
+    function closeOrderDetailModal() {
+      document.getElementById('orderDetailModal').classList.remove('active');
+    }
+    
+    function refundOrder(orderCode) {
+      closeOrderDetailModal();
+      document.getElementById('refundModal').classList.add('active');
+      lucide.createIcons();
+    }
+    
+    function closeRefundModal() {
+      document.getElementById('refundModal').classList.remove('active');
+    }
+    
+    function confirmRefund() {
+      const reason = document.getElementById('refundReason').value;
+      const note = document.getElementById('refundNote').value;
+      
+      if (!reason) {
+        alert('Vui lòng chọn lý do hoàn tiền');
+        return;
+      }
+      
+      if (confirm('Bạn có chắc muốn hoàn tiền cho đơn hàng này?')) {
+        console.log('Refund order:', { reason, note });
+        alert('Đã hoàn tiền thành công!');
+        closeRefundModal();
+        // Reload page
+        location.reload();
+      }
+    }
+    
+    function copyLink() {
+      const input = document.querySelector('input[readonly]');
+      input.select();
+      document.execCommand('copy');
+      alert('Đã sao chép link!');
+    }
+    
+    function filterOrders() {
+      console.log('Filter orders');
+    }
+    
+    function resetFilters() {
+      document.getElementById('searchOrder').value = '';
+      document.getElementById('filterStatus').value = '';
+      document.getElementById('filterPackage').value = '';
+      document.getElementById('filterDate').value = '';
+      filterOrders();
+    }
+    
+    function exportOrders() {
+      alert('Xuất danh sách đơn hàng ra file Excel');
+    }
+    
+    // Role-based visibility
+    const currentRole = 'admin-system';
+    document.querySelectorAll('[data-role]').forEach(el => {
+      const allowedRoles = el.dataset.role.split(',');
+      if (!allowedRoles.includes(currentRole)) {
+        el.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

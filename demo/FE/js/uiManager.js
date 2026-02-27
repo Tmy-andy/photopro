@@ -129,23 +129,27 @@ class UIManager {
    */
   updateCartInfo() {
     const count = this.state.getSelectedCount();
-    const suggestion = this.data.getSuggestedPackage(count);
+    const pricing = this.data.calculatePricing(count);
 
     // Update các elements
     this.updateElement('selected-count', count);
     this.updateElement('cart-count', count);
     this.updateElement('result-count', '18');
 
-    const cartBtn = document.getElementById('go-to-cart-btn');
-
+    // Update sticky bottom bar
+    this.updateElement('stickySelectedCount', count + ' ảnh');
+    this.updateElement('stickyTotalPrice', this.formatPrice(pricing.finalPrice));
+    
     if (count === 0) {
-      this.updateElement('suggested-package', 'Chưa chọn');
-      this.updateElement('suggested-price', '0đ');
-      if (cartBtn) cartBtn.disabled = true;
+      this.updateElement('stickyPackageInfo', 'Chưa có gói');
     } else {
-      this.updateElement('suggested-package', suggestion.name);
-      this.updateElement('suggested-price', this.formatPrice(suggestion.price));
-      if (cartBtn) cartBtn.disabled = false;
+      const packageInfo = this.getPackageBreakdown(count);
+      this.updateElement('stickyPackageInfo', packageInfo.summary);
+    }
+
+    const cartBtn = document.getElementById('go-to-cart-btn');
+    if (cartBtn) {
+      cartBtn.disabled = count === 0;
     }
   }
 
@@ -155,6 +159,39 @@ class UIManager {
   updateElement(id, text) {
     const element = document.getElementById(id);
     if (element) element.textContent = text;
+  }
+
+  /**
+   * Calculate package breakdown (số gói + số ảnh lẻ)
+   */
+  getPackageBreakdown(photoCount) {
+    const pricing = this.data.calculatePricing(photoCount);
+    
+    if (photoCount === 0 || !pricing.packages || pricing.packages.length === 0) {
+      return {
+        packages: [],
+        singles: photoCount,
+        summary: photoCount > 0 ? `${photoCount} ảnh lẻ` : 'Chưa có',
+        details: photoCount > 0 ? `${photoCount} ảnh lẻ` : 'Chưa có'
+      };
+    }
+    
+    // Build summary và details từ packages
+    const parts = pricing.packages.map(p => {
+      if (p.tier.name === 'Ảnh lẻ') {
+        return `${p.count} ảnh lẻ`;
+      }
+      return `${p.tier.name} x${p.count}`;
+    });
+    
+    const summary = parts.join(' + ');
+    const details = parts.join(' và ');
+    
+    return {
+      packages: pricing.packages,
+      summary,
+      details
+    };
   }
 
   /**
@@ -204,38 +241,84 @@ class UIManager {
    */
   updateCartPage() {
     const count = this.state.getSelectedCount();
-    const suggestion = this.data.getSuggestedPackage(count);
-    const originalPrice = this.data.calculateOriginalPrice(count);
-    const savings = originalPrice - suggestion.price;
+    const pricing = this.data.calculatePricing(count);
+    const packageBreakdown = this.getPackageBreakdown(count);
 
     // Update summary
-    this.updateElement('cart-photo-count', count);
-    this.updateElement('summary-count', count);
-    this.updateElement('summary-package', suggestion.name);
-    this.updateElement('summary-original', this.formatPrice(originalPrice));
-    this.updateElement('summary-savings', this.formatPrice(savings));
-    this.updateElement('summary-total', this.formatPrice(suggestion.price));
+    this.updateElement('cartPhotoCount', count);
+    this.updateElement('summaryPhotoCount', count);
+    this.updateElement('originalPrice', this.formatPrice(pricing.originalPrice));
+    
+    // Update package list
+    const packageListEl = document.getElementById('packageList');
+    
+    if (packageListEl) {
+      if (count === 0 || !pricing.packages || pricing.packages.length === 0) {
+        packageListEl.innerHTML = '<div style="color: var(--text-secondary); font-size: 14px;">Chưa có</div>';
+      } else {
+        packageListEl.innerHTML = pricing.packages.map(pkg => {
+          const isSingles = pkg.tier.name === 'Ảnh lẻ';
+          const itemClass = isSingles ? 'package-item singles' : 'package-item';
+          const displayName = isSingles ? `${pkg.count} ảnh lẻ` : `${pkg.tier.name} × ${pkg.count}`;
+          
+          return `
+            <div class="${itemClass}">
+              <span class="package-item-name">${displayName}</span>
+              <span class="package-item-price">${this.formatPrice(pkg.totalPrice)}</span>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+    
+    // Update discount
+    const discountRow = document.getElementById('discountRow');
+    if (pricing.discount > 0) {
+      this.updateElement('discountAmount', '-' + this.formatPrice(pricing.discount));
+      if (discountRow) discountRow.style.display = 'flex';
+    } else {
+      if (discountRow) discountRow.style.display = 'none';
+    }
+    
+    this.updateElement('totalPrice', this.formatPrice(pricing.finalPrice));
 
     // Render photos in cart
     const selectedIds = this.state.getSelectedPhotos();
     const allPhotos = this.data.getAllPhotos();
     const cartPhotos = allPhotos.filter(p => selectedIds.includes(p.id));
 
-    const container = document.getElementById('cart-photos-grid');
-    if (container) {
-      container.innerHTML = cartPhotos.map(photo => `
-        <div class="photo-card">
-          <div class="photo-placeholder">
-            <div class="photo-placeholder-icon">📷</div>
-            <div>Photo ${photo.id}</div>
-          </div>
-          <div class="photo-badge">${photo.similarity}%</div>
-          <button 
-            style="position: absolute; top: 8px; left: 8px; width: 28px; height: 28px; border-radius: 50%; background: var(--danger); color: white; border: none; cursor: pointer; font-weight: bold;"
-            onclick="uiManager.removeFromCart(${photo.id})"
-          >×</button>
-        </div>
-      `).join('');
+    const cartGrid = document.getElementById('cartPhotosGrid');
+    const emptyCart = document.getElementById('emptyCart');
+    
+    if (count === 0) {
+      if (cartGrid) cartGrid.style.display = 'none';
+      if (emptyCart) emptyCart.style.display = 'block';
+    } else {
+      if (cartGrid) {
+        cartGrid.style.display = 'grid';
+        cartGrid.innerHTML = cartPhotos.map(photo => {
+          const imageUrl = photo.url || `https://images.unsplash.com/photo-${1500000000000 + photo.id * 1000000}?w=400&h=500&fit=crop`;
+          return `
+            <div class="photo-card">
+              <div class="photo-image" style="background-image: url('${imageUrl}');">
+                <div class="photo-watermark">DEMO</div>
+              </div>
+              <div class="photo-badge">${photo.similarity}%</div>
+              <button 
+                style="position: absolute; top: 8px; left: 8px; width: 28px; height: 28px; border-radius: 50%; background: var(--danger); color: white; border: none; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);"
+                onclick="uiManager.removeFromCart(${photo.id})"
+                title="Xóa ảnh"
+              >×</button>
+            </div>
+          `;
+        }).join('');
+      }
+      if (emptyCart) emptyCart.style.display = 'none';
+    }
+    
+    // Re-initialize icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
     }
   }
 
@@ -264,15 +347,39 @@ class UIManager {
    */
   updateCheckoutPage() {
     const count = this.state.getSelectedCount();
-    const suggestion = this.data.getSuggestedPackage(count);
-    const originalPrice = this.data.calculateOriginalPrice(count);
-    const savings = originalPrice - suggestion.price;
+    const pricing = this.data.calculatePricing(count);
+    const packageBreakdown = this.getPackageBreakdown(count);
 
-    this.updateElement('checkout-count', count);
-    this.updateElement('checkout-package', suggestion.name);
-    this.updateElement('checkout-original', this.formatPrice(originalPrice));
-    this.updateElement('checkout-savings', this.formatPrice(savings));
-    this.updateElement('checkout-total', this.formatPrice(suggestion.price));
+    this.updateElement('checkoutPhotoCount', count);
+    
+    // Update package info
+    const checkoutPackageEl = document.getElementById('checkoutPackage');
+    const checkoutPackageDetailsEl = document.getElementById('checkoutPackageDetails');
+    
+    if (checkoutPackageEl) {
+      checkoutPackageEl.textContent = count === 0 ? '-' : packageBreakdown.summary;
+    }
+    
+    if (checkoutPackageDetailsEl) {
+      if (count > 0 && packageBreakdown.tier) {
+        checkoutPackageDetailsEl.innerHTML = packageBreakdown.details;
+      } else {
+        checkoutPackageDetailsEl.innerHTML = '';
+      }
+    }
+    
+    // Update prices
+    this.updateElement('checkoutSubtotal', this.formatPrice(pricing.originalPrice));
+    
+    const checkoutDiscountRow = document.getElementById('checkoutDiscountRow');
+    if (pricing.discount > 0) {
+      this.updateElement('checkoutDiscount', '-' + this.formatPrice(pricing.discount));
+      if (checkoutDiscountRow) checkoutDiscountRow.style.display = 'flex';
+    } else {
+      if (checkoutDiscountRow) checkoutDiscountRow.style.display = 'none';
+    }
+    
+    this.updateElement('checkoutTotal', this.formatPrice(pricing.finalPrice));
   }
 
   /**

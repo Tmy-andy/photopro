@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo Doanh thu - PhotoPro Admin</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="sidebar-logo">
+          <i data-lucide="camera"></i>
+          PhotoPro Admin
+        </a>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Tổng quan</div>
+          <a href="../index.html" class="nav-item">
+            <i data-lucide="layout-dashboard"></i>
+            Dashboard
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Quản lý</div>
+          <a href="albums.html" class="nav-item">
+            <i data-lucide="folder-open"></i>
+            Albums
+          </a>
+          <a href="orders.html" class="nav-item">
+            <i data-lucide="shopping-bag"></i>
+            Đơn hàng
+          </a>
+          <a href="staff.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="users"></i>
+            Nhân viên
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Kinh doanh</div>
+          <a href="pricing.html" class="nav-item" data-role="admin-system,admin-sales">
+            <i data-lucide="tag"></i>
+            Bảng giá
+          </a>
+          <a href="revenue.html" class="nav-item active">
+            <i data-lucide="trending-up"></i>
+            Doanh thu
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a href="settings.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="settings"></i>
+            Cài đặt
+          </a>
+        </div>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1 class="header-title">Báo cáo Doanh thu</h1>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="exportRevenue()">
+            <i data-lucide="download"></i>
+            Xuất Excel
+          </button>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <!-- Period Tabs -->
+        <div class="tabs mb-4">
+          <button class="tab" onclick="switchPeriod('day')">Ngày</button>
+          <button class="tab" onclick="switchPeriod('week')">Tuần</button>
+          <button class="tab active" onclick="switchPeriod('month')">Tháng</button>
+          <button class="tab" onclick="switchPeriod('quarter')">Quý</button>
+          <button class="tab" onclick="switchPeriod('year')">Năm</button>
+        </div>
+        
+        <!-- Summary Cards -->
+        <div class="stats-grid mb-4">
+          <div class="stat-card">
+            <div class="stat-icon primary">
+              <i data-lucide="dollar-sign" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Tổng doanh thu</div>
+              <div class="stat-value">42.5M</div>
+              <div class="stat-change positive">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+                +18% so với kỳ trước
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon success">
+              <i data-lucide="shopping-cart" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Số đơn hàng</div>
+              <div class="stat-value">850</div>
+              <div class="stat-change positive">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+                +22% so với kỳ trước
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon warning">
+              <i data-lucide="image" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Số ảnh bán ra</div>
+              <div class="stat-value">3,420</div>
+              <div class="stat-change positive">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+                +15% so với kỳ trước
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon info">
+              <i data-lucide="trending-up" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Giá trung bình</div>
+              <div class="stat-value">50,000đ</div>
+              <div class="stat-change negative">
+                <i data-lucide="trending-down" style="width: 14px; height: 14px;"></i>
+                -3% so với kỳ trước
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Revenue Chart -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3 class="card-title">Xu hướng doanh thu - Tháng 02/2026</h3>
+            <select onchange="changeMonth(this.value)" style="padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;">
+              <option value="2">Tháng 02/2026</option>
+              <option value="1">Tháng 01/2026</option>
+              <option value="12">Tháng 12/2025</option>
+            </select>
+          </div>
+          <div class="card-body">
+            <canvas id="revenueChart" style="max-height: 400px;"></canvas>
+          </div>
+        </div>
+        
+        <!-- Revenue by Category -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Doanh thu theo Album</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="albumChart"></canvas>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Doanh thu theo Gói</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="packageChart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Top Performers -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Top Album bán chạy</h3>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+                  <div style="flex: 1;">
+                    <div style="font-weight: 600; margin-bottom: 4px;">Bà Nà Hills 20/02</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">120 đơn · 450 ảnh</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; color: var(--primary);">6,000,000đ</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">14.1%</div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+                  <div style="flex: 1;">
+                    <div style="font-weight: 600; margin-bottom: 4px;">Hội An 19/02</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">98 đơn · 380 ảnh</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; color: var(--primary);">4,900,000đ</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">11.5%</div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+                  <div style="flex: 1;">
+                    <div style="font-weight: 600; margin-bottom: 4px;">Cầu Rồng 18/02</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">75 đơn · 290 ảnh</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; color: var(--primary);">3,750,000đ</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">8.8%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card" data-role="admin-system,admin-sales">
+            <div class="card-header">
+              <h3 class="card-title">Top Staff hiệu suất cao</h3>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+                  <div style="flex: 1;">
+                    <div style="font-weight: 600; margin-bottom: 4px;">Nguyễn Văn A</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">3,200 ảnh upload</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; color: var(--primary);">280 đơn</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">14,000,000đ</div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+                  <div style="flex: 1;">
+                    <div style="font-weight: 600; margin-bottom: 4px;">Lê Văn C</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">2,800 ảnh upload</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; color: var(--primary);">245 đơn</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">12,250,000đ</div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+                  <div style="flex: 1;">
+                    <div style="font-weight: 600; margin-bottom: 4px;">Phạm Thị D</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">2,450 ảnh upload</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; color: var(--primary);">210 đơn</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">10,500,000đ</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/dashboardManager.js"></script>
+  <script>
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+    
+    function switchPeriod(period) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      console.log('Switch period:', period);
+      // Reload data for period
+    }
+    
+    function changeMonth(month) {
+      console.log('Change month:', month);
+      // Reload chart data
+    }
+    
+    function exportRevenue() {
+      alert('Xuất báo cáo doanh thu ra file Excel');
+    }
+    
+    // Revenue Trend Chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+      type: 'line',
+      data: {
+        labels: Array.from({length: 28}, (_, i) => (i + 1) + '/02'),
+        datasets: [{
+          label: 'Doanh thu (VNĐ)',
+          data: [1200000, 1900000, 1500000, 2100000, 1800000, 2400000, 2200000, 1700000, 2000000, 1600000, 2300000, 1900000, 2500000, 2100000, 1800000, 2200000, 1600000, 2400000, 2000000, 2300000, 1900000, 2100000, 1700000, 2200000, 1800000, 2400000, 2000000, 2300000],
+          borderColor: '#1a6b4e',
+          backgroundColor: 'rgba(26, 107, 78, 0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return (value / 1000000).toFixed(1) + 'M';
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    // Album Chart
+    const albumCtx = document.getElementById('albumChart').getContext('2d');
+    new Chart(albumCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Bà Nà Hills', 'Hội An', 'Cầu Rồng', 'Mỹ Khê', 'Khác'],
+        datasets: [{
+          label: 'Doanh thu (VNĐ)',
+          data: [6000000, 4900000, 3750000, 3400000, 24450000],
+          backgroundColor: ['#1a6b4e', '#2563eb', '#d4870e', '#1a854a', '#8b91a0']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return (value / 1000000).toFixed(1) + 'M';
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    // Package Chart
+    const packageCtx = document.getElementById('packageChart').getContext('2d');
+    new Chart(packageCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Gói 8 ảnh', 'Gói 3 ảnh', 'Gói 1 ảnh'],
+        datasets: [{
+          data: [28000000, 14000000, 500000],
+          backgroundColor: ['#1a6b4e', '#d4870e', '#2563eb']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+    
+    // Role-based visibility
+    const currentRole = 'admin-system';
+    document.querySelectorAll('[data-role]').forEach(el => {
+      const allowedRoles = el.dataset.role.split(',');
+      if (!allowedRoles.includes(currentRole)) {
+        el.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
