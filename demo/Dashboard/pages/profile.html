@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hồ Sơ - PhotoPro Dashboard</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <i data-lucide="camera"></i>
+    <span>PhotoPro</span>
+  </div>
+  
+  <nav class="sidebar-nav">
+    <a href="../index.html" class="nav-item">
+      <i data-lucide="layout-dashboard"></i>
+      <span>Dashboard</span>
+    </a>
+    <a href="albums.html" class="nav-item">
+      <i data-lucide="images"></i>
+      <span>Albums</span>
+    </a>
+    <a href="orders.html" class="nav-item">
+      <i data-lucide="shopping-bag"></i>
+      <span>Đơn hàng</span>
+    </a>
+    <a href="staff.html" class="nav-item" data-role="admin-system">
+      <i data-lucide="users"></i>
+      <span>Nhân viên</span>
+    </a>
+    <a href="pricing.html" class="nav-item" data-role="admin-system,admin-sales">
+      <i data-lucide="tag"></i>
+      <span>Giá & Gói</span>
+    </a>
+    <a href="revenue.html" class="nav-item" data-role="admin-system,admin-sales">
+      <i data-lucide="trending-up"></i>
+      <span>Doanh thu</span>
+    </a>
+    <a href="settings.html" class="nav-item" data-role="admin-system">
+      <i data-lucide="settings"></i>
+      <span>Cài đặt</span>
+    </a>
+  </nav>
+  
+  <div class="sidebar-footer">
+    <a href="profile.html" class="nav-item active">
+      <i data-lucide="user"></i>
+      <span>Hồ sơ</span>
+    </a>
+    <a href="#" class="nav-item" onclick="handleLogout(); return false;">
+      <i data-lucide="log-out"></i>
+      <span>Đăng xuất</span>
+    </a>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <i data-lucide="menu"></i>
+      </button>
+      <h2>Hồ Sơ Cá Nhân</h2>
+    </div>
+    
+    <div class="header-right">
+      <button class="icon-btn">
+        <i data-lucide="bell"></i>
+        <span class="badge">3</span>
+      </button>
+      
+      <div class="user-menu">
+        <button class="user-menu-btn" onclick="toggleUserMenu()">
+          <div class="avatar">
+            <i data-lucide="user"></i>
+          </div>
+          <div class="user-info">
+            <div class="user-name" id="headerUserName">Admin</div>
+            <div class="user-role" id="headerUserRole">Admin System</div>
+          </div>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="page-content">
+    <div class="container">
+      
+      <!-- Profile Header -->
+      <div class="card mb-3">
+        <div class="profile-banner">
+          <div class="profile-banner-overlay"></div>
+        </div>
+        <div class="profile-header-content">
+          <div class="profile-avatar-wrapper">
+            <div class="profile-avatar">
+              <i data-lucide="user" style="width: 48px; height: 48px;"></i>
+            </div>
+            <button class="btn btn-sm btn-outline" style="position: absolute; bottom: 0; right: 0;">
+              <i data-lucide="camera"></i>
+            </button>
+          </div>
+          <div class="profile-info">
+            <h1 id="profileName">Admin System</h1>
+            <p id="profileEmail">admin@photopro.vn</p>
+            <div class="profile-stats">
+              <div class="stat-item">
+                <strong id="profilePhotos">8,450</strong>
+                <span>Ảnh đã chụp</span>
+              </div>
+              <div class="stat-item">
+                <strong id="profileOrders">156</strong>
+                <span>Đơn hàng</span>
+              </div>
+              <div class="stat-item">
+                <strong id="profileRevenue">42.5M</strong>
+                <span>Doanh thu</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs mb-3">
+        <button class="tab active" onclick="switchProfileTab('info')">
+          <i data-lucide="user"></i> Thông tin
+        </button>
+        <button class="tab" onclick="switchProfileTab('security')">
+          <i data-lucide="lock"></i> Bảo mật
+        </button>
+        <button class="tab" onclick="switchProfileTab('activity')">
+          <i data-lucide="activity"></i> Hoạt động
+        </button>
+        <button class="tab" onclick="switchProfileTab('notifications')">
+          <i data-lucide="bell"></i> Thông báo
+        </button>
+      </div>
+
+      <!-- Tab Content: Info -->
+      <div id="tab-info" class="tab-content active">
+        <div class="card">
+          <div class="card-header">
+            <h3>Thông Tin Cá Nhân</h3>
+            <button class="btn btn-primary btn-sm" id="editInfoBtn" onclick="toggleEditMode()">
+              <i data-lucide="edit"></i> Chỉnh sửa
+            </button>
+          </div>
+          <div class="card-body">
+            <form id="profileForm">
+              <div class="form-row">
+                <div class="form-group" style="flex: 1;">
+                  <label class="form-label">Họ và tên</label>
+                  <input type="text" class="form-input" id="fullName" value="Admin System" disabled>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                  <label class="form-label">Vai trò</label>
+                  <input type="text" class="form-input" id="userRole" value="Admin System" disabled>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group" style="flex: 1;">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-input" id="email" value="admin@photopro.vn" disabled>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                  <label class="form-label">Số điện thoại</label>
+                  <input type="tel" class="form-input" id="phone" value="0901234567" disabled>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Địa chỉ</label>
+                <input type="text" class="form-input" id="address" value="123 Đường ABC, Quận 1, TP.HCM" disabled>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Giới thiệu</label>
+                <textarea class="form-input" id="bio" rows="4" disabled>Quản trị viên hệ thống với kinh nghiệm 5+ năm trong lĩnh vực nhiếp ảnh và quản lý doanh nghiệp.</textarea>
+              </div>
+
+              <div class="form-actions" id="formActions" style="display: none;">
+                <button type="button" class="btn btn-outline" onclick="cancelEdit()">
+                  <i data-lucide="x"></i> Hủy
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i data-lucide="save"></i> Lưu thay đổi
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Security -->
+      <div id="tab-security" class="tab-content">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h3>Đổi Mật Khẩu</h3>
+          </div>
+          <div class="card-body">
+            <form id="passwordForm">
+              <div class="form-group">
+                <label class="form-label">Mật khẩu hiện tại</label>
+                <input type="password" class="form-input" placeholder="••••••••" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mật khẩu mới</label>
+                <input type="password" class="form-input" id="newPassword" placeholder="••••••••" required>
+                <small class="form-help">Tối thiểu 8 ký tự, bao gồm chữ hoa, chữ thường và số</small>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Xác nhận mật khẩu mới</label>
+                <input type="password" class="form-input" id="confirmPassword" placeholder="••••••••" required>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i data-lucide="lock"></i> Đổi mật khẩu
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Phiên Đăng Nhập</h3>
+          </div>
+          <div class="card-body">
+            <div class="session-list">
+              <div class="session-item">
+                <div class="session-icon">
+                  <i data-lucide="monitor"></i>
+                </div>
+                <div class="session-info">
+                  <strong>Windows - Chrome</strong>
+                  <p>TP.HCM, Việt Nam • Phiên hiện tại</p>
+                  <small>Đăng nhập lúc 14:30, 27/02/2026</small>
+                </div>
+                <span class="badge badge-success">Đang hoạt động</span>
+              </div>
+              <div class="session-item">
+                <div class="session-icon">
+                  <i data-lucide="smartphone"></i>
+                </div>
+                <div class="session-info">
+                  <strong>iPhone - Safari</strong>
+                  <p>Hà Nội, Việt Nam</p>
+                  <small>Đăng nhập lúc 09:15, 26/02/2026</small>
+                </div>
+                <button class="btn btn-sm btn-outline btn-danger">Đăng xuất</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Activity -->
+      <div id="tab-activity" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h3>Lịch Sử Hoạt Động</h3>
+          </div>
+          <div class="card-body">
+            <div class="activity-timeline">
+              <div class="activity-item">
+                <div class="activity-icon success">
+                  <i data-lucide="check"></i>
+                </div>
+                <div class="activity-content">
+                  <strong>Tạo album mới</strong>
+                  <p>Album "Bà Nà Hills" đã được tạo với 150 ảnh</p>
+                  <small>2 giờ trước</small>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon info">
+                  <i data-lucide="edit"></i>
+                </div>
+                <div class="activity-content">
+                  <strong>Cập nhật giá gói</strong>
+                  <p>Thay đổi giá gói 8 ảnh từ 120,000₫ thành 100,000₫</p>
+                  <small>5 giờ trước</small>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon warning">
+                  <i data-lucide="user-plus"></i>
+                </div>
+                <div class="activity-content">
+                  <strong>Thêm nhân viên mới</strong>
+                  <p>Nhân viên "Nguyễn Văn A" đã được thêm vào hệ thống</p>
+                  <small>1 ngày trước</small>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon danger">
+                  <i data-lucide="trash-2"></i>
+                </div>
+                <div class="activity-content">
+                  <strong>Xóa ảnh hết hạn</strong>
+                  <p>45 ảnh đã hết hạn đã được xóa tự động</p>
+                  <small>2 ngày trước</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Notifications -->
+      <div id="tab-notifications" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h3>Cài Đặt Thông Báo</h3>
+          </div>
+          <div class="card-body">
+            <div class="notification-settings">
+              <div class="notification-item">
+                <div>
+                  <strong>Đơn hàng mới</strong>
+                  <p>Nhận thông báo khi có đơn hàng mới</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="notification-item">
+                <div>
+                  <strong>Thanh toán thành công</strong>
+                  <p>Thông báo khi khách hàng thanh toán</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="notification-item">
+                <div>
+                  <strong>Album sắp hết hạn</strong>
+                  <p>Cảnh báo trước 3 ngày khi album hết hạn</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="notification-item">
+                <div>
+                  <strong>Báo cáo doanh thu</strong>
+                  <p>Gửi báo cáo hàng tuần qua email</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="notification-item">
+                <div>
+                  <strong>Cập nhật hệ thống</strong>
+                  <p>Thông báo về tính năng và bảo trì</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+/* Profile Banner */
+.profile-banner {
+  height: 200px;
+  background: linear-gradient(135deg, var(--primary) 0%, #0f5840 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="white" opacity="0.05"/></svg>');
+  animation: slide 20s linear infinite;
+}
+
+@keyframes slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(100px); }
+}
+
+.profile-header-content {
+  padding: 0 24px 24px 24px;
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  margin-top: -60px;
+  position: relative;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 4px solid var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.profile-info {
+  flex: 1;
+  padding-top: 40px;
+}
+
+.profile-info h1 {
+  margin: 0 0 4px 0;
+  font-size: 28px;
+}
+
+.profile-info p {
+  margin: 0 0 16px 0;
+  color: var(--text-secondary);
+}
+
+.profile-stats {
+  display: flex;
+  gap: 32px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-item strong {
+  font-size: 24px;
+  color: var(--primary);
+}
+
+.stat-item span {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+/* Session List */
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.session-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface-elevated);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.session-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--surface);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.session-info {
+  flex: 1;
+}
+
+.session-info strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.session-info p {
+  margin: 0 0 4px 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.session-info small {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Activity Timeline */
+.activity-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 16px;
+  position: relative;
+  padding-bottom: 16px;
+}
+
+.activity-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--surface-elevated);
+  border: 2px solid var(--border);
+}
+
+.activity-icon.success {
+  background: var(--success-light);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.activity-icon.info {
+  background: var(--info-light);
+  border-color: var(--info);
+  color: var(--info);
+}
+
+.activity-icon.warning {
+  background: var(--warning-light);
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.activity-icon.danger {
+  background: var(--error-light);
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.activity-content strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.activity-content p {
+  margin: 0 0 4px 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.activity-content small {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Notification Settings */
+.notification-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--surface-elevated);
+  border-radius: 8px;
+}
+
+.notification-item strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.notification-item p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--border);
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background: var(--primary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+@media (max-width: 768px) {
+  .profile-header-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .profile-stats {
+    justify-content: center;
+  }
+  
+  .form-row {
+    flex-direction: column !important;
+  }
+  
+  .session-item {
+    flex-wrap: wrap;
+  }
+}
+</style>
+
+<script src="../js/dashboardManager.js"></script>
+<script>
+// Initialize Dashboard Manager
+const manager = new DashboardManager();
+manager.init();
+
+// Load user data
+window.addEventListener('load', function() {
+  const userData = JSON.parse(localStorage.getItem('photopro_user') || '{}');
+  
+  if (userData.name) {
+    document.getElementById('profileName').textContent = userData.name;
+    document.getElementById('fullName').value = userData.name;
+    document.getElementById('profileEmail').textContent = userData.username;
+    document.getElementById('email').value = userData.username;
+    document.getElementById('userRole').value = userData.role;
+  }
+});
+
+// Tab Switching
+function switchProfileTab(tabName) {
+  // Hide all tabs
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  
+  // Show selected tab
+  document.getElementById('tab-' + tabName).classList.add('active');
+  event.target.closest('.tab').classList.add('active');
+  
+  lucide.createIcons();
+}
+
+// Toggle Edit Mode
+function toggleEditMode() {
+  const inputs = document.querySelectorAll('#profileForm input:not([type="submit"]), #profileForm textarea');
+  const formActions = document.getElementById('formActions');
+  const editBtn = document.getElementById('editInfoBtn');
+  
+  inputs.forEach(input => {
+    if (input.id !== 'userRole') { // Don't allow editing role
+      input.disabled = !input.disabled;
+    }
+  });
+  
+  if (formActions.style.display === 'none') {
+    formActions.style.display = 'flex';
+    editBtn.innerHTML = '<i data-lucide="x"></i> Hủy';
+  } else {
+    formActions.style.display = 'none';
+    editBtn.innerHTML = '<i data-lucide="edit"></i> Chỉnh sửa';
+  }
+  
+  lucide.createIcons();
+}
+
+function cancelEdit() {
+  toggleEditMode();
+  // Reset form values if needed
+}
+
+// Handle Profile Form Submit
+document.getElementById('profileForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  alert('Thông tin đã được cập nhật!');
+  toggleEditMode();
+});
+
+// Handle Password Form Submit
+document.getElementById('passwordForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const newPassword = document.getElementById('newPassword').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  
+  if (newPassword !== confirmPassword) {
+    alert('Mật khẩu xác nhận không khớp!');
+    return;
+  }
+  
+  alert('Mật khẩu đã được đổi thành công!');
+  this.reset();
+});
+
+// Handle Logout
+function handleLogout() {
+  if (confirm('Bạn có chắc muốn đăng xuất?')) {
+    localStorage.removeItem('photopro_user');
+    window.location.href = '../login.html';
+  }
+}
+
+// Initialize Lucide Icons
+lucide.createIcons();
+</script>
+
+</body>
+</html>

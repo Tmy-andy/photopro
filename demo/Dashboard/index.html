@@ -82,7 +82,7 @@
           </div>
           
           <div class="dropdown-menu" id="userMenu">
-            <a href="#" class="dropdown-item">
+            <a href="pages/profile.html" class="dropdown-item">
               <i data-lucide="user"></i>
               Hồ sơ
             </a>
@@ -91,7 +91,7 @@
               Cài đặt
             </a>
             <div class="dropdown-divider"></div>
-            <a href="../FE/index.html" class="dropdown-item">
+            <a href="#" class="dropdown-item" onclick="handleLogout(event)">
               <i data-lucide="log-out"></i>
               Đăng xuất
             </a>
@@ -309,6 +309,34 @@
 
   <script src="js/dashboardManager.js"></script>
   <script>
+    // Check authentication
+    window.addEventListener('load', function() {
+      const userData = localStorage.getItem('photopro_user');
+      if (!userData) {
+        // Redirect to login if not authenticated
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      const user = JSON.parse(userData);
+      
+      // Update user info in header
+      const userNameEl = document.querySelector('.user-name');
+      const userRoleEl = document.getElementById('userRole');
+      const userAvatarEl = document.querySelector('.user-avatar');
+      
+      if (userNameEl) userNameEl.textContent = user.name;
+      if (userRoleEl) userRoleEl.textContent = user.role;
+      if (userAvatarEl) {
+        const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        userAvatarEl.textContent = initials;
+      }
+    });
+    
+    // Initialize Dashboard Manager
+    const manager = new DashboardManager();
+    manager.init();
+    
     // Initialize icons
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
@@ -325,6 +353,15 @@
         document.getElementById('userMenu').classList.remove('active');
       }
     });
+    
+    // Handle Logout
+    function handleLogout(e) {
+      e.preventDefault();
+      if (confirm('Bạn có chắc muốn đăng xuất?')) {
+        localStorage.removeItem('photopro_user');
+        window.location.href = 'login.html';
+      }
+    }
     
     // Revenue Chart
     const revenueCtx = document.getElementById('revenueChart').getContext('2d');

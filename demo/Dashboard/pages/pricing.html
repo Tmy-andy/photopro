@@ -117,6 +117,9 @@
                       <i data-lucide="edit"></i>
                       Sửa
                     </button>
+                    <button class="btn btn-outline btn-sm" onclick="toggleFeatured(1)" title="Đánh dấu phổ biến">
+                      <i data-lucide="star"></i>
+                    </button>
                     <button class="btn btn-danger btn-sm" onclick="deleteBundle(1)">
                       <i data-lucide="trash-2"></i>
                     </button>
@@ -148,6 +151,9 @@
                       <i data-lucide="edit"></i>
                       Sửa
                     </button>
+                    <button class="btn btn-primary btn-sm" onclick="toggleFeatured(2)" title="Bỏ đánh dấu phổ biến">
+                      <i data-lucide="star" style="fill: currentColor;"></i>
+                    </button>
                     <button class="btn btn-danger btn-sm" onclick="deleteBundle(2)">
                       <i data-lucide="trash-2"></i>
                     </button>
@@ -177,6 +183,9 @@
                     <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="editBundle(3)">
                       <i data-lucide="edit"></i>
                       Sửa
+                    </button>
+                    <button class="btn btn-outline btn-sm" onclick="toggleFeatured(3)" title="Đánh dấu phổ biến">
+                      <i data-lucide="star"></i>
                     </button>
                     <button class="btn btn-danger btn-sm" onclick="deleteBundle(3)">
                       <i data-lucide="trash-2"></i>
@@ -305,12 +314,28 @@
           <input type="number" placeholder="VD: 80000" id="bundlePrice" min="1000" step="1000">
         </div>
         
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="bundleFeatured" onchange="updateFeaturedPreview()">
+            <span>Đánh dấu là gói phổ biến</span>
+          </label>
+          <small style="color: var(--text-secondary); display: block; margin-top: 4px;">
+            Gói phổ biến sẽ được highlight với badge "PHỔ BIẾN NHẤT"
+          </small>
+        </div>
+        
         <div class="alert alert-info" id="bundleCalculation" style="display: none;">
           <strong>Tính toán:</strong>
           <div style="margin-top: 8px;">
             Giá / ảnh: <strong id="pricePerPhoto">-</strong><br>
             So với gói 1 ảnh (20,000đ): <strong id="savingsPercent">-</strong>
           </div>
+        </div>
+        
+        <div class="alert alert-warning" id="featuredPreview" style="display: none; margin-top: 12px;">
+          <i data-lucide="star" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+          <strong>Gói này sẽ được đánh dấu là PHỔ BIẾN NHẤT</strong>
+          <p style="margin: 4px 0 0 0; font-size: 13px;">Chỉ nên chọn 1 gói phổ biến duy nhất để tăng hiệu quả chuyển đổi.</p>
         </div>
       </div>
       <div class="modal-footer">
@@ -392,6 +417,15 @@
     
     // Bundle functions
     function openCreateBundleModal() {
+      // Reset form
+      document.getElementById('bundleName').value = '';
+      document.getElementById('bundleQuantity').value = '';
+      document.getElementById('bundlePrice').value = '';
+      document.getElementById('bundleFeatured').checked = false;
+      document.getElementById('bundleCalculation').style.display = 'none';
+      document.getElementById('featuredPreview').style.display = 'none';
+      document.querySelector('.modal-title').textContent = 'Tạo gói bundle mới';
+      
       document.getElementById('bundleModal').classList.add('active');
       lucide.createIcons();
     }
@@ -400,30 +434,28 @@
       document.getElementById('bundleModal').classList.remove('active');
     }
     
-    function saveBundle() {
-      const name = document.getElementById('bundleName').value;
-      const quantity = document.getElementById('bundleQuantity').value;
-      const price = document.getElementById('bundlePrice').value;
-      
-      if (!name || !quantity || !price) {
-        alert('Vui lòng điền đầy đủ thông tin');
-        return;
-      }
-      
-      console.log('Save bundle:', { name, quantity, price });
-      alert('Đã tạo gói bundle thành công!');
-      closeBundleModal();
-    }
-    
-    function editBundle(id) {
-      openCreateBundleModal();
-      console.log('Edit bundle:', id);
-    }
-    
     function deleteBundle(id) {
       if (confirm('Bạn có chắc muốn xóa gói này?')) {
         console.log('Delete bundle:', id);
         alert('Đã xóa gói');
+      }
+    }
+    
+    function toggleFeatured(id) {
+      const currentFeatured = id === 2; // Currently bundle 2 is featured
+      
+      if (currentFeatured) {
+        if (confirm('Bỏ đánh dấu gói này là PHỔ BIẾN NHẤT?')) {
+          console.log('Remove featured from bundle:', id);
+          alert('✨ Đã bỏ đánh dấu gói phổ biến');
+          // In real app, reload page or update UI dynamically
+        }
+      } else {
+        if (confirm('Đánh dấu gói này là PHỔ BIẾN NHẤT?\n\n⚠️ Gói hiện tại đang được đánh dấu sẽ bị bỏ đánh dấu.')) {
+          console.log('Set featured to bundle:', id);
+          alert('✨ Đã đánh dấu gói này là PHỔ BIẾN NHẤT!');
+          // In real app, reload page or update UI dynamically
+        }
       }
     }
     
@@ -446,6 +478,59 @@
       } else {
         document.getElementById('bundleCalculation').style.display = 'none';
       }
+    }
+    
+    // Update featured preview
+    function updateFeaturedPreview() {
+      const isFeatured = document.getElementById('bundleFeatured').checked;
+      const preview = document.getElementById('featuredPreview');
+      
+      if (isFeatured) {
+        preview.style.display = 'block';
+      } else {
+        preview.style.display = 'none';
+      }
+      
+      lucide.createIcons();
+    }
+    
+    function saveBundle() {
+      const name = document.getElementById('bundleName').value;
+      const quantity = document.getElementById('bundleQuantity').value;
+      const price = document.getElementById('bundlePrice').value;
+      const isFeatured = document.getElementById('bundleFeatured').checked;
+      
+      if (!name || !quantity || !price) {
+        alert('Vui lòng điền đầy đủ thông tin');
+        return;
+      }
+      
+      console.log('Save bundle:', { name, quantity, price, isFeatured });
+      
+      if (isFeatured) {
+        alert('✨ Gói bundle đã được tạo và đánh dấu là PHỔ BIẾN NHẤT!');
+      } else {
+        alert('Đã tạo gói bundle thành công!');
+      }
+      
+      closeBundleModal();
+    }
+    
+    function editBundle(id) {
+      openCreateBundleModal();
+      console.log('Edit bundle:', id);
+      
+      // Pre-fill data for editing (demo)
+      if (id === 2) {
+        document.getElementById('bundleName').value = 'Gói 3 ảnh';
+        document.getElementById('bundleQuantity').value = '3';
+        document.getElementById('bundlePrice').value = '50000';
+        document.getElementById('bundleFeatured').checked = true;
+        updateBundleCalculation();
+        updateFeaturedPreview();
+      }
+      
+      document.querySelector('.modal-title').textContent = 'Chỉnh sửa gói bundle';
     }
     
     // Coupon functions

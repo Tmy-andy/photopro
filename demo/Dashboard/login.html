@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Nhập - PhotoPro Dashboard</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<div class="login-container">
+  <div class="login-card">
+    <!-- Logo & Title -->
+    <div class="login-header">
+      <div class="login-logo">
+        <i data-lucide="camera" style="width: 48px; height: 48px;"></i>
+      </div>
+      <h1>PhotoPro Dashboard</h1>
+      <p>Đăng nhập để quản lý hệ thống</p>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="login-form">
+      <div class="form-group">
+        <label for="username" class="form-label">
+          <i data-lucide="user" style="width: 16px; height: 16px;"></i>
+          Tên đăng nhập hoặc Email
+        </label>
+        <input 
+          type="text" 
+          id="username" 
+          class="form-input" 
+          placeholder="admin@photopro.vn"
+          required
+          autocomplete="username"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">
+          <i data-lucide="lock" style="width: 16px; height: 16px;"></i>
+          Mật khẩu
+        </label>
+        <div style="position: relative;">
+          <input 
+            type="password" 
+            id="password" 
+            class="form-input" 
+            placeholder="••••••••"
+            required
+            autocomplete="current-password"
+          >
+          <button 
+            type="button" 
+            class="password-toggle"
+            onclick="togglePasswordVisibility()"
+            aria-label="Toggle password visibility"
+          >
+            <i data-lucide="eye" id="eyeIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" id="rememberMe">
+          <span style="font-size: 14px;">Ghi nhớ đăng nhập</span>
+        </label>
+        <a href="#" class="link" style="font-size: 14px;">Quên mật khẩu?</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">
+        <i data-lucide="log-in"></i>
+        Đăng Nhập
+      </button>
+
+      <!-- Demo Accounts -->
+      <div class="demo-accounts">
+        <div style="text-align: center; margin: 20px 0 16px 0; color: var(--text-secondary); font-size: 14px;">
+          <i data-lucide="info" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+          Tài khoản demo
+        </div>
+        <div class="demo-account-list">
+          <button type="button" class="demo-account-btn" onclick="fillDemoAccount('admin-system')">
+            <i data-lucide="shield-check"></i>
+            <div>
+              <strong>Admin System</strong>
+              <span>Toàn quyền hệ thống</span>
+            </div>
+          </button>
+          <button type="button" class="demo-account-btn" onclick="fillDemoAccount('admin-sales')">
+            <i data-lucide="briefcase"></i>
+            <div>
+              <strong>Admin Sales</strong>
+              <span>Quản lý bán hàng</span>
+            </div>
+          </button>
+          <button type="button" class="demo-account-btn" onclick="fillDemoAccount('manager')">
+            <i data-lucide="users"></i>
+            <div>
+              <strong>Manager</strong>
+              <span>Quản lý vận hành</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>© 2026 PhotoPro. All rights reserved.</p>
+      <div style="display: flex; gap: 16px; justify-content: center; margin-top: 8px;">
+        <a href="#" class="link">Điều khoản</a>
+        <a href="#" class="link">Chính sách</a>
+        <a href="#" class="link">Hỗ trợ</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 480px;
+  padding: 20px;
+}
+
+.login-card {
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.login-header {
+  text-align: center;
+  padding: 40px 40px 32px 40px;
+  background: linear-gradient(135deg, var(--primary) 0%, #0f5840 100%);
+  color: white;
+}
+
+.login-logo {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px auto;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.login-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.login-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 15px;
+}
+
+.login-form {
+  padding: 32px 40px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: var(--primary);
+}
+
+.demo-accounts {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.demo-account-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.demo-account-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+}
+
+.demo-account-btn:hover {
+  background: var(--surface-alt);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.demo-account-btn i {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.demo-account-btn div {
+  flex: 1;
+}
+
+.demo-account-btn strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.demo-account-btn span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.login-footer {
+  padding: 24px 40px;
+  text-align: center;
+  background: var(--surface-elevated);
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.login-footer p {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .login-header {
+    padding: 32px 24px 24px 24px;
+  }
+  
+  .login-form {
+    padding: 24px;
+  }
+  
+  .login-footer {
+    padding: 20px 24px;
+  }
+  
+  .login-header h1 {
+    font-size: 24px;
+  }
+}
+</style>
+
+<script>
+// Initialize Lucide Icons
+lucide.createIcons();
+
+// Toggle Password Visibility
+function togglePasswordVisibility() {
+  const passwordInput = document.getElementById('password');
+  const eyeIcon = document.getElementById('eyeIcon');
+  
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    eyeIcon.setAttribute('data-lucide', 'eye-off');
+  } else {
+    passwordInput.type = 'password';
+    eyeIcon.setAttribute('data-lucide', 'eye');
+  }
+  
+  lucide.createIcons();
+}
+
+// Fill Demo Account
+function fillDemoAccount(role) {
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+  
+  const accounts = {
+    'admin-system': {
+      username: 'admin@photopro.vn',
+      password: 'admin123'
+    },
+    'admin-sales': {
+      username: 'sales@photopro.vn',
+      password: 'sales123'
+    },
+    'manager': {
+      username: 'manager@photopro.vn',
+      password: 'manager123'
+    }
+  };
+  
+  const account = accounts[role];
+  if (account) {
+    usernameInput.value = account.username;
+    passwordInput.value = account.password;
+    
+    // Add animation
+    usernameInput.style.background = 'var(--success-light)';
+    passwordInput.style.background = 'var(--success-light)';
+    
+    setTimeout(() => {
+      usernameInput.style.background = '';
+      passwordInput.style.background = '';
+    }, 500);
+  }
+}
+
+// Handle Login Form Submit
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const rememberMe = document.getElementById('rememberMe').checked;
+  
+  // Simple validation for demo
+  const validAccounts = {
+    'admin@photopro.vn': { password: 'admin123', role: 'admin-system', name: 'Admin System' },
+    'sales@photopro.vn': { password: 'sales123', role: 'admin-sales', name: 'Admin Sales' },
+    'manager@photopro.vn': { password: 'manager123', role: 'manager', name: 'Manager' }
+  };
+  
+  const account = validAccounts[username];
+  
+  if (account && account.password === password) {
+    // Save to localStorage
+    const userData = {
+      username: username,
+      role: account.role,
+      name: account.name,
+      loginTime: new Date().toISOString(),
+      rememberMe: rememberMe
+    };
+    
+    localStorage.setItem('photopro_user', JSON.stringify(userData));
+    
+    // Show success message
+    alert('Đăng nhập thành công! Đang chuyển hướng...');
+    
+    // Redirect to dashboard
+    window.location.href = 'index.html';
+  } else {
+    alert('Tên đăng nhập hoặc mật khẩu không đúng!');
+  }
+});
+
+// Check if already logged in
+window.addEventListener('load', function() {
+  const userData = localStorage.getItem('photopro_user');
+  if (userData) {
+    const user = JSON.parse(userData);
+    if (user.rememberMe) {
+      // Auto redirect to dashboard
+      window.location.href = 'index.html';
+    }
+  }
+});
+</script>
+
+</body>
+</html>
