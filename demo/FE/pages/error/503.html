@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>503 - Dịch Vụ Không Khả Dụng</title>
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="container" style="max-width: 600px; margin: 0 auto; padding: 40px 20px; text-align: center;">
+    <div style="margin-bottom: 24px;">
+      <i data-lucide="construction" style="width: 80px; height: 80px; color: var(--primary);"></i>
+    </div>
+    
+    <h1 style="font-size: 4rem; font-weight: 800; color: var(--primary); margin-bottom: 16px;">503</h1>
+    
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; display: block;">Dịch Vụ Không Khả Dụng</h2>
+    
+    <p style="color: var(--text-secondary); margin-bottom: 32px;">
+      Hệ thống đang được bảo trì hoặc nâng cấp. Chúng tôi sẽ sớm quay lại.
+    </p>
+
+    <div class="card card-padded mb-3" style="background: var(--primary-light); border: 2px solid var(--primary);">
+      <div style="display: flex; align-items: flex-start; gap: 12px; text-align: left;">
+        <i data-lucide="wrench" style="width: 24px; height: 24px; flex-shrink: 0; color: var(--primary);"></i>
+        <div>
+          <strong style="display: block; margin-bottom: 8px; color: var(--primary);">Thông báo bảo trì</strong>
+          <p style="margin: 0; color: var(--text-secondary); font-size: 14px;">
+            Chúng tôi đang nâng cấp hệ thống để mang đến trải nghiệm tốt hơn. 
+            Dự kiến hoàn thành trong <strong>30 phút</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+      <a href="../../index.html" class="btn btn-outline">
+        <i data-lucide="home"></i> Về Trang Chủ
+      </a>
+      <a href="javascript:location.reload()" class="btn btn-primary">
+        <i data-lucide="refresh-cw"></i> Thử Lại
+      </a>
+    </div>
+  </div>
+
+  <script>
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>

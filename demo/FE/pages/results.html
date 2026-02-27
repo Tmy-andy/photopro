@@ -1,0 +1,76 @@
+<div class="page-section" id="results">
+  <div class="container">
+  <div class="page-header">
+    <h1 class="page-title"><i data-lucide="sparkles" style="vertical-align: middle;"></i> Kết Quả Tìm Kiếm</h1>
+    <p class="page-subtitle" id="resultsSubtitle">Đã tìm thấy <span id="totalPhotos">0</span> ảnh</p>
+  </div>
+
+  <!-- Filter & Sort Bar -->
+  <div class="card card-padded mb-3">
+    <div class="flex-between" style="gap: 12px; flex-wrap: wrap;">
+      <div style="flex: 1;">
+        <strong>Sắp xếp kết quả:</strong>
+      </div>
+      
+      <select id="sortOrder" class="form-input" style="width: auto; min-width: 200px;" onchange="uiManager.sortResults(this.value)">
+        <option value="similarity">Độ giống cao nhất</option>
+        <option value="album">Theo album</option>
+        <option value="date">Mới nhất</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Select All Actions -->
+  <div class="card card-padded mb-3" style="background: var(--surface-elevated);">
+    <div class="flex-between" style="flex-wrap: wrap; gap: 12px;">
+      <div>
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" id="selectAllPhotos" onchange="stateManager.selectAllPhotos(this.checked)">
+          <span><strong>Chọn tất cả</strong> (<span id="selectedCount">0</span> đã chọn)</span>
+        </label>
+      </div>
+      
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-outline btn-sm" onclick="uiManager.filterBySimilarity(90)">
+          Chỉ ảnh rất giống (≥90%)
+        </button>
+        <button class="btn btn-outline btn-sm" onclick="uiManager.filterBySimilarity(70)">
+          Ảnh khá giống (≥70%)
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="uiManager.clearFilters()">
+          Xóa bộ lọc
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Grid (Grouped by Album) -->
+  <div id="resultsContainer"></div>
+
+  <!-- Empty State -->
+  <div id="emptyResults" style="display: none; text-align: center; padding: 60px 20px;">
+    <div style="font-size: 80px;" class="mb-2"><i data-lucide="search" style="width: 80px; height: 80px; stroke-width: 1.5;"></i></div>
+    <h3 class="mb-1">Không tìm thấy ảnh phù hợp</h3>
+    <p class="mb-3" style="color: var(--text-secondary);">
+      Thử điều chỉnh bộ lọc hoặc quét lại với ảnh khác
+    </p>
+    <button class="btn btn-primary" onclick="navigationManager.goToPage('faceSearch')">
+      <i data-lucide="refresh-cw"></i> Quét Lại
+    </button>
+  </div>
+</div>
+
+<!-- Sticky Cart Bar (Mobile) -->
+<div class="sticky-bottom-bar">
+  <div class="flex-between">
+    <div>
+      <div style="font-size: 14px; color: var(--text-secondary);">Đã chọn</div>
+      <div style="font-size: 20px; font-weight: 700;" id="stickySelectedCount">0 ảnh</div>
+    </div>
+    <button class="btn btn-primary" onclick="navigationManager.goToCart()">
+      <i data-lucide="arrow-right"></i> Tiếp Tục
+    </button>
+  </div>
+</div>
+  </div>
+</div>

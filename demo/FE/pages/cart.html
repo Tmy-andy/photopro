@@ -1,0 +1,151 @@
+<div class="page-section" id="cart">
+  <div class="container">
+  <div class="page-header">
+    <h1 class="page-title"><i data-lucide="shopping-cart"></i> Giỏ Hàng</h1>
+    <p class="page-subtitle">Xem lại các ảnh đã chọn trước khi thanh toán</p>
+  </div>
+
+  <div class="two-column-layout">
+    <!-- Left: Selected Photos -->
+    <div>
+      <div class="card card-padded mb-3">
+        <div class="flex-between mb-2">
+          <h3>Ảnh đã chọn (<span id="cartPhotoCount">0</span>)</h3>
+          <button class="btn btn-ghost btn-sm" onclick="stateManager.clearCart()">
+            <i data-lucide="trash-2"></i> Xóa tất cả
+          </button>
+        </div>
+        
+        <div class="photo-grid" id="cartPhotosGrid"></div>
+      </div>
+
+      <!-- Empty Cart State -->
+      <div id="emptyCart" style="display: none; text-align: center; padding: 60px 20px;">
+        <div class="mb-2" style="font-size: 80px;"><i data-lucide="shopping-cart" style="width: 80px; height: 80px; stroke-width: 1.5;"></i></div>
+        <h3 class="mb-1">Giỏ hàng trống</h3>
+        <p class="mb-3" style="color: var(--text-secondary);">
+          Chưa có ảnh nào được chọn
+        </p>
+        <button class="btn btn-primary" onclick="navigationManager.goToPage('albums')">
+          <i data-lucide="images"></i> Chọn Ảnh Ngay
+        </button>
+      </div>
+
+      <!-- Notes -->
+      <div class="card card-padded">
+        <h3 class="mb-2"><i data-lucide="file-text"></i> Ghi Chú</h3>
+        <textarea 
+          id="orderNotes" 
+          class="form-input" 
+          rows="4" 
+          placeholder="Thêm ghi chú cho đơn hàng (nếu có)..."
+          onchange="stateManager.updateOrderNotes(this.value)"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Right: Cart Summary -->
+    <div>
+      <div class="cart-summary">
+        <h3 class="mb-2"><i data-lucide="dollar-sign"></i> Chi Tiết Thanh Toán</h3>
+        
+        <!-- Price Breakdown -->
+        <div class="price-breakdown">
+          <div class="price-row">
+            <span>Số lượng ảnh:</span>
+            <strong id="summaryPhotoCount">0</strong>
+          </div>
+          <div class="price-row">
+            <span>Giá gốc:</span>
+            <span id="originalPrice" style="text-decoration: line-through; color: var(--text-secondary);">0₫</span>
+          </div>
+          <div class="price-row" id="discountRow" style="display: none;">
+            <span>Giảm giá:</span>
+            <span style="color: var(--success);" id="discountAmount">-0₫</span>
+          </div>
+          <div class="price-row">
+            <span>Gói áp dụng:</span>
+            <strong id="appliedPackage">Chưa có</strong>
+          </div>
+          <div class="price-row total-row">
+            <span style="font-size: 18px;">Tổng thanh toán:</span>
+            <strong style="font-size: 24px; color: var(--primary);" id="totalPrice">0₫</strong>
+          </div>
+        </div>
+
+        <!-- Benefits -->
+        <div class="benefits-list" id="packageBenefits"></div>
+
+        <!-- Action Buttons -->
+        <button class="btn btn-primary mb-2" style="width: 100%;" onclick="navigationManager.goToPage('checkout')">
+          <i data-lucide="target"></i> Tiến Hành Thanh Toán
+        </button>
+        <button class="btn btn-outline" style="width: 100%;" onclick="navigationManager.goToPage('results')">
+          <i data-lucide="arrow-left"></i> Chọn Thêm Ảnh
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.two-column-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .two-column-layout {
+    grid-template-columns: 1fr;
+  }
+  .cart-summary {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+  }
+}
+
+.price-breakdown {
+  background: var(--surface-elevated);
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.price-row:last-child {
+  border-bottom: none;
+}
+
+.total-row {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 2px solid var(--primary);
+}
+
+.benefits-list {
+  background: var(--surface-elevated);
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.benefits-list ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.benefits-list li {
+  margin: 8px 0;
+  color: var(--text-secondary);
+}
+</style>
+  </div>
+</div>

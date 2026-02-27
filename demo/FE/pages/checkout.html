@@ -1,0 +1,228 @@
+<div class="page-section" id="checkout">
+  <div class="container">
+  <div class="page-header">
+    <h1 class="page-title"><i data-lucide="credit-card"></i> Thanh Toán</h1>
+    <p class="page-subtitle">Vui lòng điền thông tin để hoàn tất đơn hàng</p>
+  </div>
+
+  <div class="two-column-layout">
+    <!-- Left: Customer Info & Payment -->
+    <div>
+      <!-- Customer Information -->
+      <div class="card card-padded mb-3">
+        <h3 class="mb-2"><i data-lucide="user"></i> Thông Tin Khách Hàng</h3>
+        
+        <form id="checkoutForm" onsubmit="event.preventDefault(); appManager.processPayment();">
+          <div class="form-group">
+            <label for="customerPhone" class="form-label">
+              Số điện thoại <span style="color: var(--error);">*</span>
+            </label>
+            <input 
+              type="tel" 
+              id="customerPhone" 
+              class="form-input" 
+              placeholder="0912345678"
+              required
+              pattern="[0-9]{10}"
+              onchange="stateManager.updateCustomerInfo('phone', this.value)"
+            >
+            <small style="color: var(--text-secondary);">Link tải ảnh sẽ được gửi qua SMS</small>
+          </div>
+
+          <div class="form-group">
+            <label for="customerEmail" class="form-label">Email (tùy chọn)</label>
+            <input 
+              type="email" 
+              id="customerEmail" 
+              class="form-input" 
+              placeholder="email@example.com"
+              onchange="stateManager.updateCustomerInfo('email', this.value)"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="customerName" class="form-label">Họ và tên (tùy chọn)</label>
+            <input 
+              type="text" 
+              id="customerName" 
+              class="form-input" 
+              placeholder="Nguyễn Văn A"
+              onchange="stateManager.updateCustomerInfo('name', this.value)"
+            >
+          </div>
+        </form>
+      </div>
+
+      <!-- Payment Method -->
+      <div class="card card-padded">
+        <h3 class="mb-2"><i data-lucide="dollar-sign"></i> Phương Thức Thanh Toán</h3>
+        
+        <div class="payment-methods">
+          <label class="payment-method-card">
+            <input type="radio" name="paymentMethod" value="momo" checked onchange="stateManager.updatePaymentMethod('momo')">
+            <div class="payment-method-content">
+              <div style="font-size: 32px;"><i data-lucide="smartphone" style="width: 32px; height: 32px;"></i></div>
+              <div>
+                <strong>Ví MoMo</strong>
+                <p>Thanh toán nhanh qua ví điện tử</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="payment-method-card">
+            <input type="radio" name="paymentMethod" value="banking" onchange="stateManager.updatePaymentMethod('banking')">
+            <div class="payment-method-content">
+              <div style="font-size: 32px;"><i data-lucide="building-2" style="width: 32px; height: 32px;"></i></div>
+              <div>
+                <strong>Chuyển khoản</strong>
+                <p>Chuyển khoản ngân hàng</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="payment-method-card">
+            <input type="radio" name="paymentMethod" value="cash" onchange="stateManager.updatePaymentMethod('cash')">
+            <div class="payment-method-content">
+              <div style="font-size: 32px;"><i data-lucide="banknote" style="width: 32px; height: 32px;"></i></div>
+              <div>
+                <strong>Tiền mặt</strong>
+                <p>Thanh toán tại quầy</p>
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Order Summary -->
+    <div>
+      <div class="cart-summary">
+        <h3 class="mb-2"><i data-lucide="clipboard-list"></i> Thông Tin Đơn Hàng</h3>
+        
+        <!-- Order Items -->
+        <div class="mb-2">
+          <div class="flex-between mb-1">
+            <span>Số lượng ảnh:</span>
+            <strong id="checkoutPhotoCount">0</strong>
+          </div>
+          <div class="flex-between mb-1">
+            <span>Gói:</span>
+            <strong id="checkoutPackage">-</strong>
+          </div>
+        </div>
+
+        <!-- Price Summary -->
+        <div class="price-breakdown">
+          <div class="price-row">
+            <span>Tạm tính:</span>
+            <span id="checkoutSubtotal">0₫</span>
+          </div>
+          <div class="price-row" id="checkoutDiscountRow" style="display: none;">
+            <span>Giảm giá:</span>
+            <span style="color: var(--success);" id="checkoutDiscount">-0₫</span>
+          </div>
+          <div class="price-row total-row">
+            <span style="font-size: 18px;">Tổng cộng:</span>
+            <strong style="font-size: 24px; color: var(--primary);" id="checkoutTotal">0₫</strong>
+          </div>
+        </div>
+
+        <!-- Terms -->
+        <label class="mb-2 mt-2" style="display: flex; align-items: start; gap: 8px; cursor: pointer;">
+          <input type="checkbox" id="agreeTerms" required style="margin-top: 4px;">
+          <span style="font-size: 14px; color: var(--text-secondary);">
+            Tôi đồng ý với <a href="#" style="color: var(--primary);">điều khoản sử dụng</a> và <a href="#" style="color: var(--primary);">chính sách bảo mật</a>
+          </span>
+        </label>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit"
+          form="checkoutForm"
+          class="btn btn-primary mb-2" 
+          style="width: 100%;" 
+          id="paymentButton"
+        >
+          <i data-lucide="check-circle"></i> Xác Nhận Thanh Toán
+        </button>
+        
+        <button class="btn btn-outline" style="width: 100%;" onclick="navigationManager.goToPage('cart')">
+          <i data-lucide="arrow-left"></i> Quay Lại Giỏ Hàng
+        </button>
+
+        <!-- Security Notice -->
+        <div class="mt-2" style="padding: 12px; background: var(--surface-elevated); border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
+          <span style="font-size: 12px; color: var(--text-secondary);">Giao dịch được mã hóa và bảo mật</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.payment-methods {
+  display: grid;
+  gap: 12px;
+}
+
+.payment-method-card {
+  display: block;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s;
+}
+
+.payment-method-card:hover {
+  border-color: var(--primary);
+  background: var(--surface-elevated);
+}
+
+.payment-method-card input[type="radio"]:checked ~ .payment-method-content {
+  opacity: 1;
+}
+
+.payment-method-card input[type="radio"] {
+  display: none;
+}
+
+.payment-method-card input[type="radio"]:checked + .payment-method-content::before {
+  content: '✓';
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.payment-method-card input[type="radio"]:checked ~ .payment-method-content {
+  border-color: var(--primary);
+  background: var(--surface-elevated);
+}
+
+.payment-method-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.payment-method-content p {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+</style>
+  </div>
+</div>

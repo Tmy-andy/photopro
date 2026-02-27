@@ -1,0 +1,200 @@
+{
+  "business": {
+    "name": "Wonderland Photo",
+    "subdomain": "wonderland",
+    "phone": "1900 xxxx",
+    "email": "support@wonderland.vn",
+    "address": "123 Đường ABC, Đà Nẵng",
+    "description": "Chúng tôi là đội ngũ nhiếp ảnh chuyên nghiệp chuyên chụp ảnh cho du khách tại các điểm du lịch nổi tiếng miền Trung Việt Nam",
+    "locations": ["Bà Nà Hills", "Hội An", "Đà Nẵng", "Sơn Trà"]
+  },
+  "albums": [
+    {
+      "id": 1,
+      "name": "Bà Nà Hills",
+      "date": "20/02/2026",
+      "description": "Lễ hội mùa xuân",
+      "icon": "🎡",
+      "category": "bana",
+      "photoCount": 150,
+      "status": "published",
+      "coverImage": null
+    },
+    {
+      "id": 2,
+      "name": "Hội An Ancient Town",
+      "date": "19/02/2026",
+      "description": "Phố cổ đêm",
+      "icon": "🏮",
+      "category": "hoian",
+      "photoCount": 200,
+      "status": "published",
+      "coverImage": null
+    },
+    {
+      "id": 3,
+      "name": "Cầu Rồng Đêm",
+      "date": "18/02/2026",
+      "description": "Cầu phun lửa",
+      "icon": "🐉",
+      "category": "danang",
+      "photoCount": 120,
+      "status": "published",
+      "coverImage": null
+    },
+    {
+      "id": 4,
+      "name": "Sơn Trà Linh Ứng",
+      "date": "17/02/2026",
+      "description": "Chùa Linh Ứng",
+      "icon": "🏯",
+      "category": "sontra",
+      "photoCount": 180,
+      "status": "published",
+      "coverImage": null
+    },
+    {
+      "id": 5,
+      "name": "Biển Mỹ Khê",
+      "date": "16/02/2026",
+      "description": "Hoàng hôn biển",
+      "icon": "🌊",
+      "category": "danang",
+      "photoCount": 90,
+      "status": "published",
+      "coverImage": null
+    },
+    {
+      "id": 6,
+      "name": "Bà Nà Hills Sunset",
+      "date": "15/02/2026",
+      "description": "Chiều hoàng hôn",
+      "icon": "🌅",
+      "category": "bana",
+      "photoCount": 130,
+      "status": "published",
+      "coverImage": null
+    }
+  ],
+  "photos": {
+    "bana": [
+      { "id": 1, "albumId": 1, "similarity": 98, "warning": null, "uploadDate": "2026-02-20", "url": "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&h=1000&fit=crop" },
+      { "id": 2, "albumId": 1, "similarity": 95, "warning": null, "uploadDate": "2026-02-20", "url": "https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?w=800&h=1000&fit=crop" },
+      { "id": 3, "albumId": 1, "similarity": 92, "warning": null, "uploadDate": "2026-02-20", "url": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&h=1000&fit=crop" },
+      { "id": 4, "albumId": 1, "similarity": 88, "warning": "3d", "uploadDate": "2026-02-20", "url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1000&fit=crop" },
+      { "id": 5, "albumId": 1, "similarity": 85, "warning": null, "uploadDate": "2026-02-20", "url": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&h=1000&fit=crop" },
+      { "id": 6, "albumId": 1, "similarity": 82, "warning": "5d", "uploadDate": "2026-02-20", "url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=1000&fit=crop" },
+      { "id": 7, "albumId": 1, "similarity": 78, "warning": null, "uploadDate": "2026-02-20", "url": "https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=800&h=1000&fit=crop" },
+      { "id": 8, "albumId": 1, "similarity": 75, "warning": null, "uploadDate": "2026-02-20", "url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&h=1000&fit=crop" }
+    ],
+    "hoian": [
+      { "id": 9, "albumId": 2, "similarity": 94, "warning": null, "uploadDate": "2026-02-19", "url": "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=800&h=1000&fit=crop" },
+      { "id": 10, "albumId": 2, "similarity": 91, "warning": null, "uploadDate": "2026-02-19", "url": "https://images.unsplash.com/photo-1521119989659-a83eee488004?w=800&h=1000&fit=crop" },
+      { "id": 11, "albumId": 2, "similarity": 85, "warning": null, "uploadDate": "2026-02-19", "url": "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=800&h=1000&fit=crop" },
+      { "id": 12, "albumId": 2, "similarity": 80, "warning": "4d", "uploadDate": "2026-02-19", "url": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&h=1000&fit=crop" },
+      { "id": 13, "albumId": 2, "similarity": 77, "warning": null, "uploadDate": "2026-02-19", "url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1000&fit=crop" },
+      { "id": 14, "albumId": 2, "similarity": 73, "warning": null, "uploadDate": "2026-02-19", "url": "https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?w=800&h=1000&fit=crop" },
+      { "id": 15, "albumId": 2, "similarity": 70, "warning": null, "uploadDate": "2026-02-19", "url": "https://images.unsplash.com/photo-1519764622345-23439dd774f7?w=800&h=1000&fit=crop" }
+    ],
+    "dragon": [
+      { "id": 16, "albumId": 3, "similarity": 88, "warning": "2d", "uploadDate": "2026-02-18", "url": "https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?w=800&h=1000&fit=crop" },
+      { "id": 17, "albumId": 3, "similarity": 82, "warning": null, "uploadDate": "2026-02-18", "url": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&h=1000&fit=crop" },
+      { "id": 18, "albumId": 3, "similarity": 76, "warning": null, "uploadDate": "2026-02-18", "url": "https://images.unsplash.com/photo-1479936343636-73cdc5aae0c3?w=800&h=1000&fit=crop" }
+    ]
+  },
+  "pricing": {
+    "tiers": [
+      {
+        "id": 1,
+        "photos": 1,
+        "price": 20000,
+        "name": "Gói 1 ảnh",
+        "savings": 0,
+        "savingsPercent": 0,
+        "pricePerPhoto": 20000
+      },
+      {
+        "id": 2,
+        "photos": 3,
+        "price": 50000,
+        "name": "Gói 3 ảnh",
+        "savings": 10000,
+        "savingsPercent": 17,
+        "pricePerPhoto": 16667
+      },
+      {
+        "id": 3,
+        "photos": 8,
+        "price": 100000,
+        "name": "Gói 8 ảnh",
+        "savings": 60000,
+        "savingsPercent": 37,
+        "pricePerPhoto": 12500
+      }
+    ],
+    "singlePhotoPrice": 20000,
+    "currency": "VND"
+  },
+  "settings": {
+    "deliveryLinkTTL": 7,
+    "deliveryLinkTTLUnit": "days",
+    "photoRetentionDays": 365,
+    "supportedPaymentMethods": ["bank", "momo", "vnpay"],
+    "autoPackEnabled": true,
+    "faceSearchMinSimilarity": 70
+  },
+  "orders": [
+    {
+      "id": "WL2024ABC",
+      "customerId": null,
+      "customerPhone": "0901234567",
+      "customerEmail": null,
+      "photoIds": [1, 2, 3, 4, 5],
+      "packageId": 3,
+      "totalAmount": 100000,
+      "status": "paid",
+      "paymentMethod": "bank",
+      "createdAt": "2026-02-21T14:30:00",
+      "expiresAt": "2026-02-28T14:30:00",
+      "downloadLink": "studio-abc.photopro.vn/d/ABC123XYZ789"
+    }
+  ],
+  "staff": [
+    {
+      "id": 1,
+      "name": "Nguyễn Văn A",
+      "email": "staff1@photopro.vn",
+      "phone": "0912345678",
+      "role": "staff",
+      "status": "active",
+      "uploadedPhotos": 450,
+      "joinedDate": "2025-01-15"
+    },
+    {
+      "id": 2,
+      "name": "Trần Thị B",
+      "email": "staff2@photopro.vn",
+      "phone": "0923456789",
+      "role": "staff",
+      "status": "active",
+      "uploadedPhotos": 320,
+      "joinedDate": "2025-03-20"
+    }
+  ],
+  "statistics": {
+    "totalPhotos": 1800,
+    "totalAlbums": 12,
+    "totalOrders": 156,
+    "totalRevenue": 15600000,
+    "averageOrderValue": 100000,
+    "conversionRate": 23.5,
+    "dailyStats": [
+      { "date": "2026-02-20", "orders": 12, "revenue": 1200000, "photos": 96 },
+      { "date": "2026-02-21", "orders": 15, "revenue": 1500000, "photos": 120 },
+      { "date": "2026-02-22", "orders": 18, "revenue": 1800000, "photos": 144 },
+      { "date": "2026-02-23", "orders": 14, "revenue": 1400000, "photos": 112 },
+      { "date": "2026-02-24", "orders": 16, "revenue": 1600000, "photos": 128 },
+      { "date": "2026-02-25", "orders": 8, "revenue": 800000, "photos": 64 }
+    ]
+  }
+}

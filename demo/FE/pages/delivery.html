@@ -1,0 +1,168 @@
+<div class="page-section" id="delivery">
+  <div class="container">
+  <div class="page-header">
+    <h1 class="page-title"><i data-lucide="download"></i> Tải Ảnh</h1>
+    <p class="page-subtitle">Tải về tất cả ảnh chất lượng cao không watermark</p>
+  </div>
+
+  <!-- Order Info Bar -->
+  <div class="card card-padded mb-3" style="background: var(--surface-elevated);">
+    <div class="flex-between" style="flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div class="mb-1" style="font-size: 14px; color: var(--text-secondary);">Mã đơn hàng</div>
+        <div style="font-size: 18px; font-weight: 600;" id="deliveryOrderCode">-</div>
+      </div>
+      <div>
+        <div class="mb-1" style="font-size: 14px; color: var(--text-secondary);">Số lượng ảnh</div>
+        <div style="font-size: 18px; font-weight: 600;" id="deliveryPhotoCount">0 ảnh</div>
+      </div>
+      <div>
+        <div class="mb-1" style="font-size: 14px; color: var(--text-secondary);">Thời gian còn lại</div>
+        <div style="font-size: 18px; font-weight: 600; color: var(--primary);" id="deliveryTimeLeft">--:--:--</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Warning Banner -->
+  <div class="alert alert-info mb-3">
+    <div style="display: flex; align-items: flex-start; gap: 8px;">
+      <i data-lucide="alert-triangle" style="width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;"></i>
+      <div>
+        <strong style="display: block; margin-bottom: 4px;">Lưu ý:</strong>
+        <span>Link này sẽ hết hạn sau <strong id="expiryTime" style="white-space: nowrap;">24 giờ</strong>. Vui lòng tải tất cả ảnh về máy trước khi hết hạn.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download All Button -->
+  <div class="card mb-3" style="text-align: center; background: var(--primary); color: white; padding: 20px;">
+    <h3 class="mb-1" style="color: white;"><i data-lucide="package"></i> Tải Tất Cả Ảnh</h3>
+    <p class="mb-2" style="opacity: 0.9;">File ZIP chứa toàn bộ ảnh chất lượng cao</p>
+    <button class="btn" style="background: white; color: var(--primary); font-size: 18px; padding: 16px 32px;" onclick="appManager.downloadAllPhotos()">
+      <i data-lucide="download"></i> Tải Tất Cả (ZIP)
+    </button>
+    <p class="mt-2" style="font-size: 14px; opacity: 0.8;">
+      Dung lượng: <strong id="totalSize">~50 MB</strong>
+    </p>
+  </div>
+
+  <!-- Individual Photos Grid -->
+  <div class="card card-padded">
+    <div class="flex-between mb-2">
+      <h3><i data-lucide="images"></i> Hoặc Tải Từng Ảnh</h3>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+          <input type="checkbox" id="showOriginalSize" onchange="uiManager.toggleOriginalSize(this.checked)">
+          <span>Xem kích thước gốc</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Photos Grid -->
+    <div class="delivery-photo-grid" id="deliveryPhotosGrid"></div>
+  </div>
+
+  <!-- Tips -->
+  <div class="card card-padded mt-3" style="background: var(--surface-elevated);">
+    <h3 class="mb-2"><i data-lucide="lightbulb"></i> Mẹo Tải Ảnh</h3>
+    <ul style="margin: 0; padding-left: 20px; color: var(--text-secondary);">
+      <li class="mb-1">Nên tải file ZIP để có tất cả ảnh một lần</li>
+      <li class="mb-1">Ảnh gốc có độ phân giải cao, kích thước lớn</li>
+      <li class="mb-1">Nếu link hết hạn, liên hệ hotline để được hỗ trợ</li>
+      <li class="mb-1">Lưu ảnh vào Google Drive/Cloud để an toàn</li>
+      <li class="mb-1">Có thể in ảnh ở studio với chất lượng tốt nhất</li>
+    </ul>
+  </div>
+
+  <!-- Contact Support -->
+  <div class="card card-padded mt-3" style="text-align: center;">
+    <h3 class="mb-2"><i data-lucide="help-circle"></i> Cần Hỗ Trợ?</h3>
+    <p class="mb-2" style="color: var(--text-secondary);">
+      Gặp vấn đề khi tải ảnh? Liên hệ ngay:
+    </p>
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+      <a href="tel:0987654321" class="btn btn-outline">
+        <i data-lucide="phone"></i> Hotline
+      </a>
+      <a href="https://zalo.me/wonderlandphoto" class="btn btn-outline" target="_blank">
+        <i data-lucide="message-circle"></i> Zalo
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+.delivery-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .delivery-photo-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+}
+
+.delivery-photo-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s;
+}
+
+.delivery-photo-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.delivery-photo-item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.delivery-photo-item .download-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.delivery-photo-item:hover .download-overlay {
+  opacity: 1;
+}
+
+.delivery-photo-item .download-btn {
+  background: white;
+  color: var(--primary);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.delivery-photo-item .download-btn:hover {
+  transform: scale(1.05);
+}
+
+.delivery-photo-item .photo-info {
+  color: white;
+  font-size: 12px;
+}
+</style>
+  </div>
+</div>

@@ -1,0 +1,2290 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhotoPro — Demo Hoàn Chỉnh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   CSS VARIABLES — Customizable Colors
+   ============================================ */
+:root {
+  --primary: #1a6b4e;
+  --primary-light: #e8f5ef;
+  --primary-dark: #0f4030;
+  --accent: #d4870e;
+  --accent-light: #fef3e0;
+  --surface: #ffffff;
+  --surface-alt: #f6f7f9;
+  --border: #e2e5ea;
+  --border-light: #f0f1f3;
+  --text: #1a1d23;
+  --text-secondary: #5a6170;
+  --text-muted: #8b91a0;
+  --danger: #d63b3b;
+  --danger-light: #fef2f2;
+  --warning: #c4850a;
+  --success: #1a854a;
+  --success-light: #ecfdf5;
+  --info: #2563eb;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 16px rgba(0,0,0,.07);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.1);
+  --transition: .2s cubic-bezier(.4,0,.2,1);
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 15px; }
+body {
+  font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
+  color: var(--text);
+  background: var(--surface-alt);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--primary); text-decoration: none; transition: var(--transition); }
+a:hover { color: var(--primary-dark); }
+img { max-width: 100%; display: block; }
+button, input, select, textarea { font-family: inherit; font-size: inherit; }
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--surface-alt); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ============================================
+   TOP NAV — Demo Navigation
+   ============================================ */
+.demo-topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: var(--text);
+  color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; height: 48px;
+  font-size: .85rem; font-weight: 500;
+  box-shadow: var(--shadow);
+}
+.demo-topbar-left { display: flex; align-items: center; gap: 12px; }
+.demo-topbar span { opacity: .7; }
+.demo-label {
+  background: var(--accent);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+
+/* ============================================
+   DEMO TABS — Switch between portals
+   ============================================ */
+.demo-tabs {
+  position: fixed; top: 48px; left: 0; right: 0; z-index: 999;
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  display: flex; align-items: stretch;
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+.demo-tab {
+  padding: 12px 20px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: var(--transition);
+  position: relative;
+}
+.demo-tab:hover { color: var(--primary); background: var(--primary-light); }
+.demo-tab.active { 
+  color: var(--primary); 
+  border-bottom-color: var(--primary); 
+  background: var(--primary-light);
+}
+
+/* ============================================
+   PAGE SECTIONS
+   ============================================ */
+.page-section {
+  display: none;
+  padding-top: 110px;
+  min-height: 100vh;
+  padding-bottom: 40px;
+  animation: fadeIn .35s ease;
+}
+.page-section.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.container-sm { max-width: 680px; margin: 0 auto; padding: 0 20px; }
+.container-lg { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+
+/* ============================================
+   HEADER
+   ============================================ */
+.page-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+.page-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.page-header p {
+  color: var(--text-secondary);
+  font-size: .95rem;
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.card-padded { padding: 24px; }
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-alt);
+}
+.card-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.card-body { padding: 20px; }
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 20px;
+  font-size: .88rem; font-weight: 600;
+  border: none; border-radius: var(--radius-sm);
+  cursor: pointer; transition: var(--transition);
+  text-align: center;
+}
+.btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover:not(:disabled) { 
+  filter: brightness(1.1); 
+  transform: translateY(-2px); 
+  box-shadow: var(--shadow); 
+}
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover:not(:disabled) { filter: brightness(1.1); }
+.btn-outline {
+  background: transparent; color: var(--primary);
+  border: 2px solid var(--primary);
+}
+.btn-outline:hover:not(:disabled) { background: var(--primary-light); }
+.btn-ghost { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover:not(:disabled) { background: var(--surface-alt); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover:not(:disabled) { filter: brightness(1.1); }
+.btn-sm { padding: 6px 14px; font-size: .8rem; }
+.btn-lg { padding: 14px 32px; font-size: 1rem; border-radius: var(--radius); }
+.btn-block { width: 100%; }
+
+/* ============================================
+   BADGES
+   ============================================ */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px;
+  font-size: .75rem; font-weight: 600;
+  border-radius: 20px;
+}
+.badge-primary { background: var(--primary-light); color: var(--primary); }
+.badge-accent { background: var(--accent-light); color: var(--accent); }
+.badge-danger { background: var(--danger-light); color: var(--danger); }
+.badge-success { background: var(--success-light); color: var(--success); }
+.badge-warning { background: var(--warning); color: #fff; }
+.badge-muted { background: var(--surface-alt); color: var(--text-muted); }
+
+/* ============================================
+   TAGS (Pills)
+   ============================================ */
+.tag-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; font-size: .82rem; font-weight: 500;
+  border-radius: 20px; border: 2px solid var(--border);
+  color: var(--text-secondary); cursor: pointer;
+  transition: var(--transition);
+}
+.tag:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.tag.active { border-color: var(--primary); color: #fff; background: var(--primary); }
+
+/* ============================================
+   FORMS
+   ============================================ */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: .9rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  background: var(--surface);
+  color: var(--text);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.form-textarea { resize: vertical; min-height: 100px; }
+.form-hint {
+  font-size: .78rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.form-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* ============================================
+   PHOTO GRID
+   ============================================ */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.photo-card {
+  position: relative; 
+  aspect-ratio: 3/4;
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+  overflow: hidden; 
+  cursor: pointer;
+  border: 2px solid var(--border);
+  transition: var(--transition);
+}
+.photo-card:hover { 
+  border-color: var(--primary); 
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+.photo-card.selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.photo-placeholder {
+  width: 100%; height: 100%;
+  display: flex; 
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center;
+  background: linear-gradient(135deg, #f0f1f3, #e2e5ea);
+  font-size: .8rem; 
+  color: var(--text-muted);
+  padding: 20px;
+  text-align: center;
+}
+.photo-placeholder-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  opacity: .5;
+}
+.photo-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.3) 0%, transparent 30%, transparent 70%, rgba(0,0,0,.5) 100%);
+  opacity: 0; 
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+}
+.photo-card:hover .photo-overlay { opacity: 1; }
+.photo-badge {
+  position: absolute; top: 8px; right: 8px;
+  font-size: .7rem; font-weight: 700;
+  background: rgba(0,0,0,.7); color: #fff;
+  padding: 3px 10px; border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+.photo-warning {
+  position: absolute; top: 8px; left: 8px;
+  font-size: .7rem; font-weight: 700;
+  background: var(--danger); color: #fff;
+  padding: 3px 10px; border-radius: 20px;
+}
+.photo-check {
+  position: absolute; top: 8px; left: 8px;
+  width: 28px; height: 28px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.4);
+  font-size: .75rem; color: #fff;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+.photo-card.selected .photo-check {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.photo-tags {
+  position: absolute; bottom: 8px; left: 8px; right: 8px;
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.photo-tags span {
+  font-size: .65rem; 
+  background: rgba(255,255,255,.95);
+  color: var(--text);
+  padding: 2px 8px; 
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   ALBUM CARD
+   ============================================ */
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+.album-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.album-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-4px);
+}
+.album-cover {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--text-muted);
+  position: relative;
+  overflow: hidden;
+}
+.album-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,.2));
+}
+.album-info {
+  padding: 16px;
+}
+.album-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.album-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: .82rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.album-desc {
+  font-size: .85rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+/* ============================================
+   STATS
+   ============================================ */
+.stat-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+  gap: 16px; 
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: var(--transition);
+}
+.stat-card:hover { box-shadow: var(--shadow); }
+.stat-label { 
+  font-size: .8rem; 
+  color: var(--text-muted); 
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.stat-value { 
+  font-size: 2rem; 
+  font-weight: 800; 
+  margin-top: 8px;
+  color: var(--text);
+}
+.stat-change { 
+  font-size: .8rem; 
+  margin-top: 8px; 
+  font-weight: 600; 
+}
+.stat-change.up { color: var(--success); }
+.stat-change.down { color: var(--danger); }
+
+/* ============================================
+   PRICING TABLE
+   ============================================ */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+.pricing-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  text-align: center;
+  transition: var(--transition);
+  position: relative;
+}
+.pricing-card.recommended {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-light);
+}
+.pricing-card.recommended::before {
+  content: '⭐ KHUYẾN NGHỊ';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: white;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+.pricing-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+.pricing-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.pricing-price {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.pricing-unit {
+  font-size: .85rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.pricing-savings {
+  display: inline-block;
+  background: var(--success-light);
+  color: var(--success);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: .75rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* ============================================
+   CART SUMMARY
+   ============================================ */
+.cart-summary {
+  position: sticky;
+  top: 120px;
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+}
+.cart-summary h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: .9rem;
+}
+.cart-item:last-child {
+  border-bottom: none;
+}
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  margin-top: 12px;
+  border-top: 2px solid var(--border);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+.cart-total .price {
+  color: var(--primary);
+}
+
+/* ============================================
+   ALERT
+   ============================================ */
+.alert {
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-left: 4px solid;
+}
+.alert-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.alert-content {
+  flex: 1;
+}
+.alert-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.alert-info {
+  background: var(--info-light);
+  border-color: var(--info);
+  color: var(--info);
+}
+.alert-success {
+  background: var(--success-light);
+  border-color: var(--success);
+  color: var(--success);
+}
+.alert-warning {
+  background: var(--warning);
+  border-color: var(--warning);
+  color: white;
+}
+.alert-danger {
+  background: var(--danger-light);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* ============================================
+   COUNTDOWN
+   ============================================ */
+.countdown {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: 24px 0;
+}
+.countdown-item {
+  text-align: center;
+  background: var(--surface-alt);
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  min-width: 80px;
+}
+.countdown-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary);
+  display: block;
+}
+.countdown-label {
+  font-size: .75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: .5px;
+}
+
+/* ============================================
+   FACE SEARCH BOX
+   ============================================ */
+.face-search-box {
+  background: var(--surface);
+  border: 3px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  text-align: center;
+  transition: var(--transition);
+  cursor: pointer;
+  margin: 24px 0;
+}
+.face-search-box:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.face-search-box.active {
+  border-color: var(--primary);
+  border-style: solid;
+  background: var(--primary-light);
+}
+.face-search-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  color: var(--text-muted);
+}
+.face-search-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.face-search-desc {
+  font-size: .9rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+.face-search-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ============================================
+   LOADING SPINNER
+   ============================================ */
+.loading-spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+.loading-content {
+  background: var(--surface);
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+.loading-text {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.loading-subtext {
+  margin-top: 8px;
+  font-size: .85rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   MODAL
+   ============================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  animation: fadeIn .3s ease;
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp .3s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.modal-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-header h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.modal-close {
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  transition: var(--transition);
+}
+.modal-close:hover {
+  color: var(--danger);
+  background: var(--danger-light);
+  border-radius: var(--radius-sm);
+}
+.modal-body {
+  padding: 24px;
+}
+
+/* ============================================
+   QR CODE
+   ============================================ */
+.qr-code {
+  width: 200px;
+  height: 200px;
+  background: var(--surface-alt);
+  border: 4px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  font-size: 3rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  html { font-size: 14px; }
+  
+  .demo-topbar {
+    height: 56px;
+    padding: 0 16px;
+  }
+  
+  .demo-tabs {
+    top: 56px;
+  }
+  
+  .page-section {
+    padding-top: 120px;
+  }
+  
+  .photo-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  
+  .album-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .cart-summary {
+    position: static;
+  }
+  
+  .countdown {
+    gap: 8px;
+  }
+  
+  .countdown-item {
+    padding: 12px 16px;
+    min-width: 70px;
+  }
+  
+  .countdown-value {
+    font-size: 1.5rem;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mb-4 { margin-bottom: 32px; }
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mt-4 { margin-top: 32px; }
+.flex { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+.gap-1 { gap: 8px; }
+.gap-2 { gap: 16px; }
+.gap-3 { gap: 24px; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     TOP BAR — Demo Navigation
+     ============================================ -->
+<div class="demo-topbar">
+  <div class="demo-topbar-left">
+    <span class="demo-label">DEMO</span>
+    <span>PhotoPro — Demo Hoàn Chỉnh Tất Cả Chức Năng</span>
+  </div>
+  <div>
+    <span id="current-time"></span>
+  </div>
+</div>
+
+<!-- ============================================
+     TABS — Switch between pages
+     ============================================ -->
+<div class="demo-tabs">
+  <div class="demo-tab active" data-page="landing">🏠 Landing Page</div>
+  <div class="demo-tab" data-page="albums">📂 Chọn Album</div>
+  <div class="demo-tab" data-page="face-search">🔍 Quét Mặt</div>
+  <div class="demo-tab" data-page="results">🖼️ Kết Quả</div>
+  <div class="demo-tab" data-page="cart">🛒 Giỏ Hàng</div>
+  <div class="demo-tab" data-page="checkout">💳 Thanh Toán</div>
+  <div class="demo-tab" data-page="success">✅ Thành Công</div>
+  <div class="demo-tab" data-page="delivery">📥 Tải Ảnh</div>
+  <div class="demo-tab" data-page="lookup">🔎 Tra Cứu</div>
+</div>
+
+<!-- ============================================
+     PAGE 1: LANDING PAGE
+     ============================================ -->
+<div class="page-section active" id="landing">
+  <div class="container">
+    <!-- Hero Section -->
+    <div class="card card-padded text-center mb-4">
+      <div style="font-size: 4rem; margin-bottom: 20px;">📸</div>
+      <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; color: var(--primary);">
+        Lưu Giữ Khoảnh Khắc Đẹp<br>Trong Chuyến Du Lịch
+      </h1>
+      <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 32px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        Chúng tôi đã chụp hàng nghìn bức ảnh tại các điểm du lịch nổi tiếng.<br>
+        <strong>Tìm ảnh của bạn chỉ với 1 selfie!</strong>
+      </p>
+      <button class="btn btn-primary btn-lg" onclick="goToPage('face-search')">
+        🔍 TÌM ẢNH CỦA TÔI
+      </button>
+    </div>
+
+    <!-- How It Works -->
+    <div class="mb-4">
+      <h2 class="text-center mb-3" style="font-size: 1.8rem; font-weight: 700;">Cách Tìm Ảnh Của Bạn</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div class="card card-padded text-center">
+          <div style="font-size: 3rem; margin-bottom: 12px;">📱</div>
+          <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 8px;">1. Chụp Selfie</h3>
+          <p style="color: var(--text-secondary);">Hoặc tải ảnh có mặt bạn</p>
+        </div>
+        <div class="card card-padded text-center">
+          <div style="font-size: 3rem; margin-bottom: 12px;">🤖</div>
+          <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 8px;">2. AI Tìm Ảnh</h3>
+          <p style="color: var(--text-secondary);">Có bạn trong vài giây</p>
+        </div>
+        <div class="card card-padded text-center">
+          <div style="font-size: 3rem; margin-bottom: 12px;">💳</div>
+          <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 8px;">3. Mua & Tải</h3>
+          <p style="color: var(--text-secondary);">Ảnh HD về điện thoại</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Albums -->
+    <div class="mb-4">
+      <h2 class="text-center mb-3" style="font-size: 1.8rem; font-weight: 700;">Địa Điểm Chụp Ảnh Gần Đây</h2>
+      <div class="album-grid" id="landing-albums"></div>
+      <div class="text-center mt-3">
+        <button class="btn btn-outline" onclick="goToPage('albums')">Xem Tất Cả Địa Điểm</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="mb-4">
+      <h2 class="text-center mb-3" style="font-size: 1.8rem; font-weight: 700;">💰 Bảng Giá Ảnh HD</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-name">Gói 1 Ảnh</div>
+          <div class="pricing-price">20,000đ</div>
+          <div class="pricing-unit">20,000đ / ảnh</div>
+          <button class="btn btn-outline btn-block">Chọn Gói</button>
+        </div>
+        <div class="pricing-card recommended">
+          <div class="pricing-name">Gói 3 Ảnh</div>
+          <div class="pricing-price">50,000đ</div>
+          <div class="pricing-unit">~16,667đ / ảnh</div>
+          <div class="pricing-savings">Tiết kiệm 17%</div>
+          <button class="btn btn-primary btn-block">Chọn Gói</button>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-name">Gói 8 Ảnh</div>
+          <div class="pricing-price">100,000đ</div>
+          <div class="pricing-unit">12,500đ / ảnh</div>
+          <div class="pricing-savings">Tiết kiệm 37%</div>
+          <button class="btn btn-outline btn-block">Chọn Gói</button>
+        </div>
+      </div>
+      <div class="alert alert-info mt-3">
+        <div class="alert-icon">💡</div>
+        <div class="alert-content">
+          <div class="alert-title">Auto-pack Thông Minh</div>
+          Hệ thống tự động chọn gói tối ưu khi bạn chọn ảnh. Ví dụ: Chọn 2 ảnh → Đề xuất Gói 3 (tiết kiệm thêm 1 ảnh!)
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="card card-padded">
+      <h2 class="mb-3" style="font-size: 1.6rem; font-weight: 700;">❓ Câu Hỏi Thường Gặp</h2>
+      <div class="faq-item" style="margin-bottom: 20px;">
+        <h4 style="font-weight: 700; margin-bottom: 8px; color: var(--primary);">Làm sao tìm được ảnh của tôi?</h4>
+        <p style="color: var(--text-secondary);">Chỉ cần chụp selfie hoặc tải ảnh có mặt bạn, AI sẽ tìm tất cả ảnh có bạn trong hệ thống.</p>
+      </div>
+      <div class="faq-item" style="margin-bottom: 20px;">
+        <h4 style="font-weight: 700; margin-bottom: 8px; color: var(--primary);">Ảnh selfie của tôi có được lưu không?</h4>
+        <p style="color: var(--text-secondary);">Không. Ảnh selfie được xử lý ngay trên thiết bị của bạn, chúng tôi không lưu trữ ảnh mặt của bạn.</p>
+      </div>
+      <div class="faq-item" style="margin-bottom: 20px;">
+        <h4 style="font-weight: 700; margin-bottom: 8px; color: var(--primary);">Tôi có thể tải ảnh trong bao lâu?</h4>
+        <p style="color: var(--text-secondary);">Link tải có hiệu lực 7 ngày sau khi thanh toán. Bạn có thể tải ảnh nhiều lần trong thời gian này.</p>
+      </div>
+      <div class="faq-item">
+        <h4 style="font-weight: 700; margin-bottom: 8px; color: var(--primary);">Tôi quên mã đơn hàng thì sao?</h4>
+        <p style="color: var(--text-secondary);">Bạn có thể tra cứu bằng số điện thoại đã đặt hàng.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE 2: CHỌN ALBUM
+     ============================================ -->
+<div class="page-section" id="albums">
+  <div class="container">
+    <div class="page-header">
+      <h1>📍 Bạn Đã Chụp Ảnh Tại Đâu?</h1>
+      <p>Chọn địa điểm để tìm ảnh nhanh hơn</p>
+    </div>
+
+    <div class="mb-3">
+      <button class="btn btn-primary btn-lg btn-block" onclick="goToPage('face-search')">
+        🔍 TÌM TRONG TẤT CẢ ĐỊA ĐIỂM
+      </button>
+    </div>
+
+    <div class="card card-padded mb-3">
+      <h3 class="mb-2" style="font-size: 1.2rem; font-weight: 700;">Lọc Theo Khu Vực</h3>
+      <div class="tag-list">
+        <div class="tag active" onclick="filterAlbums('all')">Tất cả</div>
+        <div class="tag" onclick="filterAlbums('bana')">Bà Nà Hills</div>
+        <div class="tag" onclick="filterAlbums('hoian')">Hội An</div>
+        <div class="tag" onclick="filterAlbums('danang')">Đà Nẵng</div>
+        <div class="tag" onclick="filterAlbums('sontra')">Sơn Trà</div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <div class="alert-icon">💡</div>
+      <div class="alert-content">
+        <strong>Không nhớ địa điểm?</strong> Đừng lo! Nhấn nút "Tìm trong tất cả địa điểm" và AI sẽ tìm giúp bạn.
+      </div>
+    </div>
+
+    <div class="album-grid" id="albums-list"></div>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE 3: QUÉT MẶT
+     ============================================ -->
+<div class="page-section" id="face-search">
+  <div class="container-sm">
+    <div class="page-header">
+      <h1>🔍 Tìm Ảnh Của Bạn</h1>
+      <p>Chụp selfie hoặc tải ảnh có mặt bạn để tìm kiếm</p>
+    </div>
+
+    <div class="card card-padded mb-3">
+      <h3 class="mb-2" style="font-size: 1.1rem; font-weight: 700;">Phạm Vi Tìm Kiếm</h3>
+      <div class="form-group">
+        <label class="form-checkbox">
+          <input type="radio" name="search-scope" value="all" checked onchange="updateSearchScope()">
+          <span><strong>Tất cả album</strong> (12 album, ~1,800 ảnh)</span>
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="form-checkbox">
+          <input type="radio" name="search-scope" value="specific" onchange="updateSearchScope()">
+          <span><strong>Chọn album cụ thể</strong> (tìm nhanh hơn)</span>
+        </label>
+      </div>
+      <div id="album-selector" class="hidden mt-2" style="padding-left: 30px; border-left: 3px solid var(--primary-light);">
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="checkbox" value="bana">
+            <span>Bà Nà Hills 20/02 (150 ảnh)</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="checkbox" value="hoian">
+            <span>Hội An Night 19/02 (200 ảnh)</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="checkbox" value="dragonbridge">
+            <span>Cầu Rồng Đêm 18/02 (120 ảnh)</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-padded mb-3">
+      <h3 class="mb-2" style="font-size: 1.1rem; font-weight: 700;">Lọc Theo Tag</h3>
+      <div class="tag-list">
+        <div class="tag" onclick="toggleTag(this)">👫 Couple</div>
+        <div class="tag" onclick="toggleTag(this)">👨‍👩‍👧‍👦 Family</div>
+        <div class="tag" onclick="toggleTag(this)">👤 Solo</div>
+        <div class="tag" onclick="toggleTag(this)">📷 Portrait</div>
+        <div class="tag" onclick="toggleTag(this)">🌅 Sunset</div>
+        <div class="tag" onclick="toggleTag(this)">🌃 Night</div>
+      </div>
+    </div>
+
+    <div class="face-search-box" id="face-search-box" onclick="document.getElementById('file-upload').click()">
+      <input type="file" id="file-upload" accept="image/*" style="display: none;" onchange="handleFileUpload(this)">
+      <div class="face-search-icon">📸</div>
+      <div class="face-search-title">Chụp Selfie hoặc Tải Ảnh Lên</div>
+      <div class="face-search-desc">
+        <strong>Mẹo:</strong> Bỏ kính, mũ • Chụp thẳng mặt • Ánh sáng đủ
+      </div>
+      <div class="face-search-buttons">
+        <button class="btn btn-primary" onclick="startCamera(event)">
+          📷 Chụp Selfie
+        </button>
+        <button class="btn btn-outline">
+          📤 Tải Ảnh Lên
+        </button>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <div class="alert-icon">🔒</div>
+      <div class="alert-content">
+        <strong>Bảo mật:</strong> Ảnh selfie của bạn được xử lý ngay trên thiết bị này. Chúng tôi không lưu trữ ảnh mặt của bạn.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE 4: KẾT QUẢ
+     ============================================ -->
+<div class="page-section" id="results">
+  <div class="container-lg">
+    <div class="page-header flex-between">
+      <div>
+        <h1>🖼️ Tìm Thấy <span id="result-count">18</span> Ảnh Của Bạn</h1>
+        <p>Thời gian tìm kiếm: <strong id="search-time">450ms</strong></p>
+      </div>
+      <div>
+        <button class="btn btn-outline" onclick="goToPage('face-search')">🔍 Tìm Lại</button>
+      </div>
+    </div>
+
+    <div class="alert alert-success mb-3">
+      <div class="alert-icon">✅</div>
+      <div class="alert-content">
+        <strong>Tìm thấy ảnh của bạn!</strong> Click vào ảnh để chọn mua. Ảnh có watermark sẽ được gỡ bỏ sau khi thanh toán.
+      </div>
+    </div>
+
+    <!-- Album Group 1 -->
+    <div class="card mb-3">
+      <div class="card-header flex-between">
+        <div>
+          <h3>📍 Bà Nà Hills 20/02/2026 <span class="badge badge-primary">8 ảnh</span></h3>
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="toggleAlbumPhotos('bana-photos')">
+          <span id="bana-toggle">Thu gọn</span>
+        </button>
+      </div>
+      <div class="card-body" id="bana-photos">
+        <div class="photo-grid" id="bana-grid"></div>
+      </div>
+    </div>
+
+    <!-- Album Group 2 -->
+    <div class="card mb-3">
+      <div class="card-header flex-between">
+        <div>
+          <h3>📍 Hội An Night 19/02/2026 <span class="badge badge-primary">7 ảnh</span></h3>
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="toggleAlbumPhotos('hoian-photos')">
+          <span id="hoian-toggle">Thu gọn</span>
+        </button>
+      </div>
+      <div class="card-body" id="hoian-photos">
+        <div class="photo-grid" id="hoian-grid"></div>
+      </div>
+    </div>
+
+    <!-- Album Group 3 -->
+    <div class="card mb-3">
+      <div class="card-header flex-between">
+        <div>
+          <h3>📍 Cầu Rồng Đêm 18/02/2026 <span class="badge badge-primary">3 ảnh</span></h3>
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="toggleAlbumPhotos('dragon-photos')">
+          <span id="dragon-toggle">Thu gọn</span>
+        </button>
+      </div>
+      <div class="card-body" id="dragon-photos">
+        <div class="photo-grid" id="dragon-grid"></div>
+      </div>
+    </div>
+
+    <!-- Sticky Cart Summary -->
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 2px solid var(--primary); padding: 16px 20px; box-shadow: var(--shadow-lg); z-index: 100;">
+      <div class="container-lg flex-between">
+        <div>
+          <div style="font-size: .85rem; color: var(--text-muted); margin-bottom: 4px;">Đã chọn: <strong id="selected-count">0</strong> ảnh</div>
+          <div style="font-size: 1.2rem; font-weight: 800; color: var(--primary);">
+            Gói đề xuất: <span id="suggested-package">Chưa chọn</span> — <span id="suggested-price">0đ</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="goToCart()" disabled id="go-to-cart-btn">
+          🛒 Thanh Toán (<span id="cart-count">0</span>)
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE 5: GIỎ HÀNG
+     ============================================ -->
+<div class="page-section" id="cart">
+  <div class="container">
+    <div class="page-header">
+      <h1>🛒 Giỏ Hàng</h1>
+      <p>Xem lại các ảnh đã chọn và gói giá tối ưu</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+      <!-- Left: Photos -->
+      <div>
+        <div class="card">
+          <div class="card-header flex-between">
+            <h3>Ảnh đã chọn (<span id="cart-photo-count">0</span>)</h3>
+            <button class="btn btn-sm btn-ghost" onclick="clearCart()">Xóa tất cả</button>
+          </div>
+          <div class="card-body">
+            <div class="photo-grid" id="cart-photos-grid"></div>
+          </div>
+        </div>
+
+        <div class="card card-padded mt-3">
+          <h3 class="mb-2">📝 Ghi Chú (Tùy chọn)</h3>
+          <textarea class="form-textarea" placeholder="Ví dụ: Gửi ảnh qua email thay vì SMS..."></textarea>
+        </div>
+      </div>
+
+      <!-- Right: Summary -->
+      <div>
+        <div class="cart-summary">
+          <h3>💰 Tóm Tắt Đơn Hàng</h3>
+          
+          <div class="cart-item">
+            <span>Số lượng ảnh:</span>
+            <strong><span id="summary-count">0</span> ảnh</strong>
+          </div>
+          
+          <div class="cart-item">
+            <span>Gói đề xuất:</span>
+            <strong id="summary-package">-</strong>
+          </div>
+          
+          <div class="cart-item">
+            <span>Giá gốc:</span>
+            <span style="text-decoration: line-through; color: var(--text-muted);" id="summary-original">0đ</span>
+          </div>
+          
+          <div class="cart-item">
+            <span>Tiết kiệm:</span>
+            <strong style="color: var(--success);" id="summary-savings">0đ</strong>
+          </div>
+          
+          <div class="cart-total">
+            <span>Tổng thanh toán:</span>
+            <span class="price" id="summary-total">0đ</span>
+          </div>
+
+          <button class="btn btn-primary btn-block btn-lg mt-3" onclick="goToPage('checkout')">
+            💳 Tiến Hành Thanh Toán
+          </button>
+          
+          <button class="btn btn-outline btn-block mt-2" onclick="goToPage('results')">
+            ← Chọn thêm ảnh
+          </button>
+        </div>
+
+        <div class="alert alert-warning mt-3">
+          <div class="alert-icon">⏰</div>
+          <div class="alert-content">
+            <strong>Lưu ý:</strong> Một số ảnh sắp bị xóa khỏi hệ thống. Đặt hàng ngay để không bỏ lỡ!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE 6: THANH TOÁN
+     ============================================ -->
+<div class="page-section" id="checkout">
+  <div class="container-sm">
+    <div class="page-header">
+      <h1>💳 Thanh Toán</h1>
+      <p>Nhập thông tin để nhận link tải ảnh</p>
+    </div>
+
+    <div style="display: grid; gap: 24px;">
+      <!-- Customer Info -->
+      <div class="card card-padded">
+        <h3 class="mb-3">📱 Thông Tin Khách Hàng</h3>
+        
+        <div class="form-group">
+          <label class="form-label">Số điện thoại <span style="color: var(--danger);">*</span></label>
+          <input type="tel" class="form-input" placeholder="0901234567" id="phone-input" required>
+          <div class="form-hint">Link tải ảnh sẽ được gửi qua SMS</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="checkbox" id="email-checkbox" onchange="toggleEmailInput()">
+            <span>Gửi link qua email (tùy chọn)</span>
+          </label>
+        </div>
+        
+        <div class="form-group hidden" id="email-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="email@example.com" id="email-input">
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="card card-padded">
+        <h3 class="mb-3">📦 Đơn Hàng</h3>
+        
+        <div class="flex-between mb-2">
+          <span>Số lượng ảnh:</span>
+          <strong><span id="checkout-count">0</span> ảnh</strong>
+        </div>
+        
+        <div class="flex-between mb-2">
+          <span>Gói:</span>
+          <strong id="checkout-package">-</strong>
+        </div>
+        
+        <div class="flex-between mb-2">
+          <span>Giá gốc:</span>
+          <span style="text-decoration: line-through; color: var(--text-muted);" id="checkout-original">0đ</span>
+        </div>
+        
+        <div class="flex-between mb-3">
+          <span>Tiết kiệm:</span>
+          <strong style="color: var(--success);" id="checkout-savings">0đ</strong>
+        </div>
+        
+        <div class="flex-between" style="font-size: 1.3rem; font-weight: 800; padding-top: 16px; border-top: 2px solid var(--border);">
+          <span>Tổng cộng:</span>
+          <span style="color: var(--primary);" id="checkout-total">0đ</span>
+        </div>
+      </div>
+
+      <!-- Payment Method -->
+      <div class="card card-padded">
+        <h3 class="mb-3">💰 Phương Thức Thanh Toán</h3>
+        
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="radio" name="payment-method" value="bank" checked>
+            <span><strong>🏦 Chuyển khoản ngân hàng</strong> (QR Code)</span>
+          </label>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="radio" name="payment-method" value="momo">
+            <span><strong>📱 Ví MoMo</strong></span>
+          </label>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="radio" name="payment-method" value="vnpay">
+            <span><strong>💳 VNPay</strong></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <div class="alert-icon">🔒</div>
+        <div class="alert-content">
+          <strong>An toàn & bảo mật:</strong> Thông tin thanh toán của bạn được mã hóa và bảo vệ.
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg" onclick="processPayment()">
+        ✅ Xác Nhận Thanh Toán
+      </button>
+      
+      <button class="btn btn-outline btn-block" onclick="goToPage('cart')">
+        ← Quay lại giỏ hàng
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE 7: THANH TOÁN THÀNH CÔNG
+     ============================================ -->
+<div class="page-section" id="success">
+  <div class="container-sm">
+    <div class="card card-padded text-center">
+      <div style="font-size: 5rem; margin-bottom: 20px;">✅</div>
+      <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 12px; color: var(--success);">
+        Thanh Toán Thành Công!
+      </h1>
+      <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 32px;">
+        Cảm ơn bạn đã mua ảnh. Mã đơn hàng của bạn:
+      </p>
+      
+      <div style="background: var(--surface-alt); padding: 16px; border-radius: var(--radius); margin-bottom: 24px;">
+        <div style="font-size: .85rem; color: var(--text-muted); margin-bottom: 4px;">MÃ ĐƠN HÀNG</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary); font-family: 'JetBrains Mono', monospace; letter-spacing: 2px;">
+          WL<span id="order-code">2024</span>ABC
+        </div>
+      </div>
+
+      <div class="alert alert-success text-left mb-3">
+        <div class="alert-icon">📱</div>
+        <div class="alert-content">
+          <strong>Link tải ảnh đã được gửi qua SMS</strong><br>
+          Kiểm tra tin nhắn tại số điện thoại: <strong id="success-phone">0901234567</strong>
+        </div>
+      </div>
+
+      <div class="card" style="background: var(--primary-light); border: 2px solid var(--primary); padding: 24px; margin-bottom: 24px;">
+        <h3 class="mb-2" style="font-size: 1.2rem; font-weight: 700;">🔗 Link Tải Ảnh</h3>
+        <div style="background: white; padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px; word-break: break-all; font-family: 'JetBrains Mono', monospace; font-size: .85rem;">
+          <span id="download-link">studio-abc.photopro.vn/d/ABC123XYZ789</span>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="copyDownloadLink()">
+          📋 Sao Chép Link
+        </button>
+        <button class="btn btn-accent btn-block mt-2" onclick="goToPage('delivery')">
+          📥 Tải Ảnh Ngay
+        </button>
+      </div>
+
+      <div class="qr-code">
+        📱 QR
+      </div>
+      <p style="font-size: .85rem; color: var(--text-muted); margin-bottom: 32px;">
+        Quét QR code để mở link trên điện thoại khác
+      </p>
+
+      <div class="alert alert-warning text-left mb-3">
+        <div class="alert-icon">⏰</div>
+        <div class="alert-content">
+          <strong>Link có hiệu lực trong 7 ngày</strong><br>
+          Hết hạn: <strong id="expiry-date">28/02/2026 14:30</strong>
+        </div>
+      </div>
+
+      <h3 class="mb-2" style="font-size: 1.2rem; font-weight: 700;">Thời gian còn lại:</h3>
+      <div class="countdown">
+        <div class="countdown-item">
+          <span class="countdown-value" id="countdown-days">6</span>
+          <span class="countdown-label">Ngày</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-value" id="countdown-hours">23</span>
+          <span class="countdown-label">Giờ</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-value" id="countdown-minutes">45</span>
+          <span class="countdown-label">Phút</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-value" id="countdown-seconds">30</span>
+          <span class="countdown-label">Giây</span>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <button class="btn btn-outline" onclick="goToPage('lookup')">
+          🔎 Tra Cứu Đơn Hàng
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE 8: TRANG TẢI ẢNH
+     ============================================ -->
+<div class="page-section" id="delivery">
+  <div class="container-sm">
+    <div class="page-header">
+      <h1>📥 Tải Ảnh Của Bạn</h1>
+      <p>Đơn hàng: <strong>WL2024ABC</strong></p>
+    </div>
+
+    <div class="alert alert-warning mb-3">
+      <div class="alert-icon">⏰</div>
+      <div class="alert-content">
+        <strong>Link này có hiệu lực đến:</strong> 28/02/2026 14:30<br>
+        Thời gian còn lại: <strong>6 ngày 23 giờ 45 phút</strong>
+      </div>
+    </div>
+
+    <div class="card card-padded mb-3">
+      <div class="flex-between mb-3">
+        <h3>Ảnh của bạn (<span id="delivery-count">5</span>)</h3>
+        <button class="btn btn-primary" onclick="downloadAll()">
+          📦 Tải Tất Cả (ZIP)
+        </button>
+      </div>
+      
+      <div class="photo-grid" id="delivery-grid"></div>
+    </div>
+
+    <div class="card card-padded">
+      <h3 class="mb-2">📋 Thông Tin Đơn Hàng</h3>
+      <div class="flex-between mb-2">
+        <span>Mã đơn hàng:</span>
+        <strong>WL2024ABC</strong>
+      </div>
+      <div class="flex-between mb-2">
+        <span>Ngày mua:</span>
+        <strong>21/02/2026 14:30</strong>
+      </div>
+      <div class="flex-between mb-2">
+        <span>Số lượng:</span>
+        <strong>5 ảnh</strong>
+      </div>
+      <div class="flex-between mb-2">
+        <span>Gói:</span>
+        <strong>Gói 8 ảnh</strong>
+      </div>
+      <div class="flex-between">
+        <span>Tổng tiền:</span>
+        <strong style="color: var(--primary);">100,000đ</strong>
+      </div>
+    </div>
+
+    <div class="text-center mt-3">
+      <button class="btn btn-outline" onclick="goToPage('landing')">
+        🏠 Về Trang Chủ
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     PAGE 9: TRA CỨU ĐƠN HÀNG
+     ============================================ -->
+<div class="page-section" id="lookup">
+  <div class="container-sm">
+    <div class="page-header">
+      <h1>🔎 Tra Cứu Đơn Hàng</h1>
+      <p>Nhập mã đơn hàng hoặc số điện thoại để tìm kiếm</p>
+    </div>
+
+    <div class="card card-padded mb-3">
+      <h3 class="mb-3">Tìm kiếm bằng:</h3>
+      
+      <div class="form-group">
+        <label class="form-label">Mã Đơn Hàng</label>
+        <input type="text" class="form-input" placeholder="WL2024ABC" id="lookup-order-code">
+        <div class="form-hint">Mã đơn hàng đã được gửi qua SMS khi thanh toán</div>
+      </div>
+
+      <div style="text-align: center; color: var(--text-muted); margin: 16px 0;">— HOẶC —</div>
+
+      <div class="form-group">
+        <label class="form-label">Số Điện Thoại</label>
+        <input type="tel" class="form-input" placeholder="0901234567" id="lookup-phone">
+        <div class="form-hint">Số điện thoại đã dùng khi đặt hàng</div>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg" onclick="searchOrder()">
+        🔍 Tìm Kiếm
+      </button>
+    </div>
+
+    <div class="alert alert-info">
+      <div class="alert-icon">💡</div>
+      <div class="alert-content">
+        <strong>Mẹo:</strong> Nếu không tìm thấy tin nhắn SMS, hãy kiểm tra mục tin nhắn rác hoặc spam.
+      </div>
+    </div>
+
+    <!-- Search Results (hidden by default) -->
+    <div class="hidden" id="lookup-results">
+      <h3 class="mb-3" style="font-size: 1.4rem; font-weight: 700;">Kết Quả Tìm Kiếm</h3>
+      
+      <div class="card card-padded mb-2">
+        <div class="flex-between mb-2">
+          <span><strong>Mã đơn:</strong> WL2024ABC</span>
+          <span class="badge badge-success">Đã thanh toán</span>
+        </div>
+        <div class="flex-between mb-2">
+          <span>Ngày mua:</span>
+          <span>21/02/2026 14:30</span>
+        </div>
+        <div class="flex-between mb-2">
+          <span>Số ảnh:</span>
+          <span>5 ảnh</span>
+        </div>
+        <div class="flex-between mb-3">
+          <span>Tổng tiền:</span>
+          <strong style="color: var(--primary);">100,000đ</strong>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="goToPage('delivery')">
+          📥 Xem & Tải Ảnh
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     LOADING OVERLAY
+     ============================================ -->
+<div class="loading-overlay hidden" id="loading-overlay">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">Đang xử lý...</div>
+    <div class="loading-subtext" id="loading-subtext">Vui lòng đợi</div>
+  </div>
+</div>
+
+<!-- ============================================
+     MODAL - Photo Preview
+     ============================================ -->
+<div class="modal-overlay" id="photo-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Xem Ảnh</h3>
+      <button class="modal-close" onclick="closeModal('photo-modal')">×</button>
+    </div>
+    <div class="modal-body text-center">
+      <div style="aspect-ratio: 3/4; background: var(--surface-alt); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--text-muted);">
+        📷
+      </div>
+      <div class="mt-3">
+        <div class="badge badge-primary">98% khớp</div>
+        <div class="badge badge-muted">#couple</div>
+        <div class="badge badge-muted">#sunset</div>
+      </div>
+      <button class="btn btn-primary btn-block mt-3" onclick="closeModal('photo-modal')">
+        Đóng
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     JAVASCRIPT
+     ============================================ -->
+<script>
+// ============================================
+// MOCK DATA
+// ============================================
+const mockAlbums = [
+  { id: 1, name: 'Bà Nà Hills', date: '20/02/2026', desc: 'Lễ hội mùa xuân', icon: '🎡', category: 'bana', photoCount: 150 },
+  { id: 2, name: 'Hội An Ancient Town', date: '19/02/2026', desc: 'Phố cổ đêm', icon: '🏮', category: 'hoian', photoCount: 200 },
+  { id: 3, name: 'Cầu Rồng Đêm', date: '18/02/2026', desc: 'Cầu phun lửa', icon: '🐉', category: 'danang', photoCount: 120 },
+  { id: 4, name: 'Sơn Trà Linh Ứng', date: '17/02/2026', desc: 'Chùa Linh Ứng', icon: '🏯', category: 'sontra', photoCount: 180 },
+  { id: 5, name: 'Biển Mỹ Khê', date: '16/02/2026', desc: 'Hoàng hôn biển', icon: '🌊', category: 'danang', photoCount: 90 },
+  { id: 6, name: 'Bà Nà Hills Sunset', date: '15/02/2026', desc: 'Chiều hoàng hôn', icon: '🌅', category: 'bana', photoCount: 130 }
+];
+
+const mockPhotos = {
+  bana: [
+    { id: 1, similarity: 98, tags: ['couple', 'sunset'], warning: null },
+    { id: 2, similarity: 95, tags: ['couple', 'portrait'], warning: null },
+    { id: 3, similarity: 92, tags: ['portrait'], warning: null },
+    { id: 4, similarity: 88, tags: ['solo'], warning: '3d' },
+    { id: 5, similarity: 85, tags: ['family'], warning: null },
+    { id: 6, similarity: 82, tags: ['couple', 'night'], warning: '5d' },
+    { id: 7, similarity: 78, tags: ['family', 'portrait'], warning: null },
+    { id: 8, similarity: 75, tags: ['solo'], warning: null }
+  ],
+  hoian: [
+    { id: 9, similarity: 94, tags: ['couple', 'night'], warning: null },
+    { id: 10, similarity: 91, tags: ['family'], warning: null },
+    { id: 11, similarity: 85, tags: ['portrait'], warning: null },
+    { id: 12, similarity: 80, tags: ['couple'], warning: '4d' },
+    { id: 13, similarity: 77, tags: ['solo', 'night'], warning: null },
+    { id: 14, similarity: 73, tags: ['family', 'portrait'], warning: null },
+    { id: 15, similarity: 70, tags: ['couple'], warning: null }
+  ],
+  dragon: [
+    { id: 16, similarity: 88, tags: ['couple', 'night'], warning: '2d' },
+    { id: 17, similarity: 82, tags: ['family'], warning: null },
+    { id: 18, similarity: 76, tags: ['solo'], warning: null }
+  ]
+};
+
+const pricingTiers = [
+  { photos: 1, price: 20000, name: 'Gói 1 ảnh', savings: 0 },
+  { photos: 3, price: 50000, name: 'Gói 3 ảnh', savings: 17 },
+  { photos: 8, price: 100000, name: 'Gói 8 ảnh', savings: 37 }
+];
+
+// ============================================
+// STATE MANAGEMENT
+// ============================================
+let selectedPhotos = new Set();
+let currentFilter = 'all';
+
+// ============================================
+// NAVIGATION
+// ============================================
+function goToPage(pageId) {
+  // Hide all pages
+  document.querySelectorAll('.page-section').forEach(page => {
+    page.classList.remove('active');
+  });
+  
+  // Show selected page
+  document.getElementById(pageId).classList.add('active');
+  
+  // Update tabs
+  document.querySelectorAll('.demo-tab').forEach(tab => {
+    tab.classList.remove('active');
+    if (tab.dataset.page === pageId) {
+      tab.classList.add('active');
+    }
+  });
+  
+  // Scroll to top
+  window.scrollTo(0, 0);
+  
+  // Update page-specific content
+  if (pageId === 'cart') {
+    updateCartPage();
+  } else if (pageId === 'checkout') {
+    updateCheckoutPage();
+  }
+}
+
+document.querySelectorAll('.demo-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    goToPage(tab.dataset.page);
+  });
+});
+
+// ============================================
+// RENDER ALBUMS
+// ============================================
+function renderAlbums(containerId, limit = null) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  
+  const albums = limit ? mockAlbums.slice(0, limit) : mockAlbums;
+  const filteredAlbums = currentFilter === 'all' 
+    ? albums 
+    : albums.filter(a => a.category === currentFilter);
+  
+  container.innerHTML = filteredAlbums.map(album => `
+    <div class="album-card" onclick="selectAlbum('${album.category}')">
+      <div class="album-cover">
+        <span style="font-size: 4rem;">${album.icon}</span>
+      </div>
+      <div class="album-info">
+        <div class="album-title">${album.name}</div>
+        <div class="album-meta">
+          <span>📅 ${album.date}</span>
+          <span>📸 ${album.photoCount} ảnh</span>
+        </div>
+        <div class="album-desc">${album.desc}</div>
+        <button class="btn btn-primary btn-block btn-sm">
+          🔍 Tìm Ảnh Tại Đây
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterAlbums(category) {
+  currentFilter = category;
+  
+  // Update tag active state
+  document.querySelectorAll('#albums .tag').forEach(tag => {
+    tag.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  renderAlbums('albums-list');
+}
+
+function selectAlbum(category) {
+  goToPage('face-search');
+}
+
+// ============================================
+// RENDER PHOTOS
+// ============================================
+function renderPhotos(containerId, photos) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  
+  container.innerHTML = photos.map(photo => {
+    const isSelected = selectedPhotos.has(photo.id);
+    return `
+      <div class="photo-card ${isSelected ? 'selected' : ''}" onclick="togglePhoto(${photo.id})">
+        <div class="photo-placeholder">
+          <div class="photo-placeholder-icon">📷</div>
+          <div>Photo ${photo.id}</div>
+          <div style="font-size: .7rem; margin-top: 4px;">WATERMARK</div>
+        </div>
+        <div class="photo-overlay">
+          ${isSelected ? '✓ Đã chọn' : 'Click để chọn'}
+        </div>
+        <div class="photo-badge">${photo.similarity}%</div>
+        ${photo.warning ? `<div class="photo-warning">⚠️ ${photo.warning}</div>` : ''}
+        <div class="photo-check ${isSelected ? 'checked' : ''}">
+          ${isSelected ? '✓' : ''}
+        </div>
+        <div class="photo-tags">
+          ${photo.tags.map(tag => `<span>#${tag}</span>`).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function togglePhoto(photoId) {
+  if (selectedPhotos.has(photoId)) {
+    selectedPhotos.delete(photoId);
+  } else {
+    selectedPhotos.add(photoId);
+  }
+  
+  // Re-render all photo grids
+  renderPhotos('bana-grid', mockPhotos.bana);
+  renderPhotos('hoian-grid', mockPhotos.hoian);
+  renderPhotos('dragon-grid', mockPhotos.dragon);
+  
+  // Update cart info
+  updateCartInfo();
+}
+
+// ============================================
+// CART MANAGEMENT
+// ============================================
+function updateCartInfo() {
+  const count = selectedPhotos.size;
+  const suggestion = getSuggestedPackage(count);
+  
+  document.getElementById('selected-count').textContent = count;
+  document.getElementById('cart-count').textContent = count;
+  document.getElementById('result-count').textContent = '18';
+  
+  const cartBtn = document.getElementById('go-to-cart-btn');
+  
+  if (count === 0) {
+    document.getElementById('suggested-package').textContent = 'Chưa chọn';
+    document.getElementById('suggested-price').textContent = '0đ';
+    cartBtn.disabled = true;
+  } else {
+    document.getElementById('suggested-package').textContent = suggestion.name;
+    document.getElementById('suggested-price').textContent = formatPrice(suggestion.price);
+    cartBtn.disabled = false;
+  }
+}
+
+function getSuggestedPackage(photoCount) {
+  if (photoCount === 0) return { name: '-', price: 0, savings: 0 };
+  
+  // Find best package
+  for (let i = pricingTiers.length - 1; i >= 0; i--) {
+    if (photoCount >= pricingTiers[i].photos) {
+      return pricingTiers[i];
+    }
+  }
+  
+  // If less than smallest package, return smallest
+  return pricingTiers[0];
+}
+
+function calculateOriginalPrice(photoCount) {
+  return photoCount * 20000; // 20k per photo
+}
+
+function formatPrice(price) {
+  return price.toLocaleString('vi-VN') + 'đ';
+}
+
+function goToCart() {
+  if (selectedPhotos.size === 0) {
+    alert('Vui lòng chọn ít nhất 1 ảnh!');
+    return;
+  }
+  goToPage('cart');
+}
+
+function updateCartPage() {
+  const count = selectedPhotos.size;
+  const suggestion = getSuggestedPackage(count);
+  const originalPrice = calculateOriginalPrice(count);
+  const savings = originalPrice - suggestion.price;
+  
+  // Update summary
+  document.getElementById('cart-photo-count').textContent = count;
+  document.getElementById('summary-count').textContent = count;
+  document.getElementById('summary-package').textContent = suggestion.name;
+  document.getElementById('summary-original').textContent = formatPrice(originalPrice);
+  document.getElementById('summary-savings').textContent = formatPrice(savings);
+  document.getElementById('summary-total').textContent = formatPrice(suggestion.price);
+  
+  // Render photos in cart
+  const allPhotos = [...mockPhotos.bana, ...mockPhotos.hoian, ...mockPhotos.dragon];
+  const cartPhotos = allPhotos.filter(p => selectedPhotos.has(p.id));
+  
+  const container = document.getElementById('cart-photos-grid');
+  container.innerHTML = cartPhotos.map(photo => `
+    <div class="photo-card">
+      <div class="photo-placeholder">
+        <div class="photo-placeholder-icon">📷</div>
+        <div>Photo ${photo.id}</div>
+      </div>
+      <div class="photo-badge">${photo.similarity}%</div>
+      <button 
+        style="position: absolute; top: 8px; left: 8px; width: 28px; height: 28px; border-radius: 50%; background: var(--danger); color: white; border: none; cursor: pointer; font-weight: bold;"
+        onclick="removeFromCart(${photo.id})"
+      >×</button>
+    </div>
+  `).join('');
+}
+
+function removeFromCart(photoId) {
+  selectedPhotos.delete(photoId);
+  updateCartPage();
+  updateCartInfo();
+}
+
+function clearCart() {
+  if (confirm('Bạn có chắc muốn xóa tất cả ảnh khỏi giỏ hàng?')) {
+    selectedPhotos.clear();
+    updateCartPage();
+    updateCartInfo();
+  }
+}
+
+function updateCheckoutPage() {
+  const count = selectedPhotos.size;
+  const suggestion = getSuggestedPackage(count);
+  const originalPrice = calculateOriginalPrice(count);
+  const savings = originalPrice - suggestion.price;
+  
+  document.getElementById('checkout-count').textContent = count;
+  document.getElementById('checkout-package').textContent = suggestion.name;
+  document.getElementById('checkout-original').textContent = formatPrice(originalPrice);
+  document.getElementById('checkout-savings').textContent = formatPrice(savings);
+  document.getElementById('checkout-total').textContent = formatPrice(suggestion.price);
+}
+
+// ============================================
+// FACE SEARCH
+// ============================================
+function updateSearchScope() {
+  const scope = document.querySelector('input[name="search-scope"]:checked').value;
+  const albumSelector = document.getElementById('album-selector');
+  
+  if (scope === 'specific') {
+    albumSelector.classList.remove('hidden');
+  } else {
+    albumSelector.classList.add('hidden');
+  }
+}
+
+function toggleTag(element) {
+  element.classList.toggle('active');
+}
+
+function handleFileUpload(input) {
+  if (input.files && input.files[0]) {
+    simulateFaceSearch();
+  }
+}
+
+function startCamera(event) {
+  event.stopPropagation();
+  simulateFaceSearch();
+}
+
+function simulateFaceSearch() {
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const loadingText = document.getElementById('loading-text');
+  const loadingSubtext = document.getElementById('loading-subtext');
+  
+  loadingOverlay.classList.remove('hidden');
+  
+  const steps = [
+    { text: 'Đang phát hiện khuôn mặt...', subtext: 'AI đang phân tích ảnh của bạn', duration: 800 },
+    { text: 'Đang trích xuất đặc trưng...', subtext: 'Tạo vector embedding', duration: 600 },
+    { text: 'Đang tìm kiếm trong 1,800 ảnh...', subtext: 'So sánh với database', duration: 900 },
+    { text: 'Đang sắp xếp kết quả...', subtext: 'Tìm thấy 18 ảnh khớp', duration: 400 }
+  ];
+  
+  let currentStep = 0;
+  
+  function nextStep() {
+    if (currentStep < steps.length) {
+      loadingText.textContent = steps[currentStep].text;
+      loadingSubtext.textContent = steps[currentStep].subtext;
+      
+      setTimeout(() => {
+        currentStep++;
+        nextStep();
+      }, steps[currentStep].duration);
+    } else {
+      loadingOverlay.classList.add('hidden');
+      goToPage('results');
+    }
+  }
+  
+  nextStep();
+}
+
+// ============================================
+// PAYMENT
+// ============================================
+function toggleEmailInput() {
+  const checkbox = document.getElementById('email-checkbox');
+  const emailGroup = document.getElementById('email-group');
+  
+  if (checkbox.checked) {
+    emailGroup.classList.remove('hidden');
+  } else {
+    emailGroup.classList.add('hidden');
+  }
+}
+
+function processPayment() {
+  const phone = document.getElementById('phone-input').value;
+  
+  if (!phone) {
+    alert('Vui lòng nhập số điện thoại!');
+    return;
+  }
+  
+  // Validate phone
+  if (!/^0[0-9]{9}$/.test(phone)) {
+    alert('Số điện thoại không hợp lệ!');
+    return;
+  }
+  
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const loadingText = document.getElementById('loading-text');
+  const loadingSubtext = document.getElementById('loading-subtext');
+  
+  loadingOverlay.classList.remove('hidden');
+  loadingText.textContent = 'Đang xử lý thanh toán...';
+  loadingSubtext.textContent = 'Vui lòng đợi';
+  
+  setTimeout(() => {
+    loadingOverlay.classList.add('hidden');
+    
+    // Update success page
+    document.getElementById('order-code').textContent = Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('success-phone').textContent = phone;
+    
+    // Calculate expiry date (7 days from now)
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 7);
+    document.getElementById('expiry-date').textContent = expiryDate.toLocaleString('vi-VN');
+    
+    goToPage('success');
+    startCountdown();
+  }, 2000);
+}
+
+// ============================================
+// COUNTDOWN
+// ============================================
+function startCountdown() {
+  let days = 6, hours = 23, minutes = 45, seconds = 30;
+  
+  setInterval(() => {
+    seconds--;
+    
+    if (seconds < 0) {
+      seconds = 59;
+      minutes--;
+    }
+    
+    if (minutes < 0) {
+      minutes = 59;
+      hours--;
+    }
+    
+    if (hours < 0) {
+      hours = 23;
+      days--;
+    }
+    
+    if (days < 0) {
+      days = 0;
+      hours = 0;
+      minutes = 0;
+      seconds = 0;
+    }
+    
+    document.getElementById('countdown-days').textContent = days;
+    document.getElementById('countdown-hours').textContent = hours;
+    document.getElementById('countdown-minutes').textContent = minutes;
+    document.getElementById('countdown-seconds').textContent = seconds;
+  }, 1000);
+}
+
+// ============================================
+// DELIVERY PAGE
+// ============================================
+function renderDeliveryPhotos() {
+  const allPhotos = [...mockPhotos.bana, ...mockPhotos.hoian, ...mockPhotos.dragon];
+  const deliveryPhotos = allPhotos.filter(p => selectedPhotos.has(p.id)).slice(0, 5);
+  
+  document.getElementById('delivery-count').textContent = deliveryPhotos.length;
+  
+  const container = document.getElementById('delivery-grid');
+  container.innerHTML = deliveryPhotos.map(photo => `
+    <div class="photo-card" onclick="downloadPhoto(${photo.id})">
+      <div class="photo-placeholder">
+        <div class="photo-placeholder-icon">📷</div>
+        <div>Photo ${photo.id}</div>
+        <div style="font-size: .7rem; margin-top: 4px; color: var(--success);">HD - NO WATERMARK</div>
+      </div>
+      <div class="photo-overlay">
+        📥 Tải xuống
+      </div>
+    </div>
+  `).join('');
+}
+
+function downloadPhoto(photoId) {
+  alert(`Đang tải ảnh ${photoId}...\n(Demo mode - không tải thực tế)`);
+}
+
+function downloadAll() {
+  alert('Đang tạo file ZIP và tải xuống...\n(Demo mode - không tải thực tế)');
+}
+
+// ============================================
+// ORDER LOOKUP
+// ============================================
+function searchOrder() {
+  const orderCode = document.getElementById('lookup-order-code').value;
+  const phone = document.getElementById('lookup-phone').value;
+  
+  if (!orderCode && !phone) {
+    alert('Vui lòng nhập mã đơn hàng hoặc số điện thoại!');
+    return;
+  }
+  
+  const loadingOverlay = document.getElementById('loading-overlay');
+  loadingOverlay.classList.remove('hidden');
+  
+  setTimeout(() => {
+    loadingOverlay.classList.add('hidden');
+    document.getElementById('lookup-results').classList.remove('hidden');
+  }, 1000);
+}
+
+// ============================================
+// UTILITIES
+// ============================================
+function copyDownloadLink() {
+  const link = document.getElementById('download-link').textContent;
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = event.target;
+    const originalText = btn.textContent;
+    btn.textContent = '✅ Đã sao chép!';
+    btn.style.background = 'var(--success)';
+    
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = '';
+    }, 2000);
+  });
+}
+
+function toggleAlbumPhotos(id) {
+  const element = document.getElementById(id);
+  const toggleText = document.getElementById(id.replace('-photos', '-toggle'));
+  
+  if (element.style.display === 'none') {
+    element.style.display = 'block';
+    toggleText.textContent = 'Thu gọn';
+  } else {
+    element.style.display = 'none';
+    toggleText.textContent = 'Xem ảnh';
+  }
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// Update current time
+function updateTime() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('vi-VN');
+  const dateStr = now.toLocaleDateString('vi-VN');
+  document.getElementById('current-time').textContent = `${timeStr} • ${dateStr}`;
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Render initial content
+  renderAlbums('landing-albums', 3);
+  renderAlbums('albums-list');
+  renderPhotos('bana-grid', mockPhotos.bana);
+  renderPhotos('hoian-grid', mockPhotos.hoian);
+  renderPhotos('dragon-grid', mockPhotos.dragon);
+  renderDeliveryPhotos();
+  
+  // Update time
+  updateTime();
+  setInterval(updateTime, 1000);
+  
+  // Initialize cart info
+  updateCartInfo();
+  
+  console.log('✅ PhotoPro Demo initialized successfully!');
+  console.log('📊 Total albums:', mockAlbums.length);
+  console.log('📸 Total photos:', Object.values(mockPhotos).flat().length);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+/* ============================================
+   PhotoPro — Navigation Styles
+   ============================================ */
+
+/* ============================================
+   TOP NAV — Demo Navigation
+   ============================================ */
+.demo-topbar {
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  z-index: 1000;
+  background: var(--text);
+  color: #fff;
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
+  padding: 0 20px; 
+  height: 48px;
+  font-size: .85rem; 
+  font-weight: 500;
+  box-shadow: var(--shadow);
+}
+
+.demo-topbar-left { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+}
+
+.demo-topbar span { 
+  opacity: .7; 
+}
+
+.demo-label {
+  background: var(--accent);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+
+@media (max-width: 768px) {
+  .demo-topbar {
+    height: 56px;
+    padding: 0 16px;
+    font-size: .8rem;
+  }
+  
+  .demo-topbar-left {
+    gap: 8px;
+  }
+  
+  .demo-topbar-left span {
+    font-size: .75rem;
+  }
+  
+  .demo-label {
+    padding: 3px 10px;
+    font-size: .7rem;
+  }
+}
+
+/* ============================================
+   DEMO TABS — Switch between portals
+   ============================================ */
+.demo-tabs {
+  position: fixed; 
+  top: 48px; 
+  left: 0; 
+  right: 0; 
+  z-index: 999;
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  display: flex; 
+  align-items: stretch;
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+  -webkit-overflow-scrolling: touch;
+}
+
+.demo-tabs::-webkit-scrollbar {
+  height: 0;
+}
+
+.demo-tab {
+  padding: 12px 20px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: var(--transition);
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.demo-tab i[data-lucide] {
+  width: 18px;
+  height: 18px;
+}
+
+.demo-tab:hover { 
+  color: var(--primary); 
+  background: var(--primary-light); 
+}
+
+.demo-tab.active { 
+  color: var(--primary); 
+  border-bottom-color: var(--primary); 
+  background: var(--primary-light);
+}
+
+@media (max-width: 768px) {
+  .demo-tabs {
+    top: 56px;
+    padding: 0 4px;
+  }
+  
+  .demo-tab {
+    padding: 10px 14px;
+    font-size: .78rem;
+  }
+}
+
+/* Mobile scroll indicator */
+@media (max-width: 768px) {
+  .demo-tabs::after {
+    content: '→';
+    position: fixed;
+    right: 0;
+    top: 56px;
+    background: linear-gradient(90deg, transparent, var(--surface) 20%);
+    padding: 10px 16px;
+    pointer-events: none;
+    color: var(--text-muted);
+    font-weight: bold;
+  }
+}

@@ -1,0 +1,35 @@
+<!-- PAGE: ALBUMS -->
+<div class="page-section" id="albums">
+  <div class="container">
+    <div class="page-header">
+      <h1><i data-lucide="map-pin"></i> Bạn Đã Chụp Ảnh Tại Đâu?</h1>
+      <p>Chọn địa điểm để tìm ảnh nhanh hơn</p>
+    </div>
+
+    <div class="mb-3">
+      <button class="btn btn-primary btn-lg btn-block" onclick="navigationManager.goToPage('face-search')">
+        <i data-lucide="search"></i> TÌM TRONG TẤT CẢ ĐỊA ĐIỂM
+      </button>
+    </div>
+
+    <div class="card card-padded mb-3">
+      <h3 class="mb-2" style="font-size: 1.2rem; font-weight: 700;">Lọc Theo Khu Vực</h3>
+      <div class="tag-list">
+        <div class="tag active" onclick="uiManager.filterAlbums('all', event)">Tất cả</div>
+        <div class="tag" onclick="uiManager.filterAlbums('bana', event)">Bà Nà Hills</div>
+        <div class="tag" onclick="uiManager.filterAlbums('hoian', event)">Hội An</div>
+        <div class="tag" onclick="uiManager.filterAlbums('danang', event)">Đà Nẵng</div>
+        <div class="tag" onclick="uiManager.filterAlbums('sontra', event)">Sơn Trà</div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <div class="alert-icon"><i data-lucide="lightbulb"></i></div>
+      <div class="alert-content">
+        <strong>Không nhớ địa điểm?</strong> Đừng lo! Nhấn nút "Tìm trong tất cả địa điểm" và AI sẽ tìm giúp bạn.
+      </div>
+    </div>
+
+    <div class="album-grid" id="albums-list"></div>
+  </div>
+</div>
