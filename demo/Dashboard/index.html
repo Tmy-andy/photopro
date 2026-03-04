@@ -79,8 +79,8 @@
           <div class="user-menu" onclick="toggleUserMenu()">
             <div class="user-avatar">AS</div>
             <div class="user-info">
-              <div class="user-name">Admin System</div>
-              <div class="user-role" id="userRole">Admin System</div>
+              <div class="user-name" id="headerUserName">Admin System</div>
+              <div class="user-role" id="headerUserRole">Admin System</div>
             </div>
             <i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i>
           </div>
@@ -244,8 +244,8 @@
           
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Album bán chạy</h3>
-              <a href="pages/albums.html" class="btn btn-sm btn-outline">Xem tất cả</a>
+              <h3 class="card-title">Địa điểm bán chạy</h3>
+              <a href="pages/locations.html" class="btn btn-sm btn-outline">Xem tất cả</a>
             </div>
             <div class="card-body">
               <div style="display: flex; flex-direction: column; gap: 16px;">
@@ -324,13 +324,14 @@
       
       const user = JSON.parse(userData);
       
-      // Update user info in header
-      const userNameEl = document.querySelector('.user-name');
-      const userRoleEl = document.getElementById('userRole');
-      const userAvatarEl = document.querySelector('.user-avatar');
+      // Staff should not see admin dashboard — redirect to staff upload page
+      if (user.role === 'staff') {
+        window.location.href = 'pages/staff-upload.html';
+        return;
+      }
       
-      if (userNameEl) userNameEl.textContent = user.name;
-      if (userRoleEl) userRoleEl.textContent = user.role;
+      // Update avatar initials
+      const userAvatarEl = document.querySelector('.user-avatar');
       if (userAvatarEl) {
         const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
         userAvatarEl.textContent = initials;
@@ -339,7 +340,6 @@
     
     // Initialize Dashboard Manager
     const manager = new DashboardManager();
-    manager.init();
     
     // Initialize icons
     if (typeof lucide !== 'undefined') {
@@ -421,14 +421,7 @@
       }
     });
     
-    // Role-based visibility
-    const currentRole = 'admin-system'; // This should come from auth
-    document.querySelectorAll('[data-role]').forEach(el => {
-      const allowedRoles = el.dataset.role.split(',');
-      if (!allowedRoles.includes(currentRole)) {
-        el.style.display = 'none';
-      }
-    });
+    // Role-based visibility is handled by DashboardManager
   </script>
 </body>
 </html>

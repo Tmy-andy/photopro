@@ -17,103 +17,101 @@
   <link rel="stylesheet" href="../css/components.css">
 </head>
 <body>
-
-<!-- Sidebar -->
-<div class="sidebar">
-  <div class="sidebar-header">
-    <i data-lucide="camera"></i>
-    <span>PhotoPro</span>
-  </div>
-  
-  <nav class="sidebar-nav">
-    <a href="../index.html" class="nav-item">
-      <i data-lucide="layout-dashboard"></i>
-      <span>Dashboard</span>
-    </a>
-    <a href="locations.html" class="nav-item">
-      <i data-lucide="map-pin"></i>
-      <span>Địa Điểm</span>
-    </a>
-    <a href="orders.html" class="nav-item">
-      <i data-lucide="shopping-bag"></i>
-      <span>Đơn hàng</span>
-    </a>
-    <a href="staff.html" class="nav-item" data-role="admin-system">
-      <i data-lucide="users"></i>
-      <span>Nhân viên</span>
-    </a>
-    <a href="pricing.html" class="nav-item" data-role="admin-system,admin-sales">
-      <i data-lucide="tag"></i>
-      <span>Giá & Gói</span>
-    </a>
-    <a href="revenue.html" class="nav-item" data-role="admin-system,admin-sales">
-      <i data-lucide="trending-up"></i>
-      <span>Doanh thu</span>
-    </a>
-    <a href="staff-stats.html" class="nav-item" data-role="admin-system,admin-sales,manager,staff">
-      <i data-lucide="bar-chart-2"></i>
-      <span>Thống kê NV</span>
-    </a>
-    <a href="settings.html" class="nav-item" data-role="admin-system">
-      <i data-lucide="settings"></i>
-      <span>Cài đặt</span>
-    </a>
-  </nav>
-  
-  <div class="sidebar-footer">
-    <a href="profile.html" class="nav-item active">
-      <i data-lucide="user"></i>
-      <span>Hồ sơ</span>
-    </a>
-    <a href="#" class="nav-item" onclick="handleLogout(); return false;">
-      <i data-lucide="log-out"></i>
-      <span>Đăng xuất</span>
-    </a>
-  </div>
-</div>
-
-<!-- Main Content -->
-<div class="main-content">
-  <!-- Header -->
-  <header class="header">
-    <div class="header-left">
-      <button class="mobile-menu-btn" onclick="toggleSidebar()">
-        <i data-lucide="menu"></i>
-      </button>
-      <h2>Hồ Sơ Cá Nhân</h2>
-    </div>
-    
-    <div class="header-right">
-      <button class="icon-btn">
-        <i data-lucide="bell"></i>
-        <span class="badge">3</span>
-      </button>
-      
-      <div class="user-menu">
-        <button class="user-menu-btn" onclick="toggleUserMenu()">
-          <div class="avatar">
-            <i data-lucide="user"></i>
-          </div>
-          <div class="user-info">
-            <div class="user-name" id="headerUserName">Admin</div>
-            <div class="user-role" id="headerUserRole">Admin System</div>
-          </div>
-          <i data-lucide="chevron-down"></i>
-        </button>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="sidebar-logo">
+          <i data-lucide="camera"></i>
+          PhotoPro Admin
+        </a>
       </div>
-    </div>
-  </header>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Tổng quan</div>
+          <a href="../index.html" class="nav-item">
+            <i data-lucide="layout-dashboard"></i>
+            Dashboard
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Quản lý</div>
+          <a href="locations.html" class="nav-item">
+            <i data-lucide="map-pin"></i>
+            Địa Điểm
+          </a>
+          <a href="orders.html" class="nav-item">
+            <i data-lucide="shopping-bag"></i>
+            Đơn hàng
+          </a>
+          <a href="staff.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="users"></i>
+            Nhân viên
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Kinh doanh</div>
+          <a href="pricing.html" class="nav-item" data-role="admin-system,admin-sales">
+            <i data-lucide="tag"></i>
+            Bảng giá
+          </a>
+          <a href="revenue.html" class="nav-item">
+            <i data-lucide="trending-up"></i>
+            Doanh thu
+          </a>
+          <a href="staff-stats.html" class="nav-item" data-role="admin-system,admin-sales,manager,staff">
+            <i data-lucide="bar-chart-2"></i>
+            Thống kê NV
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a href="settings.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="settings"></i>
+            Cài đặt
+          </a>
+        </div>
+      </nav>
+    </aside>
 
-  <!-- Page Content -->
-  <div class="page-content">
-    <div class="container">
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1 class="header-title">Hồ Sơ Cá Nhân</h1>
+        <div class="header-actions">
+          <div class="user-menu" onclick="toggleUserMenu()">
+            <div class="user-avatar" id="headerAvatar">AS</div>
+            <div class="user-info">
+              <div class="user-name" id="headerUserName">Admin System</div>
+              <div class="user-role" id="headerUserRole">Admin System</div>
+            </div>
+            <i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i>
+          </div>
+          
+          <div class="dropdown-menu" id="userMenu">
+            <a href="profile.html" class="dropdown-item">
+              <i data-lucide="user"></i> Hồ sơ
+            </a>
+            <a href="settings.html" class="dropdown-item" data-role="admin-system">
+              <i data-lucide="settings"></i> Cài đặt
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="handleLogout(); return false;">
+              <i data-lucide="log-out"></i> Đăng xuất
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-area">
       
       <!-- Profile Header -->
       <div class="card mb-3">
-        <div class="profile-banner">
-          <div class="profile-banner-overlay"></div>
-        </div>
-        <div class="profile-header-content">
+        <div class="profile-header-content" style="margin-top: 0; padding-top: 24px;">
           <div class="profile-avatar-wrapper">
             <div class="profile-avatar">
               <i data-lucide="user" style="width: 48px; height: 48px;"></i>
@@ -143,21 +141,20 @@
         </div>
       </div>
 
-      <!-- Tabs -->
-      <div class="tabs mb-3">
-        <button class="tab active" onclick="switchProfileTab('info')">
-          <i data-lucide="user"></i> Thông tin
-        </button>
-        <button class="tab" onclick="switchProfileTab('security')">
-          <i data-lucide="lock"></i> Bảo mật
-        </button>
-        <button class="tab" onclick="switchProfileTab('activity')">
-          <i data-lucide="activity"></i> Hoạt động
-        </button>
-        <button class="tab" onclick="switchProfileTab('notifications')">
-          <i data-lucide="bell"></i> Thông báo
-        </button>
-      </div>
+        <div class="tabs mb-3">
+          <button class="tab active" onclick="switchProfileTab('info', this)">
+            <i data-lucide="user"></i> Thông tin
+          </button>
+          <button class="tab" onclick="switchProfileTab('security', this)">
+            <i data-lucide="lock"></i> Bảo mật
+          </button>
+          <button class="tab" onclick="switchProfileTab('activity', this)">
+            <i data-lucide="activity"></i> Hoạt động
+          </button>
+          <button class="tab" onclick="switchProfileTab('notifications', this)">
+            <i data-lucide="bell"></i> Thông báo
+          </button>
+        </div>
 
       <!-- Tab Content: Info -->
       <div id="tab-info" class="tab-content active">
@@ -197,9 +194,18 @@
                 <input type="text" class="form-input" id="address" value="123 Đường ABC, Quận 1, TP.HCM" disabled>
               </div>
 
-              <div class="form-group">
-                <label class="form-label">Giới thiệu</label>
-                <textarea class="form-input" id="bio" rows="4" disabled>Quản trị viên hệ thống với kinh nghiệm 5+ năm trong lĩnh vực nhiếp ảnh và quản lý doanh nghiệp.</textarea>
+              <!-- Staff-only: Mã NV & Địa điểm được phân công -->
+              <div id="staffInfoSection" style="display: none;">
+                <div class="form-row">
+                  <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Mã nhân viên</label>
+                    <input type="text" class="form-input" id="employeeCode" value="" disabled>
+                  </div>
+                  <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Địa điểm được phân công</label>
+                    <input type="text" class="form-input" id="assignedLocations" value="" disabled>
+                  </div>
+                </div>
               </div>
 
               <div class="form-actions" id="formActions" style="display: none;">
@@ -289,8 +295,8 @@
                   <i data-lucide="check"></i>
                 </div>
                 <div class="activity-content">
-                  <strong>Tạo album mới</strong>
-                  <p>Album "Bà Nà Hills" đã được tạo với 150 ảnh</p>
+                  <strong>Tạo địa điểm mới</strong>
+                  <p>Địa điểm "Bà Nà Hills" đã được tạo với 150 ảnh</p>
                   <small>2 giờ trước</small>
                 </div>
               </div>
@@ -320,7 +326,7 @@
                 </div>
                 <div class="activity-content">
                   <strong>Xóa ảnh hết hạn</strong>
-                  <p>45 ảnh đã hết hạn đã được xóa tự động</p>
+                  <p>45 ảnh đã hết hạn tại các địa điểm đã được xóa tự động</p>
                   <small>2 ngày trước</small>
                 </div>
               </div>
@@ -359,8 +365,8 @@
               </div>
               <div class="notification-item">
                 <div>
-                  <strong>Album sắp hết hạn</strong>
-                  <p>Cảnh báo trước 3 ngày khi album hết hạn</p>
+                  <strong>Địa điểm sắp hết hạn</strong>
+                  <p>Cảnh báo trước 3 ngày khi địa điểm hết hạn</p>
                 </div>
                 <label class="switch">
                   <input type="checkbox" checked>
@@ -392,37 +398,16 @@
         </div>
       </div>
 
-    </div>
+      </div>
+    </main>
   </div>
-</div>
 
 <style>
-/* Profile Banner */
-.profile-banner {
-  height: 200px;
-  background: linear-gradient(135deg, var(--primary) 0%, #0f5840 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.profile-banner-overlay {
-  position: absolute;
-  inset: 0;
-  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="white" opacity="0.05"/></svg>');
-  animation: slide 20s linear infinite;
-}
-
-@keyframes slide {
-  from { transform: translateX(0); }
-  to { transform: translateX(100px); }
-}
-
 .profile-header-content {
   padding: 0 24px 24px 24px;
   display: flex;
   gap: 24px;
-  align-items: flex-end;
-  margin-top: -60px;
+  align-items: center;
   position: relative;
 }
 
@@ -446,7 +431,6 @@
 
 .profile-info {
   flex: 1;
-  padding-top: 40px;
 }
 
 .profile-info h1 {
@@ -708,24 +692,71 @@ input:checked + .slider:before {
 <script>
 // Initialize Dashboard Manager
 const manager = new DashboardManager();
-manager.init();
 
-// Load user data
-window.addEventListener('load', function() {
-  const userData = JSON.parse(localStorage.getItem('photopro_user') || '{}');
-  
-  if (userData.name) {
-    document.getElementById('profileName').textContent = userData.name;
-    document.getElementById('fullName').value = userData.name;
-    document.getElementById('profileEmail').textContent = userData.username;
-    document.getElementById('email').value = userData.username;
-    document.getElementById('userRole').value = userData.role;
+// Update avatar initials
+const avatarEl = document.getElementById('headerAvatar');
+if (avatarEl && manager.currentUser.name) {
+  const initials = manager.currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  avatarEl.textContent = initials;
+}
+
+// ===== SIDEBAR SWAP FOR STAFF ROLE =====
+if (manager.currentUser.role === 'staff') {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) {
+    sidebar.innerHTML = `
+      <div class="sidebar-header">
+        <a href="staff-upload.html" class="sidebar-logo">
+          <i data-lucide="camera"></i>
+          PhotoPro Staff
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Công việc</div>
+          <a href="staff-upload.html" class="nav-item">
+            <i data-lucide="upload-cloud"></i> Upload Ảnh
+          </a>
+          <a href="staff-stats.html" class="nav-item">
+            <i data-lucide="bar-chart-2"></i> Thống kê của tôi
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Tài khoản</div>
+          <a href="profile.html" class="nav-item active">
+            <i data-lucide="user"></i> Hồ sơ
+          </a>
+          <a href="#" class="nav-item" onclick="handleLogout(); return false;">
+            <i data-lucide="log-out"></i> Đăng xuất
+          </a>
+        </div>
+      </nav>
+    `;
+    lucide.createIcons();
   }
-});
+
+  // Update page title for staff
+  document.title = 'Hồ Sơ - PhotoPro Staff';
+}
+
+// Show staff-specific info if role is staff
+if (manager.currentUser.role === 'staff') {
+  const staffSection = document.getElementById('staffInfoSection');
+  if (staffSection) {
+    staffSection.style.display = 'block';
+  }
+  const codeField = document.getElementById('employeeCode');
+  if (codeField && manager.currentUser.employee_code) {
+    codeField.value = manager.currentUser.employee_code;
+  }
+  const locField = document.getElementById('assignedLocations');
+  if (locField && manager.currentUser.locations) {
+    locField.value = manager.currentUser.locations.join(', ');
+  }
+}
 
 // Tab Switching
-function switchProfileTab(tabName) {
-  // Hide all tabs
+function switchProfileTab(tabName, btn) {
   document.querySelectorAll('.tab-content').forEach(tab => {
     tab.classList.remove('active');
   });
@@ -733,9 +764,8 @@ function switchProfileTab(tabName) {
     tab.classList.remove('active');
   });
   
-  // Show selected tab
   document.getElementById('tab-' + tabName).classList.add('active');
-  event.target.closest('.tab').classList.add('active');
+  if (btn) btn.classList.add('active');
   
   lucide.createIcons();
 }
@@ -747,7 +777,7 @@ function toggleEditMode() {
   const editBtn = document.getElementById('editInfoBtn');
   
   inputs.forEach(input => {
-    if (input.id !== 'userRole') { // Don't allow editing role
+    if (input.id !== 'userRole' && input.id !== 'employeeCode' && input.id !== 'assignedLocations') {
       input.disabled = !input.disabled;
     }
   });
@@ -791,10 +821,23 @@ document.getElementById('passwordForm').addEventListener('submit', function(e) {
   this.reset();
 });
 
+// Toggle User Menu
+function toggleUserMenu() {
+  document.getElementById('userMenu').classList.toggle('active');
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.user-menu') && !e.target.closest('.dropdown-menu')) {
+    const menu = document.getElementById('userMenu');
+    if (menu) menu.classList.remove('active');
+  }
+});
+
 // Handle Logout
 function handleLogout() {
   if (confirm('Bạn có chắc muốn đăng xuất?')) {
     localStorage.removeItem('photopro_user');
+    localStorage.removeItem('auth_token');
     window.location.href = '../login.html';
   }
 }

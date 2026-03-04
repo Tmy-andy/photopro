@@ -112,6 +112,13 @@
               <span>Quản lý vận hành</span>
             </div>
           </button>
+          <button type="button" class="demo-account-btn" onclick="fillDemoAccount('staff')">
+            <i data-lucide="camera"></i>
+            <div>
+              <strong>Nhân viên</strong>
+              <span>Upload & xem thống kê</span>
+            </div>
+          </button>
         </div>
       </div>
     </form>
@@ -331,6 +338,10 @@ function fillDemoAccount(role) {
     'manager': {
       username: 'manager@photopro.vn',
       password: 'manager123'
+    },
+    'staff': {
+      username: 'staff@photopro.vn',
+      password: 'staff123'
     }
   };
   
@@ -362,7 +373,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   const validAccounts = {
     'admin@photopro.vn': { password: 'admin123', role: 'admin-system', name: 'Admin System' },
     'sales@photopro.vn': { password: 'sales123', role: 'admin-sales', name: 'Admin Sales' },
-    'manager@photopro.vn': { password: 'manager123', role: 'manager', name: 'Manager' }
+    'manager@photopro.vn': { password: 'manager123', role: 'manager', name: 'Manager' },
+    'staff@photopro.vn': { password: 'staff123', role: 'staff', name: 'Nguyễn Văn A', employee_code: 'NV001', locations: ['Bà Nà Hills', 'Hội An'] }
   };
   
   const account = validAccounts[username];
@@ -373,6 +385,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
       username: username,
       role: account.role,
       name: account.name,
+      employee_code: account.employee_code || null,
+      locations: account.locations || [],
       loginTime: new Date().toISOString(),
       rememberMe: rememberMe
     };
@@ -382,8 +396,12 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     // Show success message
     alert('Đăng nhập thành công! Đang chuyển hướng...');
     
-    // Redirect to dashboard
-    window.location.href = 'index.html';
+    // Redirect based on role
+    if (account.role === 'staff') {
+      window.location.href = 'pages/staff-upload.html';
+    } else {
+      window.location.href = 'index.html';
+    }
   } else {
     alert('Tên đăng nhập hoặc mật khẩu không đúng!');
   }

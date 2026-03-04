@@ -3,13 +3,30 @@
 
 class DashboardManager {
   constructor() {
-    this.currentUser = {
-      id: 1,
-      name: 'Admin System',
-      email: 'admin@photopro.vn',
-      role: 'admin-system', // admin-system | admin-sales | manager | staff
-      avatar: 'AS'
-    };
+    // Try to load user from localStorage (saved by login page)
+    const savedUser = JSON.parse(localStorage.getItem('photopro_user') || 'null');
+    
+    if (savedUser) {
+      this.currentUser = {
+        id: savedUser.id || 1,
+        name: savedUser.name || 'Admin System',
+        email: savedUser.username || 'admin@photopro.vn',
+        role: savedUser.role || 'admin-system',
+        avatar: (savedUser.name || 'AS').split(' ').map(w => w[0]).join('').substring(0, 2),
+        employee_code: savedUser.employee_code || null,
+        locations: savedUser.locations || []
+      };
+    } else {
+      this.currentUser = {
+        id: 1,
+        name: 'Admin System',
+        email: 'admin@photopro.vn',
+        role: 'admin-system', // admin-system | admin-sales | manager | staff
+        avatar: 'AS',
+        employee_code: null,
+        locations: []
+      };
+    }
     
     this.init();
   }
@@ -52,6 +69,7 @@ class DashboardManager {
   
   logout() {
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('photopro_user');
     localStorage.removeItem('user');
     window.location.href = '/login.html';
   }
@@ -81,15 +99,50 @@ class DashboardManager {
   
   // Update UI
   updateUserInfo() {
+    const roleNames = {
+      'admin-system': 'Admin System',
+      'admin-sales': 'Admin Sales',
+      'manager': 'Manager',
+      'staff': 'Nhân viên'
+    };
+
+    // Update header user name
+    const headerUserName = document.getElementById('headerUserName');
+    if (headerUserName) {
+      headerUserName.textContent = this.currentUser.name;
+    }
+    
+    // Update header user role
+    const headerUserRole = document.getElementById('headerUserRole');
+    if (headerUserRole) {
+      headerUserRole.textContent = roleNames[this.currentUser.role] || this.currentUser.role;
+    }
+
+    // Update form role field (profile page)
     const roleElement = document.getElementById('userRole');
     if (roleElement) {
-      const roleNames = {
-        'admin-system': 'Admin System',
-        'admin-sales': 'Admin Sales',
-        'manager': 'Manager',
-        'staff': 'Nhân viên'
-      };
-      roleElement.textContent = roleNames[this.currentUser.role] || this.currentUser.role;
+      roleElement.value = roleNames[this.currentUser.role] || this.currentUser.role;
+    }
+
+    // Update profile page fields if they exist
+    const profileName = document.getElementById('profileName');
+    if (profileName) {
+      profileName.textContent = this.currentUser.name;
+    }
+    
+    const profileEmail = document.getElementById('profileEmail');
+    if (profileEmail) {
+      profileEmail.textContent = this.currentUser.email;
+    }
+    
+    const fullName = document.getElementById('fullName');
+    if (fullName) {
+      fullName.value = this.currentUser.name;
+    }
+    
+    const emailField = document.getElementById('email');
+    if (emailField) {
+      emailField.value = this.currentUser.email;
     }
   }
   

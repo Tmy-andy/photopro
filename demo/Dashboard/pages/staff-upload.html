@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Ảnh - PhotoPro Staff</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="staff-upload.html" class="sidebar-logo">
+          <i data-lucide="camera"></i>
+          PhotoPro Staff
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Công việc</div>
+          <a href="staff-upload.html" class="nav-item active">
+            <i data-lucide="upload-cloud"></i>
+            Upload Ảnh
+          </a>
+          <a href="staff-stats.html" class="nav-item">
+            <i data-lucide="bar-chart-2"></i>
+            Thống kê của tôi
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Tài khoản</div>
+          <a href="profile.html" class="nav-item">
+            <i data-lucide="user"></i>
+            Hồ sơ
+          </a>
+          <a href="#" class="nav-item" onclick="handleLogout(); return false;">
+            <i data-lucide="log-out"></i>
+            Đăng xuất
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1 class="header-title">Upload Ảnh</h1>
+        <div class="header-actions">
+          <div class="user-menu" onclick="toggleUserMenu()">
+            <div class="user-avatar" id="headerAvatar">NV</div>
+            <div class="user-info">
+              <div class="user-name" id="headerUserName">Nhân viên</div>
+              <div class="user-role" id="headerUserRole">Staff</div>
+            </div>
+            <i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i>
+          </div>
+          
+          <div class="dropdown-menu" id="userMenu">
+            <a href="profile.html" class="dropdown-item">
+              <i data-lucide="user"></i> Hồ sơ
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="handleLogout(); return false;">
+              <i data-lucide="log-out"></i> Đăng xuất
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-area">
+        
+        <!-- Quick Stats Banner -->
+        <div class="quick-stats-banner mb-4">
+          <div class="quick-stat-item">
+            <div class="quick-stat-icon">
+              <i data-lucide="map-pin" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div>
+              <div class="quick-stat-value" id="qsLocations">2</div>
+              <div class="quick-stat-label">Địa điểm</div>
+            </div>
+          </div>
+          <div class="quick-stats-divider"></div>
+          <div class="quick-stat-item">
+            <div class="quick-stat-icon">
+              <i data-lucide="image" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div>
+              <div class="quick-stat-value" id="qsPhotos">135</div>
+              <div class="quick-stat-label">Tổng ảnh</div>
+            </div>
+          </div>
+          <div class="quick-stats-divider"></div>
+          <div class="quick-stat-item">
+            <div class="quick-stat-icon sold">
+              <i data-lucide="shopping-bag" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div>
+              <div class="quick-stat-value" id="qsSold">73</div>
+              <div class="quick-stat-label">Đã bán</div>
+            </div>
+          </div>
+          <div class="quick-stats-divider"></div>
+          <div class="quick-stat-item">
+            <div class="quick-stat-icon today">
+              <i data-lucide="calendar" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div>
+              <div class="quick-stat-value" id="qsToday">12</div>
+              <div class="quick-stat-label">Hôm nay</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 1: Location Selector -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="map-pin" style="width: 20px; height: 20px;"></i>
+              Chọn Địa Điểm
+            </h3>
+            <span class="badge badge-primary" id="locBadge">2 địa điểm</span>
+          </div>
+          <div class="card-body">
+            <div class="loc-grid" id="locationGrid">
+              <!-- Populated by JS from user's assigned locations -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Upload Zone (hidden until location selected) -->
+        <div id="uploadSection" style="display: none;">
+          
+          <!-- Selected Location Header -->
+          <div class="selected-loc-banner mb-4">
+            <div class="selected-loc-left">
+              <div class="selected-loc-icon" id="selectedLocIcon">
+                <i data-lucide="map-pin" style="width: 22px; height: 22px;"></i>
+              </div>
+              <div>
+                <h3 style="margin: 0; font-size: 18px; font-weight: 700;" id="selectedLocationName">—</h3>
+                <span style="font-size: 13px; opacity: 0.85;" id="selectedLocationMeta">—</span>
+              </div>
+            </div>
+            <div class="selected-loc-right">
+              <span class="badge badge-success" style="font-size: 12px; padding: 4px 12px;">
+                <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i> Đang hoạt động
+              </span>
+            </div>
+          </div>
+
+          <!-- Upload Zone -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="upload-cloud" style="width: 20px; height: 20px;"></i>
+                Tải ảnh lên
+              </h3>
+              <span class="badge badge-primary" id="uploadCount">0 ảnh</span>
+            </div>
+            <div class="card-body">
+              <div class="upload-drop-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/heic" style="display: none;" onchange="handleFileSelect(event)">
+                <div class="upload-drop-content">
+                  <div class="upload-drop-icon-ring">
+                    <i data-lucide="cloud-upload" style="width: 36px; height: 36px;"></i>
+                  </div>
+                  <h4 style="margin: 12px 0 4px 0; font-weight: 600; font-size: 16px;">Kéo thả ảnh vào đây</h4>
+                  <p style="color: var(--text-muted); margin: 0 0 12px 0; font-size: 13px;">hoặc nhấn để chọn file từ máy tính</p>
+                  <div class="upload-drop-specs">
+                    <span><i data-lucide="file-image" style="width: 13px; height: 13px;"></i> JPG, PNG, HEIC</span>
+                    <span><i data-lucide="layers" style="width: 13px; height: 13px;"></i> Tối đa 20 ảnh/lần</span>
+                    <span><i data-lucide="hard-drive" style="width: 13px; height: 13px;"></i> 50MB/ảnh</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Upload Progress -->
+              <div id="uploadProgress" style="display: none; margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h5 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <span class="upload-spinner"></span> Đang tải lên...
+                  </h5>
+                  <span class="text-muted" id="progressSummary">0/0 hoàn thành</span>
+                </div>
+                <div class="upload-file-list" id="uploadFileList">
+                  <!-- File progress items added by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Photo Grid (own uploads) -->
+          <div class="card">
+            <div class="card-header">
+              <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="images" style="width: 20px; height: 20px;"></i>
+                Ảnh đã upload
+              </h3>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="text-muted" id="photoCount">0 ảnh</span>
+                <div class="photo-view-toggle">
+                  <button class="view-btn active" onclick="setPhotoView('grid', this)" title="Dạng lưới">
+                    <i data-lucide="grid-3x3" style="width: 16px; height: 16px;"></i>
+                  </button>
+                  <button class="view-btn" onclick="setPhotoView('list', this)" title="Dạng danh sách">
+                    <i data-lucide="list" style="width: 16px; height: 16px;"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="photo-grid" id="photoGrid">
+                <!-- Populated by JS -->
+              </div>
+              <div id="emptyPhotos" class="empty-state-pro">
+                <div class="empty-state-icon">
+                  <i data-lucide="image-plus" style="width: 40px; height: 40px;"></i>
+                </div>
+                <h4 style="margin: 12px 0 4px 0; font-weight: 600;">Chưa có ảnh nào</h4>
+                <p style="color: var(--text-muted); margin: 0; font-size: 13px;">Hãy upload ảnh đầu tiên cho địa điểm này!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+<style>
+/* ===== QUICK STATS BANNER ===== */
+.quick-stats-banner {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 16px 24px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.quick-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  justify-content: center;
+}
+
+.quick-stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.quick-stat-icon.sold {
+  background: #dcfce7;
+  color: var(--success);
+}
+
+.quick-stat-icon.today {
+  background: #fef3e8;
+  color: #d4870e;
+}
+
+.quick-stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.quick-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.quick-stats-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--border);
+  margin: 0 8px;
+}
+
+/* ===== LOCATION GRID (Redesigned) ===== */
+.loc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.loc-card {
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.loc-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px rgba(26, 107, 78, 0.1);
+  transform: translateY(-2px);
+}
+
+.loc-card.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 4px 20px rgba(26, 107, 78, 0.15);
+}
+
+.loc-card-top {
+  height: 6px;
+  width: 100%;
+}
+
+.loc-card-body {
+  padding: 20px;
+}
+
+.loc-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.loc-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.loc-card-name {
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.loc-card-date {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.loc-card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.loc-card-stat {
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.03);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.loc-card.selected .loc-card-stat {
+  background: rgba(26, 107, 78, 0.08);
+}
+
+.loc-card-stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1.1;
+}
+
+.loc-card-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.loc-card-check {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(26, 107, 78, 0.3);
+}
+
+.loc-card.selected .loc-card-check {
+  display: flex;
+}
+
+/* ===== SELECTED LOCATION BANNER ===== */
+.selected-loc-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, var(--primary) 0%, #145a3e 100%);
+  border-radius: var(--radius-lg);
+  color: white;
+}
+
+.selected-loc-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.selected-loc-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== UPLOAD DROP ZONE (Redesigned) ===== */
+.upload-drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 40px 24px;
+  cursor: pointer;
+  transition: all 0.25s;
+  background: linear-gradient(135deg, rgba(26,107,78,0.02) 0%, rgba(26,107,78,0.06) 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-drop-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.upload-drop-zone:hover,
+.upload-drop-zone.dragover {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(26,107,78,0.04) 0%, rgba(26,107,78,0.10) 100%);
+  box-shadow: 0 0 0 4px rgba(26, 107, 78, 0.08);
+}
+
+.upload-drop-icon-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  transition: transform 0.2s;
+}
+
+.upload-drop-zone:hover .upload-drop-icon-ring {
+  transform: scale(1.08);
+  background: rgba(26, 107, 78, 0.15);
+}
+
+.upload-drop-specs {
+  display: inline-flex;
+  gap: 16px;
+  padding: 8px 20px;
+  background: var(--surface-alt);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.upload-drop-specs span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Upload Spinner */
+.upload-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Upload File List */
+.upload-file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface-alt);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  transition: border-color 0.2s;
+}
+
+.upload-file-item.done {
+  border-color: #bbf7d0;
+}
+
+.upload-file-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.upload-file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.upload-file-name {
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upload-file-size {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.upload-file-progress {
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.progress-bar-fill.error {
+  background: var(--danger);
+}
+
+.upload-file-status {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.upload-file-status.done {
+  background: #dcfce7;
+  color: var(--success);
+}
+
+.upload-file-status.error {
+  background: #fee2e2;
+  color: var(--danger);
+}
+
+/* ===== PHOTO VIEW TOGGLE ===== */
+.photo-view-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.view-btn {
+  padding: 6px 10px;
+  background: var(--surface);
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+}
+
+.view-btn.active {
+  background: var(--primary);
+  color: white;
+}
+
+.view-btn:not(.active):hover {
+  background: var(--surface-alt);
+}
+
+/* ===== PHOTO GRID (Redesigned) ===== */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+.photo-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.photo-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  border-color: transparent;
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-item-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: white;
+  font-size: 11px;
+}
+
+.photo-item-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state-pro {
+  text-align: center;
+  padding: 56px 24px;
+}
+
+.empty-state-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .loc-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .photo-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+  
+  .quick-stats-banner {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .quick-stats-divider {
+    display: none;
+  }
+  
+  .quick-stat-item {
+    flex: 0 0 calc(50% - 6px);
+  }
+}
+</style>
+
+<script src="../js/dashboardManager.js"></script>
+<script>
+// ===== AUTH CHECK =====
+const userData = JSON.parse(localStorage.getItem('photopro_user') || 'null');
+if (!userData) {
+  window.location.href = '../login.html';
+} else if (userData.role !== 'staff') {
+  window.location.href = '../index.html';
+}
+
+// Init Dashboard Manager
+const manager = new DashboardManager();
+
+// Update header avatar
+const avatarEl = document.getElementById('headerAvatar');
+if (avatarEl && manager.currentUser.name) {
+  const initials = manager.currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  avatarEl.textContent = initials;
+}
+if (manager.currentUser.name) {
+  document.getElementById('headerUserName').textContent = manager.currentUser.name;
+}
+
+// ===== LOCATION SELECTOR =====
+const assignedLocations = manager.currentUser.locations || [];
+
+const locationData = {
+  'Bà Nà Hills': { date: '20/02/2026', myPhotos: 80, sold: 45, color: '#1a6b4e', bg: '#e8f5f0' },
+  'Hội An':      { date: '19/02/2026', myPhotos: 55, sold: 28, color: '#2563eb', bg: '#eff6ff' },
+  'Cầu Rồng':   { date: '18/02/2026', myPhotos: 30, sold: 12, color: '#d4870e', bg: '#fef3e8' },
+  'Sơn Trà':    { date: '17/02/2026', myPhotos: 0,  sold: 0,  color: '#7c3aed', bg: '#f5f3ff' },
+  'Mỹ Khê':     { date: '16/02/2026', myPhotos: 0,  sold: 0,  color: '#dc2626', bg: '#fef2f2' }
+};
+
+let selectedLocation = null;
+
+// Update quick stats
+const totalPhotos = assignedLocations.reduce((sum, name) => sum + (locationData[name]?.myPhotos || 0), 0);
+const totalSold = assignedLocations.reduce((sum, name) => sum + (locationData[name]?.sold || 0), 0);
+document.getElementById('qsLocations').textContent = assignedLocations.length;
+document.getElementById('qsPhotos').textContent = totalPhotos;
+document.getElementById('qsSold').textContent = totalSold;
+document.getElementById('locBadge').textContent = assignedLocations.length + ' địa điểm';
+
+function renderLocations() {
+  const grid = document.getElementById('locationGrid');
+  
+  if (assignedLocations.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+        <div class="empty-state-icon" style="margin: 0 auto 12px;">
+          <i data-lucide="map-pin-off" style="width: 32px; height: 32px;"></i>
+        </div>
+        <h4 style="margin: 0 0 4px 0; font-weight: 600;">Chưa có địa điểm</h4>
+        <p style="margin: 0;">Bạn chưa được phân công vào địa điểm nào. Liên hệ Admin để được phân công.</p>
+      </div>
+    `;
+    lucide.createIcons();
+    return;
+  }
+  
+  grid.innerHTML = assignedLocations.map(name => {
+    const d = locationData[name] || { date: '—', myPhotos: 0, sold: 0, color: '#1a6b4e', bg: '#e8f5f0' };
+    return `
+      <div class="loc-card" onclick="selectLocation('${name}')" id="loc-${name.replace(/\s/g, '-')}">
+        <div class="loc-card-top" style="background: ${d.color};"></div>
+        <div class="loc-card-body">
+          <div class="loc-card-header">
+            <div class="loc-card-icon" style="background: ${d.bg}; color: ${d.color};">
+              <i data-lucide="map-pin" style="width: 22px; height: 22px;"></i>
+            </div>
+            <div>
+              <div class="loc-card-name">${name}</div>
+              <div class="loc-card-date">
+                <i data-lucide="calendar" style="width: 12px; height: 12px;"></i>
+                ${d.date}
+              </div>
+            </div>
+          </div>
+          <div class="loc-card-stats">
+            <div class="loc-card-stat">
+              <div class="loc-card-stat-value">${d.myPhotos}</div>
+              <div class="loc-card-stat-label">Ảnh của tôi</div>
+            </div>
+            <div class="loc-card-stat">
+              <div class="loc-card-stat-value">${d.sold}</div>
+              <div class="loc-card-stat-label">Đã bán</div>
+            </div>
+          </div>
+        </div>
+        <div class="loc-card-check">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  lucide.createIcons();
+}
+
+function selectLocation(name) {
+  selectedLocation = name;
+  const d = locationData[name] || { date: '—', myPhotos: 0, sold: 0, color: '#1a6b4e' };
+  
+  document.querySelectorAll('.loc-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('loc-' + name.replace(/\s/g, '-'));
+  if (card) card.classList.add('selected');
+  
+  document.getElementById('uploadSection').style.display = 'block';
+  document.getElementById('selectedLocationName').textContent = name;
+  document.getElementById('selectedLocationMeta').textContent = `📅 ${d.date} · ${d.myPhotos} ảnh đã upload`;
+  
+  renderPhotos(name, d.myPhotos);
+  
+  setTimeout(() => {
+    document.getElementById('uploadSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+  
+  lucide.createIcons();
+}
+
+// ===== UPLOAD =====
+const uploadZone = document.getElementById('uploadZone');
+
+uploadZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  uploadZone.classList.add('dragover');
+});
+
+uploadZone.addEventListener('dragleave', () => {
+  uploadZone.classList.remove('dragover');
+});
+
+uploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);
+});
+
+function handleFileSelect(e) {
+  handleFiles(e.target.files);
+}
+
+function handleFiles(files) {
+  if (!selectedLocation) {
+    alert('Vui lòng chọn địa điểm trước khi upload.');
+    return;
+  }
+  
+  const fileList = Array.from(files).slice(0, 20);
+  if (files.length > 20) {
+    alert('Tối đa 20 ảnh/lần. Chỉ 20 ảnh đầu tiên được chọn.');
+  }
+  
+  const progressSection = document.getElementById('uploadProgress');
+  progressSection.style.display = 'block';
+  
+  const listEl = document.getElementById('uploadFileList');
+  
+  fileList.forEach((file, i) => {
+    const id = 'file-' + Date.now() + '-' + i;
+    const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+    
+    const item = document.createElement('div');
+    item.className = 'upload-file-item';
+    item.id = id;
+    item.innerHTML = `
+      <div class="upload-file-icon">
+        <i data-lucide="image" style="width: 18px; height: 18px;"></i>
+      </div>
+      <div class="upload-file-info">
+        <div class="upload-file-name">${file.name}</div>
+        <div class="upload-file-size">${sizeMB} MB</div>
+      </div>
+      <div class="upload-file-progress">
+        <div class="progress-bar">
+          <div class="progress-bar-fill" id="bar-${id}" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="upload-file-status" id="status-${id}">
+        <span style="font-size: 12px; color: var(--text-muted);">0%</span>
+      </div>
+    `;
+    listEl.appendChild(item);
+    
+    simulateUpload(id, i);
+  });
+  
+  document.getElementById('uploadCount').textContent = fileList.length + ' ảnh';
+  lucide.createIcons();
+}
+
+function simulateUpload(id, index) {
+  let progress = 0;
+  const speed = 800 + Math.random() * 1500;
+  const delay = index * 300;
+  
+  setTimeout(() => {
+    const interval = setInterval(() => {
+      progress += Math.random() * 15 + 5;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        
+        const bar = document.getElementById('bar-' + id);
+        const status = document.getElementById('status-' + id);
+        const item = document.getElementById(id);
+        if (bar) bar.style.width = '100%';
+        if (item) item.classList.add('done');
+        if (status) {
+          status.className = 'upload-file-status done';
+          status.innerHTML = '<i data-lucide="check" style="width: 16px; height: 16px;"></i>';
+          lucide.createIcons();
+        }
+        
+        updateProgressSummary();
+        return;
+      }
+      
+      const bar = document.getElementById('bar-' + id);
+      const status = document.getElementById('status-' + id);
+      if (bar) bar.style.width = progress + '%';
+      if (status) status.innerHTML = `<span style="font-size: 12px; color: var(--text-muted);">${Math.floor(progress)}%</span>`;
+    }, speed / 10);
+  }, delay);
+}
+
+function updateProgressSummary() {
+  const total = document.querySelectorAll('.upload-file-item').length;
+  const done = document.querySelectorAll('.upload-file-status.done').length;
+  const summary = document.getElementById('progressSummary');
+  summary.textContent = done + '/' + total + ' hoàn thành';
+  
+  if (done === total) {
+    // Replace spinner with check
+    const h5 = summary.parentElement.querySelector('h5');
+    if (h5) h5.innerHTML = '<span style="color: var(--success);">✓</span> Upload hoàn tất!';
+  }
+}
+
+// ===== PHOTO GRID =====
+function renderPhotos(locationName, count) {
+  const grid = document.getElementById('photoGrid');
+  const empty = document.getElementById('emptyPhotos');
+  
+  if (count === 0) {
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+    document.getElementById('photoCount').textContent = '0 ảnh';
+    return;
+  }
+  
+  grid.style.display = 'grid';
+  empty.style.display = 'none';
+  document.getElementById('photoCount').textContent = count + ' ảnh';
+  
+  const statuses = ['available', 'available', 'available', 'sold', 'available', 'sold'];
+  const colors = ['#e8d5b7', '#c4d6b0', '#b0c4d6', '#d6b0b0', '#d6d0b0', '#b0d6c4', '#c4b0d6', '#d6b0c4'];
+  
+  let html = '';
+  for (let i = 0; i < Math.min(count, 24); i++) {
+    const status = statuses[i % statuses.length];
+    const bg = colors[i % colors.length];
+    const badgeClass = status === 'sold' ? 'badge-success' : 'badge-primary';
+    const badgeText = status === 'sold' ? 'Đã bán' : 'Có sẵn';
+    const time = `${String(8 + Math.floor(i / 4)).padStart(2, '0')}:${String((i * 7) % 60).padStart(2, '0')}`;
+    
+    html += `
+      <div class="photo-item">
+        <div style="width: 100%; height: 100%; background: ${bg}; display: flex; align-items: center; justify-content: center; color: rgba(0,0,0,0.15); font-size: 28px; font-weight: 800;">
+          ${i + 1}
+        </div>
+        <div class="photo-item-badge">
+          <span class="badge ${badgeClass}" style="font-size: 10px; padding: 2px 8px;">${badgeText}</span>
+        </div>
+        <div class="photo-item-overlay">
+          IMG_${String(342 + i).padStart(4, '0')}.jpg · ${time}
+        </div>
+      </div>
+    `;
+  }
+  
+  if (count > 24) {
+    html += `
+      <div class="photo-item" style="display: flex; align-items: center; justify-content: center; background: var(--surface-alt); cursor: pointer; border: 2px dashed var(--border);">
+        <div style="text-align: center; color: var(--text-muted);">
+          <strong style="font-size: 24px; display: block; color: var(--primary);">+${count - 24}</strong>
+          <span style="font-size: 12px;">ảnh khác</span>
+        </div>
+      </div>
+    `;
+  }
+  
+  grid.innerHTML = html;
+}
+
+function setPhotoView(mode, btn) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  const grid = document.getElementById('photoGrid');
+  if (mode === 'list') {
+    grid.style.gridTemplateColumns = '1fr';
+    grid.querySelectorAll('.photo-item').forEach(item => {
+      item.style.aspectRatio = 'auto';
+      item.style.height = '60px';
+      item.style.flexDirection = 'row';
+    });
+  } else {
+    grid.style.gridTemplateColumns = '';
+    grid.querySelectorAll('.photo-item').forEach(item => {
+      item.style.aspectRatio = '';
+      item.style.height = '';
+      item.style.flexDirection = '';
+    });
+  }
+}
+
+// ===== USER MENU =====
+function toggleUserMenu() {
+  document.getElementById('userMenu').classList.toggle('active');
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.user-menu') && !e.target.closest('.dropdown-menu')) {
+    const menu = document.getElementById('userMenu');
+    if (menu) menu.classList.remove('active');
+  }
+});
+
+function handleLogout() {
+  if (confirm('Bạn có chắc muốn đăng xuất?')) {
+    localStorage.removeItem('photopro_user');
+    localStorage.removeItem('auth_token');
+    window.location.href = '../login.html';
+  }
+}
+
+// ===== INIT =====
+renderLocations();
+lucide.createIcons();
+</script>
+
+</body>
+</html>
