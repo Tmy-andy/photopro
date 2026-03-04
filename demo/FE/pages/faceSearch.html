@@ -27,6 +27,46 @@
     </div>
   </div>
 
+  <!-- Date Filter (B1) -->
+  <div class="card card-padded mb-3">
+    <h3 class="mb-2"><i data-lucide="calendar"></i> Khoảng Thời Gian</h3>
+    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+      Thu hẹp phạm vi tìm kiếm theo ngày chụp
+    </p>
+
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px;">
+      <div style="flex: 1; min-width: 180px;">
+        <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">Từ ngày</label>
+        <input type="date" id="dateFrom" class="form-input"
+               style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--surface); color: var(--text-primary);"
+               onchange="updateDateFilter()">
+      </div>
+      <div style="flex: 1; min-width: 180px;">
+        <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">Đến ngày</label>
+        <input type="date" id="dateTo" class="form-input"
+               style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--surface); color: var(--text-primary);"
+               onchange="updateDateFilter()">
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <button class="btn-date-quick active" onclick="setQuickDate('today', this)">
+        <i data-lucide="clock" style="width: 14px; height: 14px;"></i> Hôm nay
+      </button>
+      <button class="btn-date-quick" onclick="setQuickDate('3days', this)">3 ngày</button>
+      <button class="btn-date-quick" onclick="setQuickDate('7days', this)">7 ngày</button>
+      <button class="btn-date-quick" onclick="setQuickDate('30days', this)">30 ngày</button>
+      <button class="btn-date-quick" onclick="setQuickDate('all', this)">Tất cả</button>
+    </div>
+
+    <!-- Active filter indicator -->
+    <div id="dateFilterInfo" style="display: none; margin-top: 12px; padding: 8px 12px; background: var(--primary-light, rgba(59,130,246,0.08)); border-radius: 8px; font-size: 13px; color: var(--primary);">
+      <i data-lucide="info" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i>
+      <span id="dateFilterText"></span>
+      <button onclick="clearDateFilter()" style="float: right; background: none; border: none; color: var(--primary); cursor: pointer; font-size: 13px; text-decoration: underline;">Xóa bộ lọc</button>
+    </div>
+  </div>
+
   <!-- Face Upload Box -->
   <div class="face-search-box">
     <div style="text-align: center; padding: 40px 20px;">
@@ -90,6 +130,101 @@
   height: 20px;
   cursor: pointer;
 }
+.btn-date-quick {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-date-quick:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light, rgba(59,130,246,0.08));
+}
+.btn-date-quick.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
 </style>
+
+<script>
+function setQuickDate(range, btn) {
+  // Update active button
+  document.querySelectorAll('.btn-date-quick').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const today = new Date();
+  const dateFrom = document.getElementById('dateFrom');
+  const dateTo = document.getElementById('dateTo');
+  const fmt = d => d.toISOString().split('T')[0];
+
+  dateTo.value = fmt(today);
+
+  switch (range) {
+    case 'today':
+      dateFrom.value = fmt(today);
+      break;
+    case '3days':
+      const d3 = new Date(today);
+      d3.setDate(d3.getDate() - 2);
+      dateFrom.value = fmt(d3);
+      break;
+    case '7days':
+      const d7 = new Date(today);
+      d7.setDate(d7.getDate() - 6);
+      dateFrom.value = fmt(d7);
+      break;
+    case '30days':
+      const d30 = new Date(today);
+      d30.setDate(d30.getDate() - 29);
+      dateFrom.value = fmt(d30);
+      break;
+    case 'all':
+      dateFrom.value = '';
+      dateTo.value = '';
+      break;
+  }
+  updateDateFilter();
+}
+
+function updateDateFilter() {
+  const dateFrom = document.getElementById('dateFrom').value;
+  const dateTo = document.getElementById('dateTo').value;
+  const info = document.getElementById('dateFilterInfo');
+  const text = document.getElementById('dateFilterText');
+
+  if (dateFrom || dateTo) {
+    info.style.display = 'block';
+    const fromStr = dateFrom ? new Date(dateFrom).toLocaleDateString('vi-VN') : '...';
+    const toStr = dateTo ? new Date(dateTo).toLocaleDateString('vi-VN') : '...';
+    text.textContent = ` Tìm ảnh từ ${fromStr} đến ${toStr}`;
+  } else {
+    info.style.display = 'none';
+  }
+
+  // Re-init lucide icons for new elements
+  if (window.lucide) lucide.createIcons();
+}
+
+function clearDateFilter() {
+  document.getElementById('dateFrom').value = '';
+  document.getElementById('dateTo').value = '';
+  document.getElementById('dateFilterInfo').style.display = 'none';
+  document.querySelectorAll('.btn-date-quick').forEach(b => b.classList.remove('active'));
+}
+
+// Initialize with "Hôm nay" selected on load
+document.addEventListener('DOMContentLoaded', function() {
+  setQuickDate('today', document.querySelector('.btn-date-quick'));
+});
+</script>
   </div>
 </div>

@@ -30,9 +30,9 @@
         
         <div class="nav-section">
           <div class="nav-section-title">Quản lý</div>
-          <a href="albums.html" class="nav-item">
-            <i data-lucide="folder-open"></i>
-            Albums
+          <a href="locations.html" class="nav-item">
+            <i data-lucide="map-pin"></i>
+            Địa Điểm
           </a>
           <a href="orders.html" class="nav-item">
             <i data-lucide="shopping-bag"></i>
@@ -53,6 +53,10 @@
           <a href="revenue.html" class="nav-item">
             <i data-lucide="trending-up"></i>
             Doanh thu
+          </a>
+          <a href="staff-stats.html" class="nav-item" data-role="admin-system,admin-sales,manager,staff">
+            <i data-lucide="bar-chart-2"></i>
+            Thống kê NV
           </a>
         </div>
         
@@ -120,25 +124,18 @@
                 <label>Thời gian lưu trữ ảnh (ngày) *</label>
                 <input type="number" value="30" id="photoRetention" min="7" max="365">
                 <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
-                  Ảnh sẽ tự động bị xóa sau <strong id="retentionDays">30</strong> ngày kể từ ngày upload. (Từ 7-365 ngày)
+                  Ảnh chưa bán sẽ tự động bị xóa sau <strong id="retentionDays">30</strong> ngày kể từ ngày upload. (Từ 7-365 ngày)
                 </div>
               </div>
               
-              <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                  <input type="checkbox" id="autoDeleteEnabled" checked onchange="toggleAutoDelete()">
-                  <span>Bật tự động xóa ảnh hết hạn</span>
-                </label>
-              </div>
-              
-              <div class="form-group" id="autoDeleteOptions">
-                <label>Chế độ xóa</label>
-                <select id="autoDeleteMode">
-                  <option value="all">Xóa tất cả ảnh hết hạn</option>
-                  <option value="unsold" selected>Chỉ xóa ảnh chưa bán</option>
-                </select>
-                <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
-                  ⚠️ Ảnh đã bán sẽ được giữ lại thêm cho đến khi link download hết hạn.
+              <div class="alert alert-info" style="margin-top: 16px;">
+                <div style="display: flex; align-items: flex-start; gap: 8px;">
+                  <i data-lucide="info" style="width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;"></i>
+                  <div style="font-size: 13px;">
+                    <strong>Lưu ý về ảnh đã mua:</strong><br>
+                    Khi khách thanh toán thành công, ảnh được move vào <strong>album đơn hàng</strong> (tên = mã đơn hàng) và lưu trữ <strong>vĩnh viễn</strong>. 
+                    Thời hạn lưu trữ ở trên chỉ áp dụng cho ảnh chưa bán trong Địa Điểm.
+                  </div>
                 </div>
               </div>
             </div>
@@ -280,39 +277,149 @@
         
         <!-- Appearance Tab -->
         <div class="tab-content" id="appearanceTab">
-          <div class="card">
+          <div class="card mb-4">
             <div class="card-header">
               <h3 class="card-title">Màu sắc chủ đạo</h3>
             </div>
             <div class="card-body">
-              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px;">
-                <div class="color-preset active" onclick="selectColor('green')" style="padding: 16px; border: 2px solid var(--primary); border-radius: 8px; cursor: pointer;">
-                  <div style="width: 48px; height: 48px; background: #1a6b4e; border-radius: 8px; margin-bottom: 8px;"></div>
-                  <div style="font-weight: 600;">Xanh lá</div>
-                  <div style="font-size: 12px; color: var(--text-muted);">Mặc định</div>
-                </div>
-                
-                <div class="color-preset" onclick="selectColor('blue')" style="padding: 16px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer;">
-                  <div style="width: 48px; height: 48px; background: #2563eb; border-radius: 8px; margin-bottom: 8px;"></div>
-                  <div style="font-weight: 600;">Xanh dương</div>
-                  <div style="font-size: 12px; color: var(--text-muted);">Chuyên nghiệp</div>
-                </div>
-                
-                <div class="color-preset" onclick="selectColor('purple')" style="padding: 16px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer;">
-                  <div style="width: 48px; height: 48px; background: #7c3aed; border-radius: 8px; margin-bottom: 8px;"></div>
-                  <div style="font-weight: 600;">Tím</div>
-                  <div style="font-size: 12px; color: var(--text-muted);">Sang trọng</div>
-                </div>
-                
-                <div class="color-preset" onclick="selectColor('red')" style="padding: 16px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer;">
-                  <div style="width: 48px; height: 48px; background: #dc2626; border-radius: 8px; margin-bottom: 8px;"></div>
-                  <div style="font-weight: 600;">Đỏ</div>
-                  <div style="font-size: 12px; color: var(--text-muted);">Năng động</div>
+              <!-- Preset Colors -->
+              <div style="margin-bottom: 24px;">
+                <label style="font-weight: 600; margin-bottom: 12px; display: block;">Preset nhanh:</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;">
+                  <div class="color-preset active" onclick="selectPreset('green', '#1a6b4e', '#d4870e')" style="padding: 12px; border: 2px solid var(--primary); border-radius: 8px; cursor: pointer; text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center; margin-bottom: 6px;">
+                      <div style="width: 28px; height: 28px; background: #1a6b4e; border-radius: 6px;"></div>
+                      <div style="width: 28px; height: 28px; background: #d4870e; border-radius: 6px;"></div>
+                    </div>
+                    <div style="font-weight: 600; font-size: 13px;">Xanh lá</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Mặc định</div>
+                  </div>
+                  
+                  <div class="color-preset" onclick="selectPreset('blue', '#2563eb', '#f59e0b')" style="padding: 12px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center; margin-bottom: 6px;">
+                      <div style="width: 28px; height: 28px; background: #2563eb; border-radius: 6px;"></div>
+                      <div style="width: 28px; height: 28px; background: #f59e0b; border-radius: 6px;"></div>
+                    </div>
+                    <div style="font-weight: 600; font-size: 13px;">Xanh dương</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Chuyên nghiệp</div>
+                  </div>
+                  
+                  <div class="color-preset" onclick="selectPreset('purple', '#7c3aed', '#ec4899')" style="padding: 12px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center; margin-bottom: 6px;">
+                      <div style="width: 28px; height: 28px; background: #7c3aed; border-radius: 6px;"></div>
+                      <div style="width: 28px; height: 28px; background: #ec4899; border-radius: 6px;"></div>
+                    </div>
+                    <div style="font-weight: 600; font-size: 13px;">Tím</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Sang trọng</div>
+                  </div>
+                  
+                  <div class="color-preset" onclick="selectPreset('red', '#dc2626', '#ea580c')" style="padding: 12px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center; margin-bottom: 6px;">
+                      <div style="width: 28px; height: 28px; background: #dc2626; border-radius: 6px;"></div>
+                      <div style="width: 28px; height: 28px; background: #ea580c; border-radius: 6px;"></div>
+                    </div>
+                    <div style="font-weight: 600; font-size: 13px;">Đỏ</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Năng động</div>
+                  </div>
+                  
+                  <div class="color-preset" onclick="selectPreset('teal', '#0d9488', '#06b6d4')" style="padding: 12px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center; margin-bottom: 6px;">
+                      <div style="width: 28px; height: 28px; background: #0d9488; border-radius: 6px;"></div>
+                      <div style="width: 28px; height: 28px; background: #06b6d4; border-radius: 6px;"></div>
+                    </div>
+                    <div style="font-weight: 600; font-size: 13px;">Teal</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Nhiệt đới</div>
+                  </div>
+                  
+                  <div class="color-preset" onclick="selectPreset('slate', '#1e293b', '#f97316')" style="padding: 12px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center; margin-bottom: 6px;">
+                      <div style="width: 28px; height: 28px; background: #1e293b; border-radius: 6px;"></div>
+                      <div style="width: 28px; height: 28px; background: #f97316; border-radius: 6px;"></div>
+                    </div>
+                    <div style="font-weight: 600; font-size: 13px;">Slate Dark</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Tối giản</div>
+                  </div>
+                  
+                  <div class="color-preset" onclick="selectPreset('brown', '#92400e', '#d97706')" style="padding: 12px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center; margin-bottom: 6px;">
+                      <div style="width: 28px; height: 28px; background: #92400e; border-radius: 6px;"></div>
+                      <div style="width: 28px; height: 28px; background: #d97706; border-radius: 6px;"></div>
+                    </div>
+                    <div style="font-weight: 600; font-size: 13px;">Nâu</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Cổ điển</div>
+                  </div>
                 </div>
               </div>
               
-              <div class="alert alert-info mt-4">
-                Màu sắc sẽ được áp dụng cho cả Frontend (trang khách) và Dashboard (trang admin).
+              <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border);">
+              
+              <!-- Custom Color Picker -->
+              <div style="margin-bottom: 24px;">
+                <label style="font-weight: 600; margin-bottom: 16px; display: block;">
+                  <i data-lucide="palette" style="width: 16px; height: 16px;"></i>
+                  Hoặc chọn màu tùy chỉnh
+                </label>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                  <!-- Primary Color -->
+                  <div>
+                    <label style="font-weight: 500; margin-bottom: 8px; display: block; font-size: 14px;">Màu chính (Primary)</label>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                      <input type="color" id="customPrimary" value="#1a6b4e" 
+                             onchange="updateCustomColor('primary', this.value)"
+                             style="width: 48px; height: 48px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; padding: 2px;">
+                      <div style="flex: 1;">
+                        <input type="text" id="customPrimaryHex" value="#1a6b4e" 
+                               placeholder="#000000" 
+                               oninput="syncColorInput('primary', this.value)"
+                               style="font-family: monospace; font-size: 14px; text-transform: uppercase;">
+                      </div>
+                    </div>
+                    <div id="primaryPreview" style="height: 8px; border-radius: 4px; background: #1a6b4e;"></div>
+                  </div>
+                  
+                  <!-- Accent Color -->
+                  <div>
+                    <label style="font-weight: 500; margin-bottom: 8px; display: block; font-size: 14px;">Màu nhấn (Accent)</label>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                      <input type="color" id="customAccent" value="#d4870e" 
+                             onchange="updateCustomColor('accent', this.value)"
+                             style="width: 48px; height: 48px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; padding: 2px;">
+                      <div style="flex: 1;">
+                        <input type="text" id="customAccentHex" value="#d4870e" 
+                               placeholder="#000000"
+                               oninput="syncColorInput('accent', this.value)"
+                               style="font-family: monospace; font-size: 14px; text-transform: uppercase;">
+                      </div>
+                    </div>
+                    <div id="accentPreview" style="height: 8px; border-radius: 4px; background: #d4870e;"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Live Preview -->
+              <div style="margin-bottom: 16px;">
+                <label style="font-weight: 600; margin-bottom: 12px; display: block;">
+                  <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
+                  Xem trước
+                </label>
+                <div id="colorPreviewArea" style="padding: 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-alt);">
+                  <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 12px;">
+                    <button class="btn btn-primary" id="previewBtnPrimary">Nút Primary</button>
+                    <button id="previewBtnAccent" style="padding: 8px 16px; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: 500; cursor: pointer;">Nút Accent</button>
+                    <span class="badge badge-primary" id="previewBadge">Badge</span>
+                    <a href="#" style="color: var(--primary); font-weight: 500;" id="previewLink">Link text</a>
+                  </div>
+                  <div style="display: flex; gap: 16px; font-size: 13px;">
+                    <div style="padding: 8px 16px; border-radius: 6px; color: white;" id="previewPrimaryBg">Text trên nền primary</div>
+                    <div style="padding: 8px 16px; border-radius: 6px; color: white;" id="previewAccentBg">Text trên nền accent</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="alert alert-info">
+                <i data-lucide="info" style="width: 16px; height: 16px;"></i>
+                Màu sắc sẽ được áp dụng cho cả Frontend (trang khách) và Dashboard (trang admin). Các biến màu phụ (light, dark) sẽ được tự động tạo từ màu chính.
               </div>
             </div>
           </div>
@@ -337,11 +444,6 @@
       lucide.createIcons();
     }
     
-    function toggleAutoDelete() {
-      const enabled = document.getElementById('autoDeleteEnabled').checked;
-      document.getElementById('autoDeleteOptions').style.display = enabled ? 'block' : 'none';
-    }
-    
     function selectColor(color) {
       document.querySelectorAll('.color-preset').forEach(p => {
         p.style.borderColor = 'var(--border)';
@@ -350,11 +452,74 @@
       console.log('Selected color:', color);
     }
     
+    function selectPreset(name, primary, accent) {
+      // Update preset selection
+      document.querySelectorAll('.color-preset').forEach(p => {
+        p.style.borderColor = 'var(--border)';
+      });
+      event.currentTarget.style.borderColor = primary;
+      
+      // Update color pickers
+      document.getElementById('customPrimary').value = primary;
+      document.getElementById('customPrimaryHex').value = primary;
+      document.getElementById('primaryPreview').style.background = primary;
+      
+      document.getElementById('customAccent').value = accent;
+      document.getElementById('customAccentHex').value = accent;
+      document.getElementById('accentPreview').style.background = accent;
+      
+      // Update live preview
+      updatePreview(primary, accent);
+      
+      console.log('Selected preset:', name, primary, accent);
+    }
+    
+    function updateCustomColor(type, hexValue) {
+      if (!/^#[0-9A-Fa-f]{6}$/.test(hexValue)) return;
+      
+      document.getElementById('custom' + type.charAt(0).toUpperCase() + type.slice(1) + 'Hex').value = hexValue;
+      document.getElementById(type + 'Preview').style.background = hexValue;
+      
+      // Deselect presets
+      document.querySelectorAll('.color-preset').forEach(p => {
+        p.style.borderColor = 'var(--border)';
+      });
+      
+      // Update preview
+      const primary = document.getElementById('customPrimary').value;
+      const accent = document.getElementById('customAccent').value;
+      updatePreview(primary, accent);
+    }
+    
+    function syncColorInput(type, hexValue) {
+      if (/^#[0-9A-Fa-f]{6}$/.test(hexValue)) {
+        const colorPicker = type === 'primary' ? 'customPrimary' : 'customAccent';
+        document.getElementById(colorPicker).value = hexValue;
+        document.getElementById(type + 'Preview').style.background = hexValue;
+        
+        const primary = document.getElementById('customPrimary').value;
+        const accent = document.getElementById('customAccent').value;
+        updatePreview(primary, accent);
+      }
+    }
+    
+    function updatePreview(primary, accent) {
+      const btnPrimary = document.getElementById('previewBtnPrimary');
+      const btnAccent = document.getElementById('previewBtnAccent');
+      const primaryBg = document.getElementById('previewPrimaryBg');
+      const accentBg = document.getElementById('previewAccentBg');
+      const link = document.getElementById('previewLink');
+      
+      if (btnPrimary) btnPrimary.style.background = primary;
+      if (btnAccent) btnAccent.style.background = accent;
+      if (primaryBg) primaryBg.style.background = primary;
+      if (accentBg) accentBg.style.background = accent;
+      if (link) link.style.color = primary;
+    }
+    
     function saveAllSettings() {
       const settings = {
         photoRetention: document.getElementById('photoRetention').value,
-        autoDeleteEnabled: document.getElementById('autoDeleteEnabled').checked,
-        autoDeleteMode: document.getElementById('autoDeleteMode').value,
         linkTTL: document.getElementById('linkTTL').value,
         maxDownloads: document.getElementById('maxDownloads').value,
         subdomain: document.getElementById('subdomain').value,

@@ -30,9 +30,9 @@
         
         <div class="nav-section">
           <div class="nav-section-title">Quản lý</div>
-          <a href="albums.html" class="nav-item">
-            <i data-lucide="folder-open"></i>
-            Albums
+          <a href="locations.html" class="nav-item">
+            <i data-lucide="map-pin"></i>
+            Địa Điểm
           </a>
           <a href="orders.html" class="nav-item">
             <i data-lucide="shopping-bag"></i>
@@ -53,6 +53,10 @@
           <a href="revenue.html" class="nav-item">
             <i data-lucide="trending-up"></i>
             Doanh thu
+          </a>
+          <a href="staff-stats.html" class="nav-item" data-role="admin-system,admin-sales,manager,staff">
+            <i data-lucide="bar-chart-2"></i>
+            Thống kê NV
           </a>
         </div>
         
@@ -160,6 +164,8 @@
                 <tr>
                   <th>Nhân viên</th>
                   <th>Vai trò</th>
+                  <th>Mã NV</th>
+                  <th>Địa điểm</th>
                   <th>Số ảnh upload</th>
                   <th>Ngày tham gia</th>
                   <th>Trạng thái</th>
@@ -179,6 +185,8 @@
                     </div>
                   </td>
                   <td><span class="badge badge-danger">Admin Sales</span></td>
+                  <td><span style="font-size: 12px; color: var(--text-muted);">—</span></td>
+                  <td><span style="font-size: 12px; color: var(--text-muted);">—</span></td>
                   <td><strong>3,200 ảnh</strong></td>
                   <td>01/01/2026</td>
                   <td><span class="badge badge-success">Hoạt động</span></td>
@@ -209,6 +217,8 @@
                     </div>
                   </td>
                   <td><span class="badge badge-info">Manager</span></td>
+                  <td><span style="font-size: 12px; color: var(--text-muted);">—</span></td>
+                  <td><span style="font-size: 12px; color: var(--text-muted);">—</span></td>
                   <td><strong>0 ảnh</strong></td>
                   <td>15/01/2026</td>
                   <td><span class="badge badge-success">Hoạt động</span></td>
@@ -239,6 +249,13 @@
                     </div>
                   </td>
                   <td><span class="badge badge-primary">Staff</span></td>
+                  <td><code style="background: var(--surface-alt); padding: 2px 8px; border-radius: 4px; font-size: 12px;">NV001</code></td>
+                  <td>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                      <span class="badge badge-primary" style="font-size: 10px; padding: 1px 6px;">Bà Nà</span>
+                      <span class="badge badge-primary" style="font-size: 10px; padding: 1px 6px;">Hội An</span>
+                    </div>
+                  </td>
                   <td><strong>2,800 ảnh</strong></td>
                   <td>20/01/2026</td>
                   <td><span class="badge badge-success">Hoạt động</span></td>
@@ -269,6 +286,13 @@
                     </div>
                   </td>
                   <td><span class="badge badge-primary">Staff</span></td>
+                  <td><code style="background: var(--surface-alt); padding: 2px 8px; border-radius: 4px; font-size: 12px;">NV002</code></td>
+                  <td>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                      <span class="badge badge-primary" style="font-size: 10px; padding: 1px 6px;">Bà Nà</span>
+                      <span class="badge badge-primary" style="font-size: 10px; padding: 1px 6px;">Cầu Rồng</span>
+                    </div>
+                  </td>
                   <td><strong>2,450 ảnh</strong></td>
                   <td>25/01/2026</td>
                   <td><span class="badge badge-success">Hoạt động</span></td>
@@ -299,6 +323,8 @@
                     </div>
                   </td>
                   <td><span class="badge badge-primary">Staff</span></td>
+                  <td><code style="background: var(--surface-alt); padding: 2px 8px; border-radius: 4px; font-size: 12px;">NV003</code></td>
+                  <td><span style="font-size: 12px; color: var(--text-muted);">—</span></td>
                   <td><strong>0 ảnh</strong></td>
                   <td>10/02/2026</td>
                   <td><span class="badge badge-muted">Đã khóa</span></td>
@@ -351,7 +377,7 @@
         
         <div class="form-group">
           <label>Vai trò *</label>
-          <select id="staffRole">
+          <select id="staffRole" onchange="toggleStaffFields()">
             <option value="">Chọn vai trò...</option>
             <option value="admin-sales">Admin Sales - Quản lý kinh doanh</option>
             <option value="manager">Manager - Chỉ xem (Read-only)</option>
@@ -364,12 +390,54 @@
           <input type="password" placeholder="Tối thiểu 8 ký tự" id="staffPassword">
         </div>
         
+        <!-- Staff-only fields (chỉ hiện khi chọn vai trò Staff) -->
+        <div id="staffOnlyFields" style="display: none;">
+          <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
+          <div style="font-weight: 600; margin-bottom: 16px; color: var(--primary);">
+            <i data-lucide="user-check" style="width: 16px; height: 16px;"></i>
+            Thông tin Staff
+          </div>
+          
+          <div class="form-group">
+            <label>Mã nhân viên *</label>
+            <input type="text" placeholder="VD: NV004" id="staffEmployeeCode" value="NV004">
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+              Mã nhân viên tự sinh, có thể sửa. Đóng vai trò user_id để định danh staff.
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Địa điểm được upload ảnh</label>
+            <div style="border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+              <div style="padding: 10px 16px; background: var(--surface-alt); font-size: 12px; font-weight: 600; color: var(--text-secondary);">
+                Chọn địa điểm:
+              </div>
+              <label style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--border); cursor: pointer;">
+                <input type="checkbox" style="width: 18px; height: 18px;" name="loc_1">
+                <span>Bà Nà Hills 20/02</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--border); cursor: pointer;">
+                <input type="checkbox" style="width: 18px; height: 18px;" name="loc_2">
+                <span>Hội An 19/02</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--border); cursor: pointer;">
+                <input type="checkbox" style="width: 18px; height: 18px;" name="loc_3">
+                <span>Cầu Rồng 18/02</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--border); cursor: pointer;">
+                <input type="checkbox" style="width: 18px; height: 18px;" name="loc_4">
+                <span>Sơn Trà 17/02</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        
         <div class="alert alert-info">
           <strong>Phân quyền:</strong>
           <ul style="margin: 8px 0 0 20px; font-size: 13px;">
-            <li><strong>Admin Sales:</strong> Quản lý albums, đơn hàng, giá, xem doanh thu</li>
+            <li><strong>Admin Sales:</strong> Quản lý địa điểm, đơn hàng, giá, xem doanh thu</li>
             <li><strong>Manager:</strong> Chỉ xem dashboard và doanh thu (không sửa/xóa)</li>
-            <li><strong>Staff:</strong> Upload ảnh, gắn tag, xem đơn hàng</li>
+            <li><strong>Staff:</strong> Upload ảnh vào địa điểm được gán, xem thống kê cá nhân</li>
           </ul>
         </div>
       </div>
@@ -398,7 +466,17 @@
       document.getElementById('staffPhone').value = '';
       document.getElementById('staffRole').value = '';
       document.getElementById('staffPassword').value = '';
+      document.getElementById('staffOnlyFields').style.display = 'none';
       lucide.createIcons();
+    }
+    
+    function toggleStaffFields() {
+      const role = document.getElementById('staffRole').value;
+      const staffFields = document.getElementById('staffOnlyFields');
+      staffFields.style.display = role === 'staff' ? 'block' : 'none';
+      if (role === 'staff') {
+        lucide.createIcons();
+      }
     }
     
     function closeStaffModal() {

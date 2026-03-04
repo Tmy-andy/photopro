@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thống kê Nhân viên - PhotoPro Admin</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="sidebar-logo">
+          <i data-lucide="camera"></i>
+          PhotoPro Admin
+        </a>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Tổng quan</div>
+          <a href="../index.html" class="nav-item">
+            <i data-lucide="layout-dashboard"></i>
+            Dashboard
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Quản lý</div>
+          <a href="locations.html" class="nav-item">
+            <i data-lucide="map-pin"></i>
+            Địa Điểm
+          </a>
+          <a href="orders.html" class="nav-item">
+            <i data-lucide="shopping-bag"></i>
+            Đơn hàng
+          </a>
+          <a href="staff.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="users"></i>
+            Nhân viên
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Kinh doanh</div>
+          <a href="pricing.html" class="nav-item" data-role="admin-system,admin-sales">
+            <i data-lucide="tag"></i>
+            Bảng giá
+          </a>
+          <a href="revenue.html" class="nav-item">
+            <i data-lucide="trending-up"></i>
+            Doanh thu
+          </a>
+          <a href="staff-stats.html" class="nav-item active" data-role="admin-system,admin-sales,manager,staff">
+            <i data-lucide="bar-chart-2"></i>
+            Thống kê NV
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a href="settings.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="settings"></i>
+            Cài đặt
+          </a>
+        </div>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1 class="header-title">Thống kê Nhân viên</h1>
+        <div class="header-actions">
+          <select id="periodFilter" onchange="changePeriod()" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; margin-right: 8px;">
+            <option value="today">Hôm nay</option>
+            <option value="week">Tuần này</option>
+            <option value="month" selected>Tháng này</option>
+            <option value="year">Năm nay</option>
+          </select>
+          <button class="btn btn-outline" onclick="exportStaffStats()">
+            <i data-lucide="download"></i>
+            Xuất Excel
+          </button>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <!-- Summary Stats -->
+        <div class="stats-grid mb-4">
+          <div class="stat-card">
+            <div class="stat-icon primary">
+              <i data-lucide="users" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Tổng nhân viên</div>
+              <div class="stat-value">5</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon success">
+              <i data-lucide="image" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Tổng ảnh upload</div>
+              <div class="stat-value">8,450</div>
+              <div class="stat-change positive">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+                +320 tháng này
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon warning">
+              <i data-lucide="shopping-cart" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Tổng ảnh bán</div>
+              <div class="stat-value">3,420</div>
+              <div class="stat-change positive">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+                +15% so với kỳ trước
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon info">
+              <i data-lucide="percent" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Tỉ lệ chuyển đổi TB</div>
+              <div class="stat-value">40.5%</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <input type="text" placeholder="Tìm theo tên, mã NV..." id="searchStaffStats" style="flex: 1; min-width: 250px;">
+              <select id="filterStaffStatus" onchange="filterStaffStats()">
+                <option value="">Tất cả trạng thái</option>
+                <option value="active">Đang hoạt động</option>
+                <option value="inactive">Đã khóa</option>
+              </select>
+              <select id="sortStaffBy" onchange="sortStaffStats()">
+                <option value="revenue-desc">Doanh thu cao → thấp</option>
+                <option value="revenue-asc">Doanh thu thấp → cao</option>
+                <option value="photos-desc">Ảnh upload nhiều → ít</option>
+                <option value="sold-desc">Ảnh bán nhiều → ít</option>
+                <option value="rate-desc">Tỉ lệ chuyển đổi cao → thấp</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Staff Statistics Table -->
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nhân viên</th>
+                  <th>Mã NV</th>
+                  <th>Ảnh upload</th>
+                  <th>Ảnh bán</th>
+                  <th>Tỉ lệ</th>
+                  <th>DT tháng</th>
+                  <th>Tổng DT</th>
+                  <th>Địa điểm</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Staff Row 1 -->
+                <tr style="cursor: pointer;" onclick="openStaffStatsModal('staff-1')">
+                  <td>1</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div style="width: 36px; height: 36px; border-radius: 50%; background: #fef3e8; color: #d4870e; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px;">LC</div>
+                      <div>
+                        <div style="font-weight: 600;">Lê Văn C</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">staff1@photopro.vn</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><code style="background: var(--surface-alt); padding: 2px 8px; border-radius: 4px; font-size: 13px;">NV001</code></td>
+                  <td><strong>2,800</strong></td>
+                  <td><strong>1,200</strong></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <div style="width: 40px; height: 6px; background: var(--surface-alt); border-radius: 3px; overflow: hidden;">
+                        <div style="width: 42.8%; height: 100%; background: var(--success); border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 13px; font-weight: 500;">42.8%</span>
+                    </div>
+                  </td>
+                  <td><strong style="color: var(--primary);">12M</strong></td>
+                  <td><strong>60M</strong></td>
+                  <td>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                      <span class="badge badge-primary" style="font-size: 10px; padding: 1px 6px;">Bà Nà</span>
+                      <span class="badge badge-primary" style="font-size: 10px; padding: 1px 6px;">Hội An</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openStaffStatsModal('staff-1')" title="Xem chi tiết">
+                      <i data-lucide="eye"></i>
+                    </button>
+                  </td>
+                </tr>
+                
+                <!-- Staff Row 2 -->
+                <tr style="cursor: pointer;" onclick="openStaffStatsModal('staff-2')">
+                  <td>2</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div style="width: 36px; height: 36px; border-radius: 50%; background: #e8f5f0; color: #1a854a; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px;">PD</div>
+                      <div>
+                        <div style="font-weight: 600;">Phạm Thị D</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">staff2@photopro.vn</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><code style="background: var(--surface-alt); padding: 2px 8px; border-radius: 4px; font-size: 13px;">NV002</code></td>
+                  <td><strong>2,450</strong></td>
+                  <td><strong>980</strong></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <div style="width: 40px; height: 6px; background: var(--surface-alt); border-radius: 3px; overflow: hidden;">
+                        <div style="width: 40%; height: 100%; background: var(--success); border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 13px; font-weight: 500;">40.0%</span>
+                    </div>
+                  </td>
+                  <td><strong style="color: var(--primary);">9.8M</strong></td>
+                  <td><strong>49M</strong></td>
+                  <td>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                      <span class="badge badge-primary" style="font-size: 10px; padding: 1px 6px;">Bà Nà</span>
+                      <span class="badge badge-primary" style="font-size: 10px; padding: 1px 6px;">Cầu Rồng</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openStaffStatsModal('staff-2')" title="Xem chi tiết">
+                      <i data-lucide="eye"></i>
+                    </button>
+                  </td>
+                </tr>
+                
+                <!-- Staff Row 3 -->
+                <tr style="cursor: pointer;" onclick="openStaffStatsModal('staff-3')">
+                  <td>3</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div style="width: 36px; height: 36px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px;">NA</div>
+                      <div>
+                        <div style="font-weight: 600;">Nguyễn Văn A</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">staff3@photopro.vn</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><code style="background: var(--surface-alt); padding: 2px 8px; border-radius: 4px; font-size: 13px;">NV003</code></td>
+                  <td><strong>1,800</strong></td>
+                  <td><strong>720</strong></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <div style="width: 40px; height: 6px; background: var(--surface-alt); border-radius: 3px; overflow: hidden;">
+                        <div style="width: 40%; height: 100%; background: var(--success); border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 13px; font-weight: 500;">40.0%</span>
+                    </div>
+                  </td>
+                  <td><strong style="color: var(--primary);">7.2M</strong></td>
+                  <td><strong>36M</strong></td>
+                  <td>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                      <span class="badge badge-primary" style="font-size: 10px; padding: 1px 6px;">Hội An</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openStaffStatsModal('staff-3')" title="Xem chi tiết">
+                      <i data-lucide="eye"></i>
+                    </button>
+                  </td>
+                </tr>
+                
+                <!-- Staff Row 4 (Inactive) -->
+                <tr style="cursor: pointer; opacity: 0.6;" onclick="openStaffStatsModal('staff-4')">
+                  <td>4</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--surface-alt); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px;">HE</div>
+                      <div>
+                        <div style="font-weight: 600;">Hoàng Văn E</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">staff4@photopro.vn</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><code style="background: var(--surface-alt); padding: 2px 8px; border-radius: 4px; font-size: 13px;">NV004</code></td>
+                  <td><strong>0</strong></td>
+                  <td><strong>0</strong></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <div style="width: 40px; height: 6px; background: var(--surface-alt); border-radius: 3px; overflow: hidden;">
+                        <div style="width: 0%; height: 100%; background: var(--success); border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 13px; font-weight: 500;">0%</span>
+                    </div>
+                  </td>
+                  <td><strong style="color: var(--text-muted);">0</strong></td>
+                  <td><strong>0</strong></td>
+                  <td>
+                    <span class="badge badge-muted" style="font-size: 10px;">Đã khóa</span>
+                  </td>
+                  <td>
+                    <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openStaffStatsModal('staff-4')" title="Xem chi tiết">
+                      <i data-lucide="eye"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ============ MODAL: CHI TIẾT THỐNG KÊ STAFF ============ -->
+  <div class="modal-overlay" id="staffStatsModal">
+    <div class="modal" style="max-width: 750px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <span style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #fef3e8; color: #d4870e; display: flex; align-items: center; justify-content: center; font-weight: 600;">LC</div>
+            <div>
+              Thống kê: Lê Văn C
+              <div style="font-size: 12px; font-weight: 400; color: var(--text-muted);">Mã NV: NV001 · Staff</div>
+            </div>
+          </span>
+        </h3>
+        <button class="modal-close" onclick="closeStaffStatsModal()">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Stats Cards -->
+        <div class="stats-grid mb-4" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="stat-card" style="padding: 16px;">
+            <div class="stat-content" style="text-align: center;">
+              <div class="stat-label">Ảnh upload</div>
+              <div class="stat-value" style="font-size: 22px; color: var(--primary);">2,800</div>
+            </div>
+          </div>
+          <div class="stat-card" style="padding: 16px;">
+            <div class="stat-content" style="text-align: center;">
+              <div class="stat-label">Ảnh đã bán</div>
+              <div class="stat-value" style="font-size: 22px; color: var(--success);">1,200</div>
+            </div>
+          </div>
+          <div class="stat-card" style="padding: 16px;">
+            <div class="stat-content" style="text-align: center;">
+              <div class="stat-label">Tỉ lệ chuyển đổi</div>
+              <div class="stat-value" style="font-size: 22px;">42.8%</div>
+            </div>
+          </div>
+          <div class="stat-card" style="padding: 16px;">
+            <div class="stat-content" style="text-align: center;">
+              <div class="stat-label">Tổng doanh thu</div>
+              <div class="stat-value" style="font-size: 22px; color: var(--accent);">60M</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Revenue Period Tabs -->
+        <div style="margin-bottom: 16px;">
+          <h4 style="margin-bottom: 12px; font-weight: 600;">
+            <i data-lucide="trending-up" style="width: 16px; height: 16px;"></i>
+            Doanh thu theo khoảng thời gian
+          </h4>
+          <div class="tabs mb-3">
+            <button class="tab active" onclick="switchStaffRevenuePeriod('day')">Ngày</button>
+            <button class="tab" onclick="switchStaffRevenuePeriod('month')">Tháng</button>
+            <button class="tab" onclick="switchStaffRevenuePeriod('year')">Năm</button>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+            <div style="padding: 12px; background: var(--surface-alt); border-radius: 8px; text-align: center;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Hôm nay</div>
+              <div style="font-size: 18px; font-weight: 700; color: var(--primary);">850K</div>
+            </div>
+            <div style="padding: 12px; background: var(--surface-alt); border-radius: 8px; text-align: center;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Tháng này</div>
+              <div style="font-size: 18px; font-weight: 700; color: var(--primary);">12M</div>
+            </div>
+            <div style="padding: 12px; background: var(--surface-alt); border-radius: 8px; text-align: center;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Năm nay</div>
+              <div style="font-size: 18px; font-weight: 700; color: var(--primary);">60M</div>
+            </div>
+          </div>
+          
+          <!-- Chart -->
+          <div style="background: var(--surface-alt); border-radius: 8px; padding: 16px;">
+            <canvas id="staffRevenueChart" style="max-height: 200px;"></canvas>
+          </div>
+        </div>
+        
+        <!-- Additional Info -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <!-- Assigned Locations -->
+          <div>
+            <h4 style="margin-bottom: 12px; font-weight: 600;">
+              <i data-lucide="map-pin" style="width: 16px; height: 16px;"></i>
+              Địa điểm được phân công
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="padding: 10px 12px; background: var(--surface-alt); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 500;">Bà Nà Hills</span>
+                <span style="font-size: 12px; color: var(--text-muted);">80 ảnh</span>
+              </div>
+              <div style="padding: 10px 12px; background: var(--surface-alt); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 500;">Hội An</span>
+                <span style="font-size: 12px; color: var(--text-muted);">55 ảnh</span>
+              </div>
+              <div style="padding: 10px 12px; background: var(--surface-alt); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 500;">Cầu Rồng</span>
+                <span style="font-size: 12px; color: var(--text-muted);">30 ảnh</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quick Info -->
+          <div>
+            <h4 style="margin-bottom: 12px; font-weight: 600;">
+              <i data-lucide="info" style="width: 16px; height: 16px;"></i>
+              Thông tin nhanh
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="padding: 10px 12px; background: var(--surface-alt); border-radius: 8px; display: flex; justify-content: space-between;">
+                <span style="color: var(--text-secondary);">DT trung bình/ảnh</span>
+                <span style="font-weight: 600;">50,000đ</span>
+              </div>
+              <div style="padding: 10px 12px; background: var(--surface-alt); border-radius: 8px; display: flex; justify-content: space-between;">
+                <span style="color: var(--text-secondary);">Upload gần nhất</span>
+                <span style="font-weight: 600;">03/03/2026</span>
+              </div>
+              <div style="padding: 10px 12px; background: var(--surface-alt); border-radius: 8px; display: flex; justify-content: space-between;">
+                <span style="color: var(--text-secondary);">Trạng thái</span>
+                <span class="badge badge-success">Hoạt động</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeStaffStatsModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/dashboardManager.js"></script>
+  <script>
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+    
+    function openStaffStatsModal(staffId) {
+      document.getElementById('staffStatsModal').classList.add('active');
+      console.log('View staff stats:', staffId);
+      lucide.createIcons();
+      
+      // Render chart
+      setTimeout(() => {
+        renderStaffRevenueChart();
+      }, 100);
+    }
+    
+    function closeStaffStatsModal() {
+      document.getElementById('staffStatsModal').classList.remove('active');
+    }
+    
+    function renderStaffRevenueChart() {
+      const ctx = document.getElementById('staffRevenueChart');
+      if (!ctx) return;
+      
+      // Destroy existing chart if any
+      if (ctx._chart) ctx._chart.destroy();
+      
+      const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['01/03', '02/03', '03/03', '04/03', '05/03', '06/03', '07/03'],
+          datasets: [{
+            label: 'Doanh thu (VNĐ)',
+            data: [1200000, 850000, 1500000, 900000, 1100000, 750000, 850000],
+            backgroundColor: 'rgba(26, 107, 78, 0.7)',
+            borderColor: '#1a6b4e',
+            borderWidth: 1,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return (value / 1000000).toFixed(1) + 'M';
+                }
+              }
+            }
+          }
+        }
+      });
+      ctx._chart = chart;
+    }
+    
+    function switchStaffRevenuePeriod(period) {
+      document.querySelectorAll('#staffStatsModal .tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      console.log('Switch period:', period);
+    }
+    
+    function changePeriod() {
+      console.log('Change period:', document.getElementById('periodFilter').value);
+    }
+    
+    function exportStaffStats() {
+      alert('Đang xuất file Excel...');
+    }
+    
+    function filterStaffStats() {
+      console.log('Filter staff stats');
+    }
+    
+    function sortStaffStats() {
+      console.log('Sort staff stats');
+    }
+    
+    // Role-based visibility
+    const currentRole = 'admin-system';
+    document.querySelectorAll('[data-role]').forEach(el => {
+      const allowedRoles = el.dataset.role.split(',').map(r => r.trim());
+      if (!allowedRoles.includes(currentRole)) {
+        el.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Địa Điểm - PhotoPro Admin</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="sidebar-logo">
+          <i data-lucide="camera"></i>
+          PhotoPro Admin
+        </a>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Tổng quan</div>
+          <a href="../index.html" class="nav-item">
+            <i data-lucide="layout-dashboard"></i>
+            Dashboard
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Quản lý</div>
+          <a href="locations.html" class="nav-item active">
+            <i data-lucide="map-pin"></i>
+            Địa Điểm
+          </a>
+          <a href="orders.html" class="nav-item">
+            <i data-lucide="shopping-bag"></i>
+            Đơn hàng
+          </a>
+          <a href="staff.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="users"></i>
+            Nhân viên
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Kinh doanh</div>
+          <a href="pricing.html" class="nav-item" data-role="admin-system,admin-sales">
+            <i data-lucide="tag"></i>
+            Bảng giá
+          </a>
+          <a href="revenue.html" class="nav-item">
+            <i data-lucide="trending-up"></i>
+            Doanh thu
+          </a>
+          <a href="staff-stats.html" class="nav-item" data-role="admin-system,admin-sales,manager,staff">
+            <i data-lucide="bar-chart-2"></i>
+            Thống kê NV
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a href="settings.html" class="nav-item" data-role="admin-system">
+            <i data-lucide="settings"></i>
+            Cài đặt
+          </a>
+        </div>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1 class="header-title">Quản lý Địa Điểm</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="openCreateLocationModal()" data-role="admin-system,admin-sales">
+            <i data-lucide="plus"></i>
+            Tạo Địa Điểm mới
+          </button>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <!-- Filters -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <input type="text" placeholder="Tìm địa điểm..." id="searchLocation" style="flex: 1; min-width: 250px;">
+              <select id="filterStatus" onchange="filterLocations()" style="padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;">
+                <option value="">Tất cả trạng thái</option>
+                <option value="published">Published</option>
+                <option value="ready">Ready</option>
+                <option value="processing">Processing</option>
+                <option value="draft">Draft</option>
+              </select>
+              <select id="filterStaff" onchange="filterLocations()" style="padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;">
+                <option value="">Tất cả nhân viên</option>
+                <option value="staff-1">Lê Văn C (NV001)</option>
+                <option value="staff-2">Phạm Thị D (NV002)</option>
+                <option value="staff-3">Hoàng Văn E (NV003)</option>
+              </select>
+              <select id="sortBy" onchange="sortLocations()" style="padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;">
+                <option value="date-desc">Mới nhất</option>
+                <option value="date-asc">Cũ nhất</option>
+                <option value="name-asc">Tên A-Z</option>
+                <option value="photos-desc">Nhiều ảnh nhất</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Locations Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;" id="locationsGrid">
+          <!-- Location Card 1 -->
+          <div class="card" style="cursor: pointer;" onclick="openViewLocationModal('loc-1')">
+            <div style="height: 200px; background: linear-gradient(135deg, #1a6b4e 0%, #134a36 100%); position: relative;">
+              <div style="position: absolute; top: 12px; right: 12px;">
+                <span class="badge badge-success">Published</span>
+              </div>
+              <div style="position: absolute; bottom: 12px; left: 12px; color: white;">
+                <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">
+                  <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+                  20/02/2026
+                </div>
+                <h3 style="margin: 0; font-size: 18px; display: block;">Bà Nà Hills 20/02</h3>
+              </div>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; color: var(--text-secondary);">
+                <div>
+                  <i data-lucide="image" style="width: 14px; height: 14px;"></i>
+                  150 ảnh
+                </div>
+                <div>
+                  <i data-lucide="shopping-cart" style="width: 14px; height: 14px;"></i>
+                  120 đơn
+                </div>
+                <div>
+                  <i data-lucide="dollar-sign" style="width: 14px; height: 14px;"></i>
+                  6M
+                </div>
+              </div>
+              <!-- Staff Assigned -->
+              <div style="display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap;">
+                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: var(--primary-light); color: var(--primary); border-radius: 12px; font-size: 11px; font-weight: 500;">
+                  <i data-lucide="user" style="width: 10px; height: 10px;"></i> Lê Văn C
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: var(--primary-light); color: var(--primary); border-radius: 12px; font-size: 11px; font-weight: 500;">
+                  <i data-lucide="user" style="width: 10px; height: 10px;"></i> Phạm Thị D
+                </span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="event.stopPropagation(); openViewLocationModal('loc-1')">
+                  <i data-lucide="eye"></i>
+                  Xem
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openEditLocationModal('loc-1')" data-role="admin-system,admin-sales">
+                  <i data-lucide="edit"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteLocation('loc-1')" data-role="admin-system">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Location Card 2 -->
+          <div class="card" style="cursor: pointer;" onclick="openViewLocationModal('loc-2')">
+            <div style="height: 200px; background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); position: relative;">
+              <div style="position: absolute; top: 12px; right: 12px;">
+                <span class="badge badge-success">Published</span>
+              </div>
+              <div style="position: absolute; bottom: 12px; left: 12px; color: white;">
+                <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">
+                  <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+                  19/02/2026
+                </div>
+                <h3 style="margin: 0; font-size: 18px; display: block;">Hội An 19/02</h3>
+              </div>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; color: var(--text-secondary);">
+                <div>
+                  <i data-lucide="image" style="width: 14px; height: 14px;"></i>
+                  200 ảnh
+                </div>
+                <div>
+                  <i data-lucide="shopping-cart" style="width: 14px; height: 14px;"></i>
+                  98 đơn
+                </div>
+                <div>
+                  <i data-lucide="dollar-sign" style="width: 14px; height: 14px;"></i>
+                  4.9M
+                </div>
+              </div>
+              <div style="display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap;">
+                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: var(--primary-light); color: var(--primary); border-radius: 12px; font-size: 11px; font-weight: 500;">
+                  <i data-lucide="user" style="width: 10px; height: 10px;"></i> Lê Văn C
+                </span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="event.stopPropagation(); openViewLocationModal('loc-2')">
+                  <i data-lucide="eye"></i>
+                  Xem
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openEditLocationModal('loc-2')" data-role="admin-system,admin-sales">
+                  <i data-lucide="edit"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteLocation('loc-2')" data-role="admin-system">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Location Card 3 -->
+          <div class="card" style="cursor: pointer;" onclick="openViewLocationModal('loc-3')">
+            <div style="height: 200px; background: linear-gradient(135deg, #d4870e 0%, #92400e 100%); position: relative;">
+              <div style="position: absolute; top: 12px; right: 12px;">
+                <span class="badge badge-warning">Processing</span>
+              </div>
+              <div style="position: absolute; bottom: 12px; left: 12px; color: white;">
+                <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">
+                  <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+                  18/02/2026
+                </div>
+                <h3 style="margin: 0; font-size: 18px; display: block;">Cầu Rồng 18/02</h3>
+              </div>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; color: var(--text-secondary);">
+                <div>
+                  <i data-lucide="image" style="width: 14px; height: 14px;"></i>
+                  120 ảnh
+                </div>
+                <div>
+                  <i data-lucide="shopping-cart" style="width: 14px; height: 14px;"></i>
+                  75 đơn
+                </div>
+                <div>
+                  <i data-lucide="dollar-sign" style="width: 14px; height: 14px;"></i>
+                  3.75M
+                </div>
+              </div>
+              <div style="display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap;">
+                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: var(--primary-light); color: var(--primary); border-radius: 12px; font-size: 11px; font-weight: 500;">
+                  <i data-lucide="user" style="width: 10px; height: 10px;"></i> Phạm Thị D
+                </span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="event.stopPropagation(); openViewLocationModal('loc-3')">
+                  <i data-lucide="eye"></i>
+                  Xem
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openEditLocationModal('loc-3')" data-role="admin-system,admin-sales">
+                  <i data-lucide="edit"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteLocation('loc-3')" data-role="admin-system">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- ============ MODAL: TẠO ĐỊA ĐIỂM MỚI ============ -->
+  <div class="modal-overlay" id="createLocationModal">
+    <div class="modal" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Tạo Địa Điểm mới</h3>
+        <button class="modal-close" onclick="closeModal('createLocationModal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Tên Địa Điểm *</label>
+          <input type="text" placeholder="VD: Bà Nà Hills 20/02/2026" id="locName">
+        </div>
+        <div class="form-group">
+          <label>Vị trí / Địa chỉ</label>
+          <input type="text" placeholder="VD: Bà Nà Hills, Đà Nẵng" id="locAddress">
+        </div>
+        <div class="form-group">
+          <label>Ngày chụp *</label>
+          <input type="date" id="locDate" value="2026-03-04">
+        </div>
+        <div class="form-group">
+          <label>Mô tả</label>
+          <textarea placeholder="Mô tả về địa điểm chụp..." id="locDescription" rows="3"></textarea>
+        </div>
+        
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
+        
+        <div class="form-group">
+          <label style="font-weight: 600; margin-bottom: 12px; display: block;">
+            <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+            Phân quyền nhân viên
+          </label>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Chọn nhân viên được quyền upload ảnh vào địa điểm này. Staff chỉ xem được ảnh do chính mình upload.</p>
+          
+          <div style="border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="display: grid; grid-template-columns: 1fr 90px; gap: 0; padding: 10px 16px; background: var(--surface-alt); font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;">
+              <span>Nhân viên</span>
+              <span style="text-align: center;">Được upload</span>
+            </div>
+            
+            <label style="display: grid; grid-template-columns: 1fr 90px; gap: 0; padding: 12px 16px; border-top: 1px solid var(--border); cursor: pointer; align-items: center;" class="staff-row">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #fef3e8; color: #d4870e; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;">LC</div>
+                <div>
+                  <div style="font-weight: 500; font-size: 14px;">Lê Văn C</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">NV001 · Staff</div>
+                </div>
+              </div>
+              <div style="text-align: center;"><input type="checkbox" checked name="staff_upload_1" style="width: 18px; height: 18px;"></div>
+            </label>
+            
+            <label style="display: grid; grid-template-columns: 1fr 90px; gap: 0; padding: 12px 16px; border-top: 1px solid var(--border); cursor: pointer; align-items: center;" class="staff-row">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #e8f5f0; color: #1a854a; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;">PD</div>
+                <div>
+                  <div style="font-weight: 500; font-size: 14px;">Phạm Thị D</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">NV002 · Staff</div>
+                </div>
+              </div>
+              <div style="text-align: center;"><input type="checkbox" name="staff_upload_2" style="width: 18px; height: 18px;"></div>
+            </label>
+            
+            <label style="display: grid; grid-template-columns: 1fr 90px; gap: 0; padding: 12px 16px; border-top: 1px solid var(--border); cursor: pointer; align-items: center;" class="staff-row">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-alt); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;">HE</div>
+                <div>
+                  <div style="font-weight: 500; font-size: 14px;">Hoàng Văn E</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">NV003 · Staff</div>
+                </div>
+              </div>
+              <div style="text-align: center;"><input type="checkbox" name="staff_upload_3" style="width: 18px; height: 18px;"></div>
+            </label>
+          </div>
+
+          <div class="alert alert-info" style="margin-top: 12px; padding: 10px 14px; font-size: 13px;">
+            <i data-lucide="info" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i>
+            <strong>Lưu ý:</strong> Staff chỉ xem được ảnh do chính mình upload tại địa điểm này. Không xem được ảnh của staff khác.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('createLocationModal')">Hủy</button>
+        <button class="btn btn-primary" onclick="createLocation()">
+          <i data-lucide="plus"></i>
+          Tạo Địa Điểm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: SỬA ĐỊA ĐIỂM ============ -->
+  <div class="modal-overlay" id="editLocationModal">
+    <div class="modal" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Sửa Địa Điểm</h3>
+        <button class="modal-close" onclick="closeModal('editLocationModal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Tên Địa Điểm *</label>
+          <input type="text" value="Bà Nà Hills 20/02" id="editLocName">
+        </div>
+        <div class="form-group">
+          <label>Vị trí / Địa chỉ</label>
+          <input type="text" value="Bà Nà Hills, Đà Nẵng" id="editLocAddress">
+        </div>
+        <div class="form-group">
+          <label>Ngày chụp *</label>
+          <input type="date" id="editLocDate" value="2026-02-20">
+        </div>
+        <div class="form-group">
+          <label>Mô tả</label>
+          <textarea id="editLocDescription" rows="3">Bộ ảnh chụp tại Bà Nà Hills ngày 20/02/2026</textarea>
+        </div>
+        
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
+        
+        <div class="form-group">
+          <label style="font-weight: 600; margin-bottom: 12px; display: block;">
+            <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+            Phân quyền nhân viên
+          </label>
+          
+          <div style="border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="display: grid; grid-template-columns: 1fr 90px; gap: 0; padding: 10px 16px; background: var(--surface-alt); font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;">
+              <span>Nhân viên</span>
+              <span style="text-align: center;">Được upload</span>
+            </div>
+            
+            <label style="display: grid; grid-template-columns: 1fr 90px; gap: 0; padding: 12px 16px; border-top: 1px solid var(--border); cursor: pointer; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #fef3e8; color: #d4870e; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;">LC</div>
+                <div>
+                  <div style="font-weight: 500; font-size: 14px;">Lê Văn C</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">NV001 · Staff</div>
+                </div>
+              </div>
+              <div style="text-align: center;"><input type="checkbox" checked style="width: 18px; height: 18px;"></div>
+            </label>
+            
+            <label style="display: grid; grid-template-columns: 1fr 90px; gap: 0; padding: 12px 16px; border-top: 1px solid var(--border); cursor: pointer; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #e8f5f0; color: #1a854a; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;">PD</div>
+                <div>
+                  <div style="font-weight: 500; font-size: 14px;">Phạm Thị D</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">NV002 · Staff</div>
+                </div>
+              </div>
+              <div style="text-align: center;"><input type="checkbox" checked style="width: 18px; height: 18px;"></div>
+            </label>
+            
+            <label style="display: grid; grid-template-columns: 1fr 90px; gap: 0; padding: 12px 16px; border-top: 1px solid var(--border); cursor: pointer; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-alt); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;">HE</div>
+                <div>
+                  <div style="font-weight: 500; font-size: 14px;">Hoàng Văn E</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">NV003 · Staff</div>
+                </div>
+              </div>
+              <div style="text-align: center;"><input type="checkbox" style="width: 18px; height: 18px;"></div>
+            </label>
+          </div>
+
+          <div class="alert alert-info" style="margin-top: 12px; padding: 10px 14px; font-size: 13px;">
+            <i data-lucide="info" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i>
+            <strong>Lưu ý:</strong> Staff chỉ xem được ảnh do chính mình upload. Không xem được ảnh của staff khác.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('editLocationModal')">Hủy</button>
+        <button class="btn btn-primary" onclick="saveEditLocation()">
+          <i data-lucide="save"></i>
+          Lưu thay đổi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: XEM CHI TIẾT ĐỊA ĐIỂM ============ -->
+  <div class="modal-overlay" id="viewLocationModal">
+    <div class="modal" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Chi tiết: Bà Nà Hills 20/02</h3>
+        <button class="modal-close" onclick="closeModal('viewLocationModal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Status & Info -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div>
+            <span class="badge badge-success" style="font-size: 13px; padding: 4px 12px;">Published</span>
+            <span style="font-size: 13px; color: var(--text-muted); margin-left: 12px;">
+              <i data-lucide="calendar" style="width: 14px; height: 14px;"></i> Ngày chụp: 20/02/2026
+            </span>
+          </div>
+        </div>
+        
+        <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
+          <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+          Bà Nà Hills, Đà Nẵng
+        </div>
+        
+        <!-- Stats -->
+        <div class="stats-grid mb-4" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="stat-card" style="padding: 16px;">
+            <div class="stat-content" style="text-align: center;">
+              <div class="stat-label">Tổng ảnh</div>
+              <div class="stat-value" style="font-size: 24px;">150</div>
+            </div>
+          </div>
+          <div class="stat-card" style="padding: 16px;">
+            <div class="stat-content" style="text-align: center;">
+              <div class="stat-label">Đơn hàng</div>
+              <div class="stat-value" style="font-size: 24px;">120</div>
+            </div>
+          </div>
+          <div class="stat-card" style="padding: 16px;">
+            <div class="stat-content" style="text-align: center;">
+              <div class="stat-label">Doanh thu</div>
+              <div class="stat-value" style="font-size: 24px;">6M</div>
+            </div>
+          </div>
+          <div class="stat-card" style="padding: 16px;">
+            <div class="stat-content" style="text-align: center;">
+              <div class="stat-label">Nhân viên</div>
+              <div class="stat-value" style="font-size: 24px;">2</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Assigned Staff -->
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 600;">
+            <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+            Nhân viên được phân công
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: #fef3e8; color: #d4870e; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px;">LC</div>
+                <div>
+                  <div style="font-weight: 600; font-size: 14px;">Lê Văn C</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">NV001 · 80 ảnh uploaded</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <span class="badge badge-success" style="font-size: 11px;">Upload ✓</span>
+              </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-alt); border-radius: 8px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: #e8f5f0; color: #1a854a; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px;">PD</div>
+                <div>
+                  <div style="font-weight: 600; font-size: 14px;">Phạm Thị D</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">NV002 · 70 ảnh uploaded</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <span class="badge badge-success" style="font-size: 11px;">Upload ✓</span>
+              </div>
+            </div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+            <i data-lucide="info" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i>
+            Staff chỉ xem được ảnh do chính mình upload.
+          </p>
+        </div>
+        
+        <!-- Description -->
+        <div>
+          <h4 style="margin-bottom: 8px; font-size: 14px; font-weight: 600;">Mô tả</h4>
+          <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
+            Bộ ảnh chụp tại Bà Nà Hills ngày 20/02/2026. Thời tiết đẹp, ánh sáng tốt. Chủ yếu chụp khách du lịch khu vực Cầu Vàng và khu vui chơi.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('viewLocationModal')">Đóng</button>
+        <button class="btn btn-outline" onclick="closeModal('viewLocationModal'); openEditLocationModal('loc-1')" data-role="admin-system,admin-sales">
+          <i data-lucide="edit"></i>
+          Sửa
+        </button>
+        <button class="btn btn-danger" onclick="deleteLocation('loc-1')" data-role="admin-system">
+          <i data-lucide="trash-2"></i>
+          Xóa
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: XÁC NHẬN XÓA ============ -->
+  <div class="modal-overlay" id="deleteLocationModal">
+    <div class="modal" style="max-width: 450px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color: var(--danger);">
+          <i data-lucide="alert-triangle" style="width: 20px; height: 20px;"></i>
+          Xác nhận xóa
+        </h3>
+        <button class="modal-close" onclick="closeModal('deleteLocationModal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          <strong>Cảnh báo:</strong> Hành động này không thể hoàn tác!
+        </div>
+        <p style="margin: 16px 0; font-size: 14px;">
+          Bạn có chắc muốn xóa địa điểm <strong id="deleteLocName">Bà Nà Hills 20/02</strong>?
+        </p>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Tất cả ảnh trong địa điểm sẽ bị xóa vĩnh viễn. Các đơn hàng đã hoàn thành không bị ảnh hưởng.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('deleteLocationModal')">Hủy</button>
+        <button class="btn btn-danger" onclick="confirmDeleteLocation()">
+          <i data-lucide="trash-2"></i>
+          Xóa vĩnh viễn
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/dashboardManager.js"></script>
+  <script>
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+    
+    // Modal helpers
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+    
+    function openCreateLocationModal() {
+      document.getElementById('createLocationModal').classList.add('active');
+      lucide.createIcons();
+    }
+    
+    function openEditLocationModal(id) {
+      document.getElementById('editLocationModal').classList.add('active');
+      console.log('Edit location:', id);
+      lucide.createIcons();
+    }
+    
+    function openViewLocationModal(id) {
+      document.getElementById('viewLocationModal').classList.add('active');
+      console.log('View location:', id);
+      lucide.createIcons();
+    }
+    
+    function createLocation() {
+      const name = document.getElementById('locName').value;
+      const address = document.getElementById('locAddress').value;
+      const date = document.getElementById('locDate').value;
+      const description = document.getElementById('locDescription').value;
+      
+      if (!name || !date) {
+        alert('Vui lòng nhập tên địa điểm và ngày chụp');
+        return;
+      }
+      
+      console.log('Creating location:', { name, address, date, description });
+      alert('Địa điểm đã được tạo thành công!');
+      closeModal('createLocationModal');
+    }
+    
+    function saveEditLocation() {
+      const name = document.getElementById('editLocName').value;
+      if (!name) {
+        alert('Vui lòng nhập tên địa điểm');
+        return;
+      }
+      console.log('Saving location edit');
+      alert('Đã lưu thay đổi!');
+      closeModal('editLocationModal');
+    }
+    
+    function deleteLocation(id) {
+      closeModal('viewLocationModal');
+      document.getElementById('deleteLocationModal').classList.add('active');
+      lucide.createIcons();
+    }
+    
+    function confirmDeleteLocation() {
+      console.log('Location deleted');
+      alert('Địa điểm đã được xóa!');
+      closeModal('deleteLocationModal');
+    }
+    
+    function filterLocations() {
+      console.log('Filter locations');
+    }
+    
+    function sortLocations() {
+      console.log('Sort locations');
+    }
+    
+    // Style for staff row hover
+    const style = document.createElement('style');
+    style.textContent = '.staff-row:hover { background: var(--surface-alt); }';
+    document.head.appendChild(style);
+    
+    // Role-based visibility
+    const currentRole = 'admin-system';
+    document.querySelectorAll('[data-role]').forEach(el => {
+      const allowedRoles = el.dataset.role.split(',').map(r => r.trim());
+      if (!allowedRoles.includes(currentRole)) {
+        el.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

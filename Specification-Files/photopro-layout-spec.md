@@ -1,8 +1,11 @@
 # PHOTOPRO — Bố cục & Chức năng Front-end Toàn diện
 
+> **Phiên bản:** 2.0 (cập nhật theo spec-v2)  
+> **Cập nhật:** 04/03/2026  
 > **Thiết kế trung tính** — Phù hợp mọi loại hình doanh nghiệp du lịch  
-> **Không dùng theme cố định** — Doanh nghiệp tự chọn màu sắc (Primary, Accent, Surface, Text)  
+> **Không dùng theme cố định** — Doanh nghiệp tự chọn màu sắc (7 preset + Custom HEX)  
 > **Kỹ thuật:** Thuần HTML + CSS Variables + Mock Data JSON  
+> **Tham chiếu:** `photopro-spec-v2.md` (v2.1) — Xem chi tiết các thay đổi A1-A6, B1, C1, C2  
 
 ---
 
@@ -12,7 +15,7 @@
 2. [3 Ứng dụng Front-end](#2-ba-ứng-dụng-front-end)
 3. [Customer Storefront — 6 trang](#3-customer-storefront)
 4. [Staff Portal — 4 trang](#4-staff-portal)
-5. [Admin Dashboard — 6 trang](#5-admin-dashboard)
+5. [Admin Dashboard — 7+ trang (cập nhật v2)](#5-admin-dashboard)
 6. [Shared Components](#6-shared-components)
 7. [Mock Data Structure](#7-mock-data-structure)
 8. [Responsive Design](#8-responsive-design)
@@ -76,13 +79,13 @@ Tương tự cho `--accent-light` từ `--accent`.
 │  2. STAFF PORTAL (React + Vite)                                │
 │     URL: portal.photopro.vn                                    │
 │     Dành cho: Nhân viên / Thợ ảnh                              │
-│     4 trang: Albums → Upload & Tag → Orders → Profile          │
+│     4 trang: Địa Điểm → Upload → Thống kê NV → Profile        │
 │                                                                │
 │  3. ADMIN DASHBOARD (React + Vite)                             │
 │     URL: admin.photopro.vn                                     │
-│     Dành cho: Admin System, Admin Sales, Manager               │
-│     6+ trang: Dashboard → Albums → Staff → Pricing             │
-│               → Revenue → Settings                             │
+│     Dành cho: Admin System, Admin Sales, Manager, Staff        │
+│     7+ trang: Dashboard → Địa Điểm → Staff → Pricing          │
+│               → Revenue → Thống kê NV → Settings              │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -117,13 +120,13 @@ Tương tự cho `--accent-light` từ `--accent`.
 │                                                            │
 │  🔒 "Selfie chỉ dùng tìm kiếm, không lưu trữ"           │
 ├─ DANH SÁCH ĐỊA ĐIỂM ─────────────────────────────────────┤
-│  Grid cards các album đang PUBLISHED                       │
-│  Mỗi card: Tên album · Số ảnh · Ngày · Color border-left │
+│  Grid cards các địa điểm đang PUBLISHED                    │
+│  Mỗi card: Tên địa điểm · Số ảnh · Ngày · Color border   │
 └────────────────────────────────────────────────────────────┘
 ```
 
 **Chức năng:**
-- Hiển thị danh sách album/tag đang published (dạng pills có thể chọn)
+- Hiển thị danh sách địa điểm đang published (dạng pills có thể chọn)
 - Camera capture hoặc file upload selfie
 - Selfie gửi lên server, xử lý in-memory, **không lưu disk**
 - Redirect sang `/results` sau khi xử lý
@@ -141,14 +144,18 @@ Tương tự cho `--accent-light` từ `--accent`.
 ├─ CARD: Tìm ảnh của bạn ──────────────────────────────┤
 │                                                        │
 │  PHẠM VI TÌM KIẾM (radio group):                      │
-│  ● Tất cả album (5 album, ~750 ảnh)                   │
-│  ○ Chọn album cụ thể:                                 │
+│  ● Tất cả địa điểm (5 địa điểm, ~750 ảnh)            │
+│  ○ Chọn địa điểm cụ thể:                              │
 │    ☑ Bà Nà Hills 20/02 (150 ảnh)                      │
 │    ☑ Hội An 19/02 (200 ảnh)                           │
 │    ☐ Cầu Rồng Đêm 18/02 (120 ảnh)                    │
 │                                                        │
-│  LỌC THEO LOẠI ẢNH (tag pills):                       │
-│  [#couple] [#family] [#solo] [#portrait] [#sunset]    │
+│  KHOẢNG THỜI GIAN (tùy chọn — v2):                    │
+│  Từ ngày: [____/____/________]                         │
+│  Đến ngày: [____/____/________]                        │
+│  Chọn nhanh:                                           │
+│  [Hôm nay] [3 ngày] [7 ngày] [30 ngày] [Tất cả]      │
+│  ⓘ Chọn ngày để thu hẹp kết quả (không bắt buộc)     │
 │                                                        │
 │  FACE SEARCH BOX (giống Landing nhưng nhỏ hơn)        │
 │                                                        │
@@ -157,30 +164,31 @@ Tương tự cho `--accent-light` từ `--accent`.
 ```
 
 **Chức năng:**
-- Chọn scope: tất cả / album cụ thể
-- Multi-select album (checkbox)
-- Lọc theo category tag
+- Chọn scope: tất cả / địa điểm cụ thể
+- Multi-select địa điểm (checkbox)
+- **Lọc theo ngày chụp** (date picker + quick buttons) — v2
 - Camera capture + File upload
 - Hiển thị search time (ms)
+- Chỉ tìm ảnh `status = 'available'` (loại ảnh đã bán)
 
 ---
 
 ### 3.3 Trang Kết quả (`/results`)
 
-**Mục đích:** Hiển thị ảnh có mặt khách, nhóm theo album. Cho chọn ảnh mua.
+**Mục đích:** Hiển thị ảnh có mặt khách, nhóm theo địa điểm. Cho chọn ảnh mua.
 
 **Bố cục:**
 
 ```
 ┌─ HEADER ─────────────────────────────────────────────────┐
 │ [Logo]                    [⏱️ 450ms] [Tìm thấy 18 ảnh]  │
-├─ RESULTS GROUPED BY ALBUM ───────────────────────────────┤
+├─ RESULTS GROUPED BY LOCATION ────────────────────────────┤
 │                                                           │
 │  ── 📍 Bà Nà Hills 20/02 (8 ảnh) ──────── [Xem thêm →] │
 │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐                    │
 │  │ 98%  │ │ 95%  │ │ 92%  │ │ 88%  │   Photo grid       │
 │  │☑ Chọn│ │☑ Chọn│ │☐ Chọn│ │☐⚠3d │   4 cột desktop    │
-│  │#couple│ │#coupl│ │#portr│ │#solo │   2 cột mobile     │
+│  └──────┘ └──────┘ └──────┘ └──────┘   2 cột mobile     │
 │  └──────┘ └──────┘ └──────┘ └──────┘                    │
 │                                                           │
 │  ── 📍 Hội An 19/02 (7 ảnh) ───────────── [Xem thêm →] │
@@ -196,8 +204,9 @@ Tương tự cho `--accent-light` từ `--accent`.
 
 **Chức năng chi tiết:**
 - Ảnh hiển thị dạng **photo grid responsive** (aspect-ratio 3:4)
-- Mỗi ảnh có: **watermark overlay**, badge % similarity, checkbox chọn, tag pills
+- Mỗi ảnh có: **watermark overlay**, badge % similarity, checkbox chọn
 - Ảnh sắp bị xóa (< 7 ngày): badge đỏ `⚠️ 3d`
+- Ảnh đã bán (`status = 'sold'`): KHÔNG hiển thị (đã di chuyển sang album đơn hàng)
 - **Auto-pack logic** tự tính gói tối ưu cho khách
 - Bottom pricing bar hiển thị tóm tắt + nút thanh toán
 
@@ -336,8 +345,9 @@ Tương tự cho `--accent-light` từ `--accent`.
 │ SIDEBAR  │          MAIN CONTENT                      │
 │ 220px    │          (padding 24px)                    │
 │          │                                            │
-│ 📂 Albums│                                            │
+│ � Địa Điểm│   ← Đổi tên từ Albums (v2)              │
 │ ⬆ Upload │                                            │
+│ 📈 TK NV │   ← Thống kê của mình (v2)                │
 │ 📋 Orders│                                            │
 │ 👤 Profile│                                           │
 │          │                                            │
@@ -346,19 +356,20 @@ Tương tự cho `--accent-light` từ `--accent`.
 └──────────┴────────────────────────────────────────────┘
 ```
 
-**LƯU Ý:** Staff KHÔNG thấy: Dashboard, Revenue, Pricing, Settings, Auto-Delete.
+**LƯU Ý:** Staff KHÔNG thấy: Dashboard (admin), Revenue, Pricing, Settings.
+Staff chỉ xem ảnh do chính mình upload vào Địa Điểm.
 
-### 4.2 Trang Albums (`/albums`)
+### 4.2 Trang Địa Điểm (`/locations`)
 
-- Danh sách album hiện có (card list, border-left color)
-- Mỗi album: tên, số ảnh, địa điểm, ngày, status badge, nút "Upload vào đây"
-- **Alert:** "Bạn không có quyền tạo album mới. Liên hệ Admin."
-- Click album → chuyển sang Upload
+- Danh sách Địa Điểm được phân công (card list, border-left color)
+- Mỗi ĐĐ: tên, số ảnh **do mình upload**, ngày, status badge, nút "Upload vào đây"
+- **Alert:** "Bạn chỉ xem được ảnh do chính mình upload."
+- Click ĐĐ → chuyển sang Upload
 
-### 4.3 Trang Upload & Tag (`/albums/{id}/upload`)
+### 4.3 Trang Upload (`/locations/{id}/upload`)
 
 ```
-┌─ Album header: Tên + status + actions ───────────────┐
+┌─ ĐĐ header: Tên + status + actions ─────────────────┐
 ├─ UPLOAD ZONE ────────────────────────────────────────┤
 │  Dashed border · Kéo thả hoặc chọn file             │
 │  Max 20 ảnh/lần · JPG/PNG/HEIC · 50MB/ảnh           │
@@ -366,21 +377,17 @@ Tương tự cho `--accent-light` từ `--accent`.
 │  IMG_0342.jpg ───────████████░░ 85%                  │
 │  IMG_0343.jpg ─────────────────── ✓ Xong             │
 │  IMG_0344.jpg ─────────────────── Đang chờ...        │
-├─ PHOTO GRID (chọn nhiều) ───────────────────────────┤
-│  [Chọn tất cả] [🏷️ Gắn tag]                         │
-│  Grid ảnh với checkbox, tag pills hiện tại           │
-├─ TAG PANEL ──────────────────────────────────────────┤
-│  "Gắn tag cho 2 ảnh đã chọn:"                       │
-│  [#couple●] [#family] [#solo] [#portrait] [#sunset]  │
+├─ PHOTO GRID (chỉ ảnh do mình upload) ───────────────┤
+│  Grid ảnh với status badge                           │
+│  ⓘ Bạn chỉ xem được ảnh do chính mình upload.      │
 └──────────────────────────────────────────────────────┘
 ```
 
 **Chức năng:**
 - Drag-drop upload (max 20 concurrent)
 - Upload progress (per file: %, retry if failed)
-- Multi-select ảnh trong grid
-- Gắn tag (toggle pills, nhiều tag/ảnh)
-- Staff **KHÔNG** thể tạo tag mới, chỉ chọn tag có sẵn
+- Grid chỉ hiển thị ảnh do staff đang đăng nhập upload
+- Staff **KHÔNG** thể xem ảnh của staff khác upload
 
 ### 4.4 Trang Orders (`/orders`)
 
@@ -403,20 +410,19 @@ Tương tự cho `--accent-light` từ `--accent`.
 │          │                                              │
 │ TỔNG QUAN│    Hiện theo role:                           │
 │ 📊 Dash  │    Admin System: TẤT CẢ menu                │
-│ ─────────│    Admin Sales: không Settings/Auto-Delete   │
-│ NỘI DUNG │    Manager: chỉ Dashboard + Orders (summary)│
-│ 🏷️ Albums│                                              │
+│ ─────────│    Admin Sales: không Settings               │
+│ NỘI DUNG │    Manager: Dashboard + DT + TK NV (read)    │
+│ 📍 Địa Điểm│  ← Đổi tên từ Albums (v2)                │
 │ 👥 Staff │                                              │
 │ ─────────│                                              │
 │ KINH DOANH│                                             │
 │ 💰 Giá   │                                              │
-│ 🏷️ Giảm  │                                              │
 │ 📋 Orders│                                              │
-│ 📈 DT    │                                              │
+│ � DT    │                                              │
+│ � TK NV │  ← Thống kê nhân viên (mới — v2)            │
 │ ─────────│                                              │
 │ HỆ THỐNG │                                              │
 │ ⚙️ Setup │                                              │
-│ 🗑️ AutoDel│                                             │
 │ 🌐 Domain│                                              │
 └──────────┴──────────────────────────────────────────────┘
 ```
@@ -427,22 +433,25 @@ Tương tự cho `--accent-light` từ `--accent`.
 - **Chart doanh thu 7 ngày:** Bar chart responsive
 - **Gói bán chạy:** Xếp hạng gói + số đơn
 - **Alert cảnh báo:** "250 ảnh sẽ bị xóa trong 7 ngày tới"
-- **Album chờ Publish:** Card list + nút Publish/Xóa
+- **Địa Điểm chờ Publish:** Card list + nút Publish/Xóa
 - **Staff đang hoạt động:** Tên + số ảnh hôm nay + Online/Offline
+- **Staff view:** 4 stat cards (Ảnh UP, Ảnh bán, DT tháng, Địa điểm) + danh sách ĐĐ được phân công
 
-### 5.3 Trang Albums/Tags (`/albums`)
+### 5.3 Trang Địa Điểm (`/locations`) *(đổi từ Albums)*
 
-- **Tabs:** Albums | Categories | Events | Custom
-- **Table:** Tên album, Địa điểm, Ngày chụp, Số ảnh, Status (badge), Actions
-- Actions: ✏️ Sửa, Publish, 🗑️ Xóa (chỉ Admin System)
-- Nút: [+ Tạo Album] [+ Tạo Tag]
+- **Danh sách:** Card grid các địa điểm chụp, mỗi card: tên, vị trí, ngày, stats, staff badges
+- **Modals:** Tạo mới, Sửa, Xem chi tiết, Xóa (confirm)
+- **Phân quyền staff:** Bảng 1 cột "Được upload" (checkbox). Staff chỉ xem ảnh do mình upload.
+- Actions: ✏️ Sửa, 👁 Xem, 🗑️ Xóa (chỉ Admin System)
+- Nút: [+ Tạo Địa Điểm]
 
 ### 5.4 Trang Staff Management (`/staff`)
 
 - **Filter tags:** Tất cả, Admin System, Admin Sales, Manager, Staff
-- **Table:** Tên, Email, Vai trò (badge theo màu), Ảnh upload, Status, Actions
+- **Table:** Tên, Vai trò (badge theo màu), Mã NV, Địa điểm (badges), Trạng thái, Actions
+- Cột Mã NV + Địa điểm chỉ hiện cho role Staff. Non-staff hiển thị "—".
 - Actions: ✏️ Sửa, 🔒 Reset password
-- **Ma trận phân quyền** hiển thị bên dưới (table ✅/❌)
+- **Form tạo/sửa:** Khi chọn vai trò Staff → hiện thêm: Mã nhân viên + Chọn Địa điểm (v2)
 - Nút: [+ Thêm nhân viên]
 
 ### 5.5 Trang Pricing (`/pricing`)
@@ -458,7 +467,7 @@ Tương tự cho `--accent-light` từ `--accent`.
 - **Time filter:** [Hôm nay] [Tuần] [Tháng●] [Quý] [Năm] [Tùy chọn]
 - **4 Stat cards:** Tổng DT, Đơn hàng, Ảnh bán, Phí platform
 - **Export buttons:** [Xuất Excel] [Xuất CSV] [Xuất PDF]
-- **Top Album bán chạy:** Ranked list
+- **Top Địa Điểm bán chạy:** Ranked list
 - **Top Staff upload:** Ranked list
 
 ### 5.7 Trang Settings (`/settings`)
@@ -467,10 +476,11 @@ Tương tự cho `--accent-light` từ `--accent`.
 
 **6 Card cấu hình:**
 
-1. **🗑️ Thời hạn lưu trữ ảnh**
+1. **🗑️ Thời hạn lưu trữ ảnh** *(đã đơn giản hóa — v2)*
    - Input: N ngày (min 7, max 365, default 30)
-   - Toggle: Bật/tắt auto-delete
-   - Toggle: Chỉ xóa ảnh chưa bán
+   - Info: "Ảnh chưa bán sẽ tự động bị xóa sau thời hạn. Ảnh đã mua được di chuyển vào album đơn hàng và lưu trữ vĩnh viễn."
+   - ~~Toggle: Bật/tắt auto-delete~~ (đã bỏ — v2 C2)
+   - ~~Toggle: Chỉ xóa ảnh chưa bán~~ (đã bỏ — v2 C2)
 
 2. **⏱️ Thời hạn Link tải**
    - Input: N giờ (min 24, max 720, default 168)
@@ -483,12 +493,24 @@ Tương tự cho `--accent-light` từ `--accent`.
 4. **🏦 Tài khoản ngân hàng**
    - Ngân hàng, Số TK, Chủ TK, Trạng thái xác minh
 
-5. **🎨 Tùy chỉnh màu sắc**
-   - Color picker: Primary, Accent
+5. **🎨 Tùy chỉnh màu sắc** *(mở rộng — v2)*
+   - 7 Preset nhanh: Xanh lá, Xanh dương, Tím, Đỏ, Teal, Slate Dark, Nâu
+   - Custom color: `<input type="color">` + Input HEX cho Primary & Accent
+   - Live preview: Nút, badge, link trên nền primary/accent
    - Upload logo doanh nghiệp
    - Upload watermark ảnh
 
 6. **Nút [💾 Lưu cài đặt]**
+
+### 5.8 Trang Thống Kê Nhân Viên (`/staff-stats`) *(mới — v2)*
+
+> Mục **Kinh Doanh** trong sidebar. Xem spec-v2.md A1.
+
+- **Admin/Manager:** Bảng danh sách staff + click mở modal chi tiết
+- **Staff:** Trang thống kê cá nhân (không thấy staff khác)
+- **Table:** #, Nhân viên, Mã NV, Ảnh upload, Ảnh bán, Tỉ lệ (progress bar), DT tháng, Tổng DT, Địa điểm (badges)
+- **Modal chi tiết:** 4 stat cards + biểu đồ doanh thu (Chart.js bar) + tabs kỳ DT + ĐĐ được phân công
+- **Export:** Xuất Excel
 
 ---
 
@@ -499,7 +521,7 @@ Tương tự cho `--accent-light` từ `--accent`.
 | Component | Mô tả |
 |-----------|-------|
 | `PhotoGrid` | Responsive grid, lazy load, aspect-ratio 3:4, auto-fill minmax(150px, 1fr) |
-| `PhotoCard` | Placeholder → lazy image, watermark overlay, checkbox, similarity badge, warning badge, tag pills |
+| `PhotoCard` | Placeholder → lazy image, watermark overlay, checkbox, similarity badge, warning badge |
 | `PhotoLightbox` | Full-screen preview với watermark, disable right-click |
 
 ### 6.2 Upload Components
@@ -510,13 +532,14 @@ Tương tự cho `--accent-light` từ `--accent`.
 | `UploadProgress` | Per-file progress bar, status (uploading/done/error), retry |
 | `BatchUploader` | Queue 20 files, parallel upload, auto-retry |
 
-### 6.3 Tag Components
+### 6.3 Search & Filter Components (cập nhật v2)
 
 | Component | Mô tả |
 |-----------|-------|
-| `TagPill` | Rounded pill, toggle active/inactive, color-coded |
-| `TagPicker` | Multi-select tag pills for filtering/tagging |
+| `DateRangePicker` | Từ ngày / Đến ngày inputs + quick date buttons (Hôm nay, 3 ngày, 7 ngày, 30 ngày, Tất cả) |
+| `QuickDateButtons` | Nút chọn nhanh khoảng thời gian, active state (primary color) |
 | `TagBadge` | Status badge (PUBLISHED/READY/DRAFT/etc.) |
+| `LocationBadge` | Badge hiển thị tên Địa Điểm được phân công |
 
 ### 6.4 Payment Components
 
@@ -558,10 +581,13 @@ Tất cả mock data được lưu trong 1 object JSON:
     "domain": "studio-abc.photopro.vn",
     "delivery_link_ttl_hours": 168,
     "photo_retention_days": 30,
-    "auto_delete_enabled": true
+    "brand_colors": {
+      "primary": "#1a6b4e",
+      "accent": "#d4870e"
+    }
   },
-  "albums": [
-    { "id": "a1", "name": "Bà Nà Hills 20/02", "spot": "Bà Nà Hills", "date": "2026-02-20", "photos": 150, "status": "PUBLISHED" }
+  "locations": [
+    { "id": "a1", "name": "Bà Nà Hills 20/02", "address": "Bà Nà Hills, Đà Nẵng", "date": "2026-02-20", "photos": 150, "status": "PUBLISHED", "type": "location", "staff": ["NV001", "NV002"] }
   ],
   "pricing": [
     { "name": "Gói 1 ảnh", "count": 1, "price": 10000 }
@@ -570,17 +596,17 @@ Tất cả mock data được lưu trong 1 object JSON:
     { "code": "WELCOME10", "discount": "10%", "used": 45, "limit": 100 }
   ],
   "staff": [
-    { "name": "Nguyễn Văn A", "role": "staff", "photos": 3200 }
+    { "name": "Nguyễn Văn A", "role": "staff", "employee_code": "NV001", "photos": 3200, "locations": ["Bà Nà Hills", "Hội An"] }
   ],
   "orders": [
-    { "id": "ORD-A1B2C3", "photos": 3, "total": 20000, "status": "DELIVERED" }
+    { "id": "ORD-A1B2C3", "photos": 3, "total": 20000, "status": "DELIVERED", "type": "order", "is_permanent": true }
   ],
   "revenue_chart": [
     { "day": "20/02", "value": 6800000 }
   ],
   "search_results": {
     "group1": [
-      { "score": 98, "tags": ["couple"], "warning": false }
+      { "score": 98, "status": "available", "warning": false }
     ]
   }
 }
@@ -675,7 +701,7 @@ apps/storefront/
     │   │   ├── layout.tsx         // StoreLayout: Header + resolve business
     │   │   ├── page.tsx           // / — Landing page
     │   │   ├── search/
-    │   │   │   └── page.tsx       // /search — Face search + album filter
+    │   │   │   └── page.tsx       // /search — Face search + location filter
     │   │   ├── results/
     │   │   │   └── page.tsx       // /results — Kết quả face search
     │   │   ├── checkout/
@@ -704,16 +730,16 @@ apps/storefront/
     │   ├── search/
     │   │   ├── CameraCapture.tsx  // Webcam selfie, canvas capture
     │   │   ├── ImageUpload.tsx    // File input, preview, validate
-    │   │   ├── AlbumSelector.tsx  // Multi-select album pills
-    │   │   ├── TagFilter.tsx      // Category tag pills toggle
+    │   │   ├── LocationSelector.tsx // Multi-select địa điểm pills (v2)
+    │   │   ├── DateRangeFilter.tsx // Lọc ngày từ–đến + quick buttons (v2)
     │   │   └── SearchTips.tsx     // Hướng dẫn chụp selfie
     │   │
     │   ├── gallery/
     │   │   ├── PhotoGrid.tsx      // Responsive grid, lazy load
-    │   │   ├── PhotoCard.tsx      // Thumbnail, badge, checkbox, tags
+    │   │   ├── PhotoCard.tsx      // Thumbnail, badge, checkbox
     │   │   ├── ProtectedImage.tsx // Watermark, anti-save overlay
     │   │   ├── PhotoLightbox.tsx  // Fullscreen preview, swipe
-    │   │   ├── ResultGroup.tsx    // Album group header + photo grid
+    │   │   ├── ResultGroup.tsx    // Location group header + photo grid
     │   │   └── DeleteWarning.tsx  // Badge đếm ngược sắp xóa
     │   │
     │   ├── cart/
@@ -736,7 +762,6 @@ apps/storefront/
     │   └── ui/                    // Base UI (hoặc từ @photopro/ui)
     │       ├── Button.tsx
     │       ├── Badge.tsx
-    │       ├── TagPill.tsx
     │       ├── Alert.tsx
     │       ├── Card.tsx
     │       ├── ProgressBar.tsx
@@ -752,11 +777,11 @@ apps/storefront/
     │
     ├── stores/                    // Zustand stores
     │   ├── cartStore.ts           // Selected photos, package, total
-    │   └── searchStore.ts         // Scope, albums, tags, results
+    │   └── searchStore.ts         // Scope, locations, date range, results
     │
     ├── services/                  // API client functions
     │   ├── api.ts                 // Axios instance, interceptors
-    │   ├── albums.ts              // getAlbums, getAlbumBySlug
+    │   ├── locations.ts            // getLocations, getLocationBySlug (v2)
     │   ├── faceSearch.ts          // postFaceSearch, getResults
     │   ├── orders.ts              // createOrder, getOrder, pay
     │   ├── pricing.ts             // getPricing packages
@@ -769,7 +794,7 @@ apps/storefront/
     │   └── qrcode.ts              // Generate QR code SVG
     │
     └── types/
-        ├── business.ts            // Business, Album, Tag interfaces
+        ├── business.ts            // Business, Location interfaces (v2)
         ├── photo.ts               // Photo, FaceResult, SearchResult
         ├── order.ts               // Order, OrderItem, Delivery
         └── pricing.ts             // PricingPackage, Discount
@@ -793,15 +818,16 @@ apps/staff-portal/
     │
     ├── pages/
     │   ├── LoginPage.tsx          // Email/SĐT + Password/OTP
-    │   ├── AlbumsPage.tsx         // Danh sách album để chọn upload
-    │   ├── AlbumDetailPage.tsx    // Ảnh trong album + gắn tag
+    │   ├── LocationsPage.tsx      // Danh sách Địa Điểm được phân công (was Albums)
+    │   ├── LocationDetailPage.tsx // Ảnh do mình upload trong ĐĐ
     │   ├── UploadPage.tsx         // Drag-drop bulk upload
+    │   ├── MyStatsPage.tsx        // Thống kê cá nhân (mới — v2)
     │   ├── OrdersPage.tsx         // Danh sách đơn hàng (list only)
     │   └── ProfilePage.tsx        // Thông tin cá nhân staff
     │
     ├── components/
     │   ├── layout/
-    │   │   ├── Sidebar.tsx        // Nav: Albums, Upload, Orders
+    │   │   ├── Sidebar.tsx        // Nav: Địa Điểm, Upload, TK NV, Orders
     │   │   ├── TopBar.tsx         // User info + logout
     │   │   └── PageLayout.tsx     // Sidebar + Main content grid
     │   │
@@ -812,14 +838,12 @@ apps/staff-portal/
     │   │   └── UploadStats.tsx    // Total/success/failed count
     │   │
     │   ├── gallery/
-    │   │   ├── PhotoGrid.tsx      // Grid ảnh, multi-select checkbox
-    │   │   ├── PhotoCard.tsx      // Thumbnail + tags + status
+    │   │   ├── PhotoGrid.tsx      // Grid ảnh, chỉ ảnh do mình upload
+    │   │   ├── PhotoCard.tsx      // Thumbnail + status
     │   │   └── PhotoDetail.tsx    // Modal chi tiết ảnh
     │   │
-    │   ├── tags/
-    │   │   ├── TagPicker.tsx      // Multi-select tag pills
-    │   │   ├── TagBadge.tsx       // Colored tag display
-    │   │   └── BulkTagPanel.tsx   // Panel gắn tag cho ảnh đã chọn
+    │   ├── stats/                     // Mới — v2
+    │   │   └── MyStatsView.tsx    // Thống kê cá nhân: cards + biểu đồ + ĐĐ được phân công
     │   │
     │   ├── orders/
     │   │   └── OrderTable.tsx     // Table đơn hàng + status badge
@@ -828,9 +852,9 @@ apps/staff-portal/
     │
     ├── hooks/
     │   ├── useAuth.ts             // Login, logout, token refresh
-    │   ├── useAlbums.ts           // React Query: fetch albums
+    │   ├── useLocations.ts        // React Query: fetch locations (v2)
     │   ├── useUpload.ts           // Upload queue, progress tracking
-    │   ├── usePhotos.ts           // Fetch photos by album, tag
+    │   ├── usePhotos.ts           // Fetch photos by location
     │   └── useOrders.ts           // Fetch order list
     │
     ├── stores/
@@ -841,12 +865,12 @@ apps/staff-portal/
     ├── services/
     │   ├── api.ts                 // Axios + JWT interceptor
     │   ├── auth.ts                // login, refresh, logout
-    │   ├── albums.ts              // getAlbums, getAlbumPhotos
-    │   ├── photos.ts              // uploadPhotos, addTags, removeTags
+    │   ├── locations.ts            // getLocations, getLocationPhotos (v2)
+    │   ├── photos.ts              // uploadPhotos
     │   └── orders.ts              // getOrders
     │
     └── types/
-        └── index.ts               // Staff, Album, Photo, Order, Tag
+        └── index.ts               // Staff, Location, Photo, Order (v2)
 ```
 
 ---
@@ -867,15 +891,16 @@ apps/admin-dashboard/
     ├── pages/
     │   ├── LoginPage.tsx          // Admin login
     │   ├── DashboardPage.tsx      // Stats, charts, alerts — All roles
-    │   ├── AlbumsPage.tsx         // CRUD albums/tags — Sys+Sales
-    │   ├── AlbumDetailPage.tsx    // Photos in album, publish
-    │   ├── StaffPage.tsx          // CRUD staff — System only
+    │   ├── LocationsPage.tsx      // CRUD Địa Điểm (was Albums) — Sys+Sales
+    │   ├── LocationDetailPage.tsx // Photos in ĐĐ, staff chỉ xem ảnh mình
+    │   ├── StaffPage.tsx          // CRUD staff (+ Mã NV, Địa điểm) — System only
+    │   ├── StaffStatsPage.tsx     // Staff statistics (mới — v2) — All roles
     │   ├── PricingPage.tsx        // Bundle pricing CRUD — Sys+Sales
     │   ├── DiscountsPage.tsx      // Discount codes CRUD — Sys+Sales
-    │   ├── OrdersPage.tsx         // Orders — Sys+Sales full / Manager summary
+    │   ├── OrdersPage.tsx         // Orders (ảnh từ album ĐH) — Sys+Sales full / Manager summary
     │   ├── RevenuePage.tsx        // Charts, export — Sys+Sales
-    │   ├── SettingsPage.tsx       // Domain, bank, branding — System only
-    │   └── AutoDeletePage.tsx     // Retention config — System only
+    │   ├── SettingsPage.tsx       // Domain, bank, branding, color picker — System only
+    │   └── ProfilePage.tsx        // Hồ sơ cá nhân — All roles
     │
     ├── components/
     │   ├── layout/
@@ -888,20 +913,25 @@ apps/admin-dashboard/
     │   │   ├── StatCard.tsx       // Label + value + change %
     │   │   ├── RevenueChart.tsx   // Bar/line chart — Recharts
     │   │   ├── TopPackages.tsx    // Gói bán chạy ranked list
-    │   │   ├── PendingAlbums.tsx  // Albums chờ publish
+    │   │   ├── PendingLocations.tsx // Địa điểm chờ publish (v2)
     │   │   ├── ActiveStaff.tsx    // Staff online + ảnh hôm nay
     │   │   └── DeleteWarnings.tsx // Ảnh sắp bị xóa alert
     │   │
-    │   ├── albums/
-    │   │   ├── AlbumTable.tsx     // Table + status + actions
-    │   │   ├── AlbumForm.tsx      // Create/Edit album modal
-    │   │   ├── TagManager.tsx     // CRUD tags: category, event, custom
-    │   │   └── PublishButton.tsx  // Publish album (check bank verified)
+    │   ├── locations/                  // Đổi từ albums/
+    │   │   ├── LocationTable.tsx  // Card grid + status + actions
+    │   │   ├── LocationForm.tsx   // Create/Edit ĐĐ modal (+ staff assign)
+    │   │   ├── LocationView.tsx   // View detail modal (stats + staff)
+    │   │   └── PublishButton.tsx  // Publish location (check bank verified)
     │   │
     │   ├── staff/
-    │   │   ├── StaffTable.tsx     // Table + role badge + actions
-    │   │   ├── StaffForm.tsx      // Create/Edit staff modal
+    │   │   ├── StaffTable.tsx     // Table + role badge + Mã NV + ĐĐ + actions
+    │   │   ├── StaffForm.tsx      // Create/Edit staff modal (+ employee_code, locations khi role=Staff)
     │   │   └── PermissionMatrix.tsx // Role × permission grid ✅/❌
+    │   │
+    │   ├── staff-stats/               // Mới — v2
+    │   │   ├── StaffStatsTable.tsx // Bảng thống kê tất cả staff
+    │   │   ├── StaffStatsModal.tsx // Modal chi tiết + biểu đồ
+    │   │   └── MyStats.tsx        // Trang thống kê cá nhân (cho Staff)
     │   │
     │   ├── pricing/
     │   │   ├── PricingTable.tsx   // Bundle packages table
@@ -914,19 +944,19 @@ apps/admin-dashboard/
     │   │   ├── RevenueChart.tsx   // Time-series chart
     │   │   ├── TimeFilter.tsx     // Hôm nay/Tuần/Tháng/Quý/Năm tabs
     │   │   ├── ExportButtons.tsx  // Excel, CSV, PDF export
-    │   │   ├── TopAlbums.tsx      // Ranked list by revenue
+    │   │   ├── TopLocations.tsx   // Ranked list by revenue (v2)
     │   │   └── TopStaff.tsx       // Ranked list by uploads
     │   │
     │   ├── settings/
-    │   │   ├── RetentionSettings.tsx  // Auto-delete config form
+    │   │   ├── RetentionSettings.tsx  // Simplified: chỉ input ngày + info note (v2 C2)
     │   │   ├── DeliverySettings.tsx   // Link TTL + max downloads
     │   │   ├── DomainSettings.tsx     // Subdomain + custom domain
     │   │   ├── BankSettings.tsx       // Bank account form
-    │   │   └── BrandingSettings.tsx   // Color picker, logo, watermark
+    │   │   └── BrandingSettings.tsx   // 7 presets + Custom color picker HEX (v2 A6) + logo + watermark
     │   │
     │   ├── orders/
     │   │   ├── OrderTable.tsx     // Full order table + actions
-    │   │   └── OrderDetail.tsx    // Order detail modal + refund
+    │   │   └── OrderDetail.tsx    // Order detail: ảnh từ album ĐH + link tải + trạng thái (v2 C1)
     │   │
     │   └── ui/                    // Shared UI
     │
@@ -939,18 +969,20 @@ apps/admin-dashboard/
     │
     ├── stores/
     │   ├── authStore.ts           // JWT, user, role, permissions
-    │   └── filterStore.ts         // Time range, album filter
+    │   └── filterStore.ts         // Time range, location filter (v2)
     │
     ├── services/
     │   ├── api.ts                 // Axios + JWT + role header
     │   ├── dashboard.ts           // getDashboardMetrics
-    │   ├── albums.ts              // CRUD albums, publish, delete
+    │   ├── locations.ts           // CRUD locations (was albums), staff assign
     │   ├── staff.ts               // CRUD staff, reset password
+    │   ├── staffStats.ts          // getStaffStatistics, getStaffStatDetail (mới — v2)
     │   ├── pricing.ts             // CRUD pricing packages
     │   ├── discounts.ts           // CRUD discount codes
-    │   ├── orders.ts              // getOrders, refund
+    │   ├── orders.ts              // getOrders, orderDetail (ảnh từ album ĐH), refund
     │   ├── revenue.ts             // getRevenue, exportReport
-    │   └── settings.ts            // get/update all settings
+    │   ├── settings.ts            // get/update all settings
+    │   └── brandColors.ts         // getBrandColors, updateBrandColors (mới — v2)
     │
     ├── lib/
     │   ├── permissions.ts         // RBAC permission matrix constants
@@ -989,7 +1021,7 @@ packages/
 │   └── src/
 │       ├── business.ts            // Business, Settings
 │       ├── user.ts                // User, Staff, Role enums
-│       ├── album.ts               // Album (Tag type=album), Tag
+│       ├── location.ts            // Location (v2 — thay thế Album)
 │       ├── photo.ts               // Photo, FaceEmbedding, SearchResult
 │       ├── order.ts               // Order, OrderItem, Payment
 │       ├── delivery.ts            // DeliveryLink, DownloadLog

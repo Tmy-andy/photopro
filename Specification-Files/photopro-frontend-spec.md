@@ -1,22 +1,30 @@
 # PHOTOPRO — ĐẶC TẢ CHI TIẾT FRONTEND & DASHBOARD
 
-> **Phiên bản:** 2.1  
-> **Cập nhật:** 26/02/2026  
+> **Phiên bản:** 2.2 (cập nhật theo spec-v2)  
+> **Cập nhật:** 04/03/2026  
 > **Mục đích:** Tài liệu đặc tả chi tiết giao diện người dùng cho Website khách hàng và Dashboard quản trị  
+> **Tham chiếu:** `photopro-spec-v2.md` (v2.1) — Xem chi tiết các thay đổi A1-A6, B1, C1, C2  
 
 ---
 
 ## ⚠️ LƯU Ý QUAN TRỌNG VỀ TAGS
 
-### Hệ thống chỉ sử dụng 2 loại định danh:
+### Hệ thống sử dụng 3 loại định danh:
 
-1. **ALBUM (Tag type='album')** 
-   - Dùng để nhóm ảnh theo địa điểm/sự kiện
+1. **ĐỊA ĐIỂM (Tag type='location')** *(đổi tên từ Album)*
+   - Dùng để nhóm ảnh theo địa điểm chụp
    - VD: "Bà Nà Hills", "Hội An Ancient Town", "Cầu Rồng"
-   - Khách hàng chọn album để quét mặt
-   - Hiển thị trong trang /albums
+   - Khách hàng chọn Địa Điểm để quét mặt
+   - Hiển thị trong trang /locations *(đổi từ /albums — v2)*
+   - Dashboard: sidebar mục **Địa Điểm** (icon `map-pin`)
 
-2. **MÃ ĐƠN HÀNG (Order Code)**
+2. **ALBUM ĐƠN HÀNG (Tag type='order')** *(mới — v2)*
+   - Tự động tạo khi thanh toán thành công. Tên = mã đơn hàng.
+   - Ảnh đã mua được **DI CHUYỂN** từ Địa Điểm → album đơn hàng (không copy).
+   - Lưu trữ **vĩnh viễn** (`is_permanent = TRUE`).
+   - Ảnh đã mua biến mất khỏi Địa Điểm gốc → không thể mua lần 2.
+
+3. **MÃ ĐƠN HÀNG (Order Code)**
    - Dùng để tra cứu đơn hàng đã mua
    - Format: WL + 4 số + 3 chữ (VD: WL2024ABC)
    - Khách hàng dùng mã này hoặc SĐT để tra cứu và tải ảnh
@@ -33,7 +41,7 @@
 **Lý do:**
 - Hệ thống tập trung vào **nhận diện khuôn mặt AI** để tìm ảnh
 - Khách hàng chỉ quan tâm: "Ảnh của tôi ở đâu?" → Không cần filter theo nội dung
-- Đơn giản hóa UX: Chọn Album → Quét mặt → Nhận ảnh
+- Đơn giản hóa UX: Chọn Địa Điểm → Quét mặt → Nhận ảnh
 - Tra cứu đơn hàng chỉ cần: Mã đơn hàng HOẶC số điện thoại
 
 ---
@@ -44,7 +52,7 @@
 1. [Tổng quan Website](#1-tổng-quan-website)
 2. [Design Templates](#2-design-templates)
 3. [Trang Landing (Giới thiệu doanh nghiệp)](#3-trang-landing-giới-thiệu-doanh-nghiệp)
-4. [Trang Chọn Album để Quét Mặt](#4-trang-chọn-album-để-quét-mặt)
+4. [Trang Chọn Địa Điểm để Quét Mặt](#4-trang-chọn-địa-điểm-để-quét-mặt)
 5. [Trang Quét Mặt & Kết Quả](#5-trang-quét-mặt--kết-quả)
 6. [Trang Giỏ Hàng & Checkout](#6-trang-giỏ-hàng--checkout)
 7. [Trang Thanh Toán Thành Công](#7-trang-thanh-toán-thành-công)
@@ -57,16 +65,17 @@
 12. [Layout & Navigation](#12-layout--navigation)
 13. [Trang Login](#13-trang-login)
 14. [Dashboard Home](#14-dashboard-home)
-15. [Quản lý Album (Tag type='album')](#15-quản-lý-album-tag-typealbum)
+15. [Quản lý Địa Điểm (Tag type='location')](#15-quản-lý-địa-điểm-tag-typelocation)
 16. [Quản lý Folder](#16-quản-lý-folder)
 17. [Upload Ảnh (Staff)](#17-upload-ảnh-staff)
 18. [Quản lý Giá & Combo](#18-quản-lý-giá--combo)
 19. [Quản lý Đơn Hàng](#19-quản-lý-đơn-hàng)
 20. [Thống Kê Doanh Thu](#20-thống-kê-doanh-thu)
 21. [Quản lý Nhân Viên](#21-quản-lý-nhân-viên)
-22. [Cấu hình Hệ Thống](#22-cấu-hình-hệ-thống)
-23. [Phân Quyền Theo Role](#23-phân-quyền-theo-role)
-24. [Tech Stack Frontend](#24-tech-stack-frontend)
+22. [Thống Kê Nhân Viên](#22-thống-kê-nhân-viên)
+23. [Cấu hình Hệ Thống](#23-cấu-hình-hệ-thống)
+24. [Phân Quyền Theo Role](#24-phân-quyền-theo-role)
+25. [Tech Stack Frontend](#25-tech-stack-frontend)
 
 ---
 
@@ -83,7 +92,7 @@ Website **landing page bán ảnh du lịch** cho doanh nghiệp nhiếp ảnh:
 
 > **QUAN TRỌNG:** Website KHÔNG hiển thị gallery ảnh công khai.  
 > Khách hàng CHỈ thấy ảnh sau khi quét mặt tìm được ảnh của mình.  
-> Album chỉ hiện ẢNH BÌA (ảnh phong cảnh đẹp) để thu hút và cho biết địa điểm chụp.
+> Địa Điểm chỉ hiện ẢNH BÌA (ảnh phong cảnh đẹp) để thu hút và cho biết nơi chụp.
 
 ### 1.2 Luồng khách hàng
 
@@ -94,7 +103,7 @@ Website **landing page bán ảnh du lịch** cho doanh nghiệp nhiếp ảnh:
 │                                                                      │
 │   ┌───────────┐       ┌───────────┐       ┌───────────┐             │
 │   │  Quét QR  │       │  Landing  │       │   Chọn    │             │
-│   │   Site    │  ───→ │   Page    │  ───→ │   Album   │             │
+│   │   Site    │  ───→ │   Page    │  ───→ │  Chọn ĐĐ  │             │
 │   │           │       │ (Giới    │       │ (chỉ ảnh  │             │
 │   │           │       │  thiệu)   │       │   bìa)    │             │
 │   └───────────┘       └───────────┘       └───────────┘             │
@@ -127,16 +136,16 @@ Website **landing page bán ảnh du lịch** cho doanh nghiệp nhiếp ảnh:
 ```
 {subdomain}.photopro.vn/
 ├── /                     → Landing Page (giới thiệu + CTA quét mặt)
-├── /albums               → Chọn album để quét mặt (CHỈ hiện ảnh bìa)
+├── /locations             → Chọn địa điểm để quét mặt (CHỈ hiện ảnh bìa) *(đổi từ /albums — v2)*
 ├── /face-search          → Quét mặt tìm ảnh (toàn site)
-├── /face-search/{album}  → Quét mặt trong album cụ thể
+├── /face-search/{location} → Quét mặt trong địa điểm cụ thể
 ├── /cart                 → Giỏ hàng
 ├── /checkout             → Thanh toán
 ├── /order/success/{id}   → Trang thành công (có countdown)
 └── /order/lookup         → Tra cứu đơn hàng
 ```
 
-> **Lưu ý:** KHÔNG có trang `/album/{slug}` xem gallery ảnh.
+> **Lưu ý:** KHÔNG có trang `/location/{slug}` xem gallery ảnh.
 
 ### 1.4 Tech Stack
 
@@ -400,7 +409,7 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 | Hero | Ảnh phong cảnh đẹp + CTA "Tìm ảnh" | Thu hút, action |
 | Cách tìm ảnh | 3 bước đơn giản | Hướng dẫn nhanh |
 | Về chúng tôi | Giới thiệu team, địa điểm | Tạo uy tín |
-| Địa điểm gần đây | Album cards (CHỈ ảnh bìa) | Quick access |
+| Địa điểm gần đây | Location cards (CHỈ ảnh bìa) | Quick access |
 | Bảng giá | Giá đơn lẻ + combo | Minh bạch giá |
 | FAQ | Câu hỏi thường gặp | Giải đáp thắc mắc |
 | Footer | Contact info | Liên hệ |
@@ -411,16 +420,16 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 |--------|----------|
 | Render | SSR cho SEO (Server Component) |
 | Hero image | `next/image` với `priority`, lazy load phần còn lại |
-| Albums | ISR (revalidate 60s), chỉ fetch cover image |
+| Locations | ISR (revalidate 60s), chỉ fetch cover image |
 | Mobile | Single column, CTA sticky bottom |
 | QR | QR code tại quầy dẫn đến URL này |
 
 ---
 
-## 4. TRANG CHỌN ALBUM ĐỂ QUÉT MẶT
+## 4. TRANG CHỌN ĐỊA ĐIỂM ĐỂ QUÉT MẶT
 
-> **Mục đích:** Khách chọn địa điểm/album để tìm ảnh (tối ưu tốc độ search).  
-> **QUAN TRỌNG:** CHỈ hiện ảnh bìa (ảnh phong cảnh), KHÔNG hiện ảnh trong album.
+> **Mục đích:** Khách chọn địa điểm để tìm ảnh (tối ưu tốc độ search).  
+> **QUAN TRỌNG:** CHỈ hiện ảnh bìa (ảnh phong cảnh), KHÔNG hiện ảnh trong địa điểm.
 
 ### 4.1 Wireframe Desktop
 
@@ -527,13 +536,13 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 └──────────────────────────────────────┘
 ```
 
-### 4.3 Album Card Components
+### 4.3 Location Card Components
 
 ```
 ┌────────────────────────────────────────┐
 │                                        │
 │        [ẢNH BÌA - PHONG CẢNH]          │  ← CHỈ ảnh phong cảnh đẹp
-│        (Cover image của album)         │     KHÔNG hiện ảnh người
+│        (Cover image của địa điểm)      │     KHÔNG hiện ảnh người
 │                                        │
 ├────────────────────────────────────────┤
 │                                        │
@@ -548,7 +557,7 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 
 ⚠️ KHÔNG có:
 - Số lượng ảnh (không cho biết có bao nhiêu ảnh)
-- Nút "Xem album" (không có trang xem ảnh)
+- Nút "Xem địa điểm" (không có trang xem ảnh)
 - Preview thumbnails (không hiện ảnh người)
 ```
 
@@ -556,8 +565,8 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 
 | Thành phần | API Endpoint | Ghi chú |
 |------------|--------------|---------|
-| Album list | `GET /api/v1/tags?type=album&status=published` | Chỉ lấy info cơ bản |
-| Cover image | `album.cover_photo_url` | Ảnh phong cảnh (do Admin set) |
+| Location list | `GET /api/v1/locations?status=published` | Chỉ lấy info cơ bản (v2) |
+| Cover image | `location.cover_photo_url` | Ảnh phong cảnh (do Admin set) |
 
 ### 4.5 Kỹ thuật
 
@@ -565,8 +574,8 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 |--------|----------|
 | Render | SSR initial + client pagination |
 | Card | Chỉ hiện cover image + info |
-| Click CTA | Navigate đến `/face-search/{album-slug}` |
-| Filter | Client-side nếu < 50 albums |
+| Click CTA | Navigate đến `/face-search/{location-slug}` |
+| Filter | Client-side nếu < 50 locations |
 
 ---
 
@@ -589,12 +598,21 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 │  ┌──────────────────────────────────────────────────────────────┐    │
 │  │ PHẠM VI TÌM KIẾM:                                            │    │
 │  │                                                              │    │
-│  │ ● Tất cả album  (12 album, ~1,800 ảnh)                       │    │
-│  │ ○ Album hiện tại: Bà Nà Hills 20/02  (150 ảnh) — nhanh hơn   │    │
-│  │ ○ Chọn album:                                                │    │
+│  │ ● Tất cả địa điểm  (12 ĐĐ, ~1,800 ảnh)                       │    │
+│  │ ○ ĐĐ hiện tại: Bà Nà Hills 20/02  (150 ảnh) — nhanh hơn     │    │
+│  │ ○ Chọn địa điểm:                                             │    │
 │  │   ☑ Bà Nà Hills 20/02           (150 ảnh)                    │    │
 │  │   ☐ Hội An Night 19/02          (200 ảnh)                    │    │
 │  │   ☐ Cầu Rồng Đêm 18/02          (120 ảnh)                    │    │
+│  └──────────────────────────────────────────────────────────────┘    │
+│                                                                      │
+│  ┌──────────────────────────────────────────────────────────────┐    │
+│  │ KHOẢNG THỜI GIAN (tùy chọn):                                 │    │
+│  │                                                              │    │
+│  │ Từ ngày: [____/____/________]  Đến ngày: [____/____/________]│    │
+│  │ Chọn nhanh: [Hôm nay] [3 ngày] [7 ngày] [30 ngày] [Tất cả] │    │
+│  │                                                              │    │
+│  │ ⓘ Chọn ngày để thu hẹp kết quả tìm kiếm (không bắt buộc)   │    │
 │  └──────────────────────────────────────────────────────────────┘    │
 │                                                                      │
 │  ┌──────────────────────────────────────────────────────────────┐    │
@@ -616,7 +634,7 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 │  │  💡 Mẹo để tìm chính xác hơn:                                │    │
 │  │  · Bỏ kính mắt & mũ                                          │    │
 │  │  · Chụp thẳng mặt, ánh sáng đủ                               │    │
-│  │  · Nếu không tìm thấy, thử album khác                        │    │
+│  │  · Nếu không tìm thấy, thử địa điểm khác                     │    │
 │  └──────────────────────────────────────────────────────────────┘    │
 │                                                                      │
 │  🔒 Ảnh selfie của bạn được xử lý ngay trên thiết bị.                │
@@ -644,7 +662,7 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 │                                                                      │
 │              ✅ Nhận diện khuôn mặt                                  │
 │              ✅ Trích xuất đặc trưng                                 │
-│              ⏳ Đang tìm kiếm trong 12 album...                      │
+│              ⏳ Đang tìm kiếm trong 12 địa điểm...                   │
 │              ○ Hiển thị kết quả                                      │
 │                                                                      │
 │              Ước tính: ~2 giây                                       │
@@ -659,7 +677,7 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 │  ← Quét lại                                     [📸 Quét mặt khác] │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  🎯 TÌM THẤY 18 ẢNH TRONG 3 ALBUM                (⏱ 1.8 giây)      │
+│  🎯 TÌM THẤY 18 ẢNH TRONG 3 ĐỊA ĐIỂM             (⏱ 1.8 giây)      │
 │                                                                      │
 │  ── Bà Nà Hills 20/02 (8 ảnh) ────────────────────────────────────  │
 │                                                                      │
@@ -706,8 +724,8 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 
 | Thành phần | API Endpoint | Ghi chú |
 |------------|--------------|---------|
-| Face search | `POST /api/v1/face-search` | Body: embedding vector + album_ids (optional) |
-| Results | Response: `[{photo_id, similarity, album_id, thumbnail_url}]` | Sorted by similarity DESC |
+| Face search | `POST /api/v1/face-search` | Body: embedding vector + album_ids (optional) + date_from, date_to (optional) |
+| Results | Response: `[{photo_id, similarity, album_id, thumbnail_url}]` | Sorted by similarity DESC, chỉ trả ảnh `status = 'available'` |
 
 ### 5.5 Kỹ thuật
 
@@ -716,8 +734,8 @@ Hệ thống hỗ trợ nhiều template thiết kế, doanh nghiệp có thể 
 | Face Detection | TensorFlow.js (MediaPipe) — chạy trên browser |
 | Embedding | ONNX Runtime Web (MobileFaceNet) — chạy trên browser |
 | Privacy | Selfie KHÔNG gửi lên server, chỉ gửi embedding vector 512d |
-| Pre-filter | Nếu chọn album, API sẽ filter theo `album_id` trước khi vector search |
-| Results | Sort theo similarity DESC, group theo album |
+| Pre-filter | Nếu chọn địa điểm, API sẽ filter theo `location_id` trước khi vector search. Nếu chọn ngày, filter thêm `shot_date`. Luôn filter `status = 'available'` (loại ảnh đã bán). |
+| Results | Sort theo similarity DESC, group theo địa điểm |
 | Thumbnail | CDN cached, load ~200ms |
 | Click | Mở Lightbox (preview lớn + watermark) |
 | Quick select | Giúp mobile UX (ít tap) |
@@ -1063,7 +1081,7 @@ if (remaining <= 0) {
 - **Admin System:** Toàn quyền
 - **Admin Sales:** Quản lý nghiệp vụ, không quản lý hệ thống
 - **Manager:** Chỉ xem thống kê (read-only)
-- **Staff:** Chỉ upload ảnh + gắn tag (KHÔNG tạo album)
+- **Staff:** Upload ảnh vào Địa Điểm được phân công, xem thống kê cá nhân, chỉ xem ảnh do mình upload
 
 ### 11.2 Tech Stack
 
@@ -1099,9 +1117,8 @@ if (remaining <= 0) {
 │ 📁 Folder│                                                           │
 │  └ DS Folder│                                                        │
 │          │                                                           │
-│ 📷 Album │  ← Album = Tag với type='album'                          │
-│  └ DS Album│                                                         │
-│  └ Category│                                                         │
+│ � Địa Điểm│  ← Đổi tên từ Album (tag type='location')              │
+│  └ DS ĐĐ │                                                          │
 │          │                                                           │
 │ 📸 Upload│  ← (Staff thấy mục này + Home)                           │
 │          │                                                           │
@@ -1109,7 +1126,9 @@ if (remaining <= 0) {
 │          │                                                           │
 │ 📦 Đơn hàng│                                                         │
 │          │                                                           │
-│ 📊 Thống kê│  ← (Manager chỉ thấy mục này)                          │
+│ 📊 Thống kê│  ← Doanh thu (Manager chỉ thấy read-only)              │
+│          │                                                           │
+│ 📈 TK NV │  ← Thống kê nhân viên (mới — v2)                        │
 │          │                                                           │
 │ 👤 Nhân viên│ ← (Admin System only)                                  │
 │          │                                                           │
@@ -1124,13 +1143,15 @@ if (remaining <= 0) {
 |------|:------------:|:-----------:|:-------:|:-----:|
 | Home (overview) | ✅ | ✅ | ✅ (limited) | ✅ (limited) |
 | Folder | ✅ | ✅ | ❌ | ❌ |
-| Album | ✅ | ✅ | ❌ | ❌ |
-| Upload | ✅ | ✅ | ❌ | ✅ (album được assign) |
+| Địa Điểm | ✅ (full) | ✅ (full) | ✅ (read) | ✅ (chỉ ĐĐ được gán) |
+| Upload | ✅ | ✅ | ❌ | ✅ (ĐĐ được assign) |
 | Gói giá (Bundle) | ✅ | ✅ | ❌ | ❌ |
 | Đơn hàng | ✅ | ✅ | ❌ | ❌ |
-| Thống kê | ✅ | ✅ | ✅ (read-only) | ❌ |
+| Doanh thu | ✅ | ✅ | ✅ (read-only) | ❌ |
+| Thống kê NV | ✅ | ✅ | ✅ (read-only) | ✅ (chỉ của mình) |
 | Nhân viên | ✅ | ❌ | ❌ | ❌ |
 | Hệ thống | ✅ | ❌ | ❌ | ❌ |
+| Hồ sơ cá nhân | ✅ | ✅ | ✅ | ✅ |
 
 ---
 
@@ -1184,7 +1205,7 @@ if (remaining <= 0) {
 │  MENU    │  🏠 TỔNG QUAN                    Hôm nay: 24/02/2026     │
 │          │                                                           │
 │          │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐    │
-│          │  │ Doanh thu│ │ Đơn hàng │ │ Ảnh bán  │ │ Album    │    │
+│          │  │ Doanh thu│ │ Đơn hàng │ │ Ảnh bán  │ │ Địa Điểm │    │
 │          │  │ hôm nay  │ │ hôm nay  │ │ hôm nay  │ │ active   │    │
 │          │  │ 2.3M VND │ │    18    │ │    52    │ │    12    │    │
 │          │  │ +15% ▲   │ │ +8% ▲    │ │ +12% ▲   │ │          │    │
@@ -1205,7 +1226,7 @@ if (remaining <= 0) {
 │          │  #ORD-122 │ 13:15 │ 50K  │ Đơn lẻ  │ ✅ Paid             │
 │          │  #ORD-121 │ 12:45 │ 120K │ Combo 3 │ ⏳ Pending          │
 │          │                                                           │
-│          │  ── ALBUM GẦN ĐÂY ────────────────── [Xem tất cả →]    │
+│          │  ── ĐỊA ĐIỂM GẦN ĐÂY ──────────────── [Xem tất cả →]   │
 │          │  Bà Nà Hills │ 150 ảnh │ PUBLISHED │ 23 ảnh bán         │
 │          │  Hội An Night│ 200 ảnh │ PUBLISHED │ 15 ảnh bán         │
 │          │  Cầu Rồng    │  45 ảnh │ PROCESSING│ —                   │
@@ -1221,7 +1242,7 @@ if (remaining <= 0) {
 │          │                                                           │
 │  Home    │  (Chỉ hiện KPI cards + biểu đồ + bảng thống kê)         │
 │  Thống kê│  Không có nút chỉnh sửa, tạo mới, xóa.                  │
-│          │  Không thấy menu Album, Giá, Đơn hàng, Nhân viên.        │
+│          │  Không thấy menu Địa Điểm, Giá, Đơn hàng, Nhân viên.     │
 │          │                                                           │
 └──────────┴───────────────────────────────────────────────────────────┘
 ```
@@ -1232,89 +1253,97 @@ if (remaining <= 0) {
 ┌──────────┬───────────────────────────────────────────────────────────┐
 │  MENU    │  🏠 TỔNG QUAN                                            │
 │          │                                                           │
-│  Home    │  Album được phân công:                                    │
-│  Upload  │  ┌───────────────────────────────────────────────────┐   │
-│          │  │ Bà Nà Hills 20/02  │ 150 ảnh uploaded │ PUBLISHED│   │
-│          │  │ Hội An 19/02       │  80 ảnh uploaded │ PUBLISHED│   │
+│  Home    │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐    │
+│  Địa Điểm│  │ Ảnh UP   │ │ Ảnh bán  │ │ DT tháng │ │ Địa điểm │    │
+│  TK NV   │  │ 2,800    │ │ 1,200    │ │ 12M      │ │ 3        │    │
+│  Upload  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘    │
+│  Hồ sơ   │                                                          │
+│          │  Địa điểm được phân công:                                 │
+│          │  ┌───────────────────────────────────────────────────┐   │
+│          │  │ Bà Nà Hills 20/02  │ 80 ảnh uploaded  │ PUBLISHED│   │
+│          │  │ Hội An 19/02       │ 55 ảnh uploaded  │ PUBLISHED│   │
+│          │  │ Cầu Rồng 18/02     │ 30 ảnh uploaded  │ PUBLISHED│   │
 │          │  └───────────────────────────────────────────────────┘   │
 │          │                                                           │
-│          │  Tổng ảnh upload tháng này: 420                          │
-│          │                                                           │
-│          │  ⚠️ Lưu ý: Bạn chỉ có thể upload ảnh vào album được     │
-│          │     phân công và gắn tag cho ảnh.                        │
+│          │  ⚠️ Lưu ý: Bạn chỉ có thể upload ảnh vào địa điểm được │
+│          │     phân công. Bạn chỉ xem được ảnh do chính mình upload.│
 │          │                                                           │
 └──────────┴───────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 15. QUẢN LÝ ALBUM (Tag type='album')
+## 15. QUẢN LÝ ĐỊA ĐIỂM (Tag type='location')
 
-> **Lưu ý:** Album = Tag với `type='album'`. Không có bảng albums riêng.
+> **Lưu ý:** Đổi tên từ "Album" → "Địa Điểm" (v2). Tag với `type='location'`.
+> Staff chỉ xem ảnh do chính mình upload vào Địa Điểm.
 
-### 15.1 Danh sách Album
+### 15.1 Danh sách Địa Điểm
 
 ```
 ┌──────────┬───────────────────────────────────────────────────────────┐
-│  MENU    │  📷 ALBUM                                    [+ Tạo album]│
+│  MENU    │  � ĐỊA ĐIỂM                                 [+ Tạo ĐĐ] │
 │          │                                                           │
 │          │  Filter: [Tất cả ▼] [Published ▼] [Tháng 02 ▼]           │
-│          │  Search: [Tìm album...________]                          │
+│          │  Search: [Tìm địa điểm...________]                       │
 │          │                                                           │
 │          │  ┌──────────────────────────────────────────────────────┐│
-│          │  │ Tên              │Folder  │Ngày   │Ảnh  │TT   │Act  ││
+│          │  │ Tên              │Vị trí  │Ngày   │Ảnh  │TT   │Act  ││
 │          │  ├──────────────────┼────────┼───────┼─────┼─────┼─────┤│
-│          │  │ Bà Nà Hills 20/02│Folder A│20/02  │ 150 │PUB  │✏️👁🗑││
-│          │  │ Hội An Night     │Folder A│19/02  │ 200 │PUB  │✏️👁🗑││
-│          │  │ Cầu Rồng Đêm     │Folder B│18/02  │ 120 │DRAFT│✏️👁🗑││
-│          │  │ Sơn Trà          │Folder B│17/02  │ 180 │ARCH │✏️👁🗑││
+│          │  │ Bà Nà Hills 20/02│Đà Nẵng │20/02  │ 150 │PUB  │✏️👁🗑││
+│          │  │ Hội An Night     │Hội An  │19/02  │ 200 │PUB  │✏️👁🗑││
+│          │  │ Cầu Rồng Đêm     │Đà Nẵng │18/02  │ 120 │DRAFT│✏️👁🗑││
+│          │  │ Sơn Trà          │Đà Nẵng │17/02  │ 180 │ARCH │✏️👁🗑││
 │          │  └──────────────────────────────────────────────────────┘│
 │          │                                                           │
 │          │  🗑 = Xóa (Admin System only)                            │
-│          │  ✏️ = Sửa thông tin album                                │
-│          │  👁 = Xem chi tiết + ảnh trong album                     │
+│          │  ✏️ = Sửa thông tin địa điểm                             │
+│          │  👁 = Xem chi tiết + ảnh trong địa điểm                  │
 │          │                                                           │
 │          │  Pagination: [← Prev] 1 2 3 ... 10 [Next →]              │
 │          │                                                           │
 └──────────┴───────────────────────────────────────────────────────────┘
 ```
 
-### 15.2 Tạo / Sửa Album (Dialog)
+### 15.2 Tạo / Sửa Địa Điểm (Dialog)
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│  TẠO ALBUM MỚI                                                      │
+│  TẠO ĐỊA ĐIỂM MỚI                                                  │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  Tên album *       [Bà Nà Hills 22/02/2026_______________]          │
-│  Folder *          [Folder Bà Nà Hills ▼]                           │
-│  Địa điểm          [Bà Nà Hills, Đà Nẵng________________]          │
+│  Tên Địa Điểm *   [Bà Nà Hills 22/02/2026_______________]          │
+│  Vị trí / Địa chỉ [Bà Nà Hills, Đà Nẵng________________]          │
 │  Ngày chụp *       [22/02/2026] 📅                                  │
-│  Category          [Bà Nà Hills ▼]                                  │
 │  Mô tả             [___________________________________]            │
 │                     [___________________________________]            │
 │  Ảnh bìa           [Kéo thả hoặc chọn file]                        │
 │                                                                      │
-│  Staff phụ trách *                                                  │
-│  ☑ Nguyễn Văn A                                                     │
-│  ☑ Trần Thị B                                                       │
-│  ☐ Lê Văn C                                                         │
+│  ─── Phân quyền nhân viên ───────────────────────────────────────── │
 │                                                                      │
-│  Giá riêng album (để trống = dùng giá mặc định)                    │
-│  HD Download:  [________] VND                                       │
-│  Print 10×15:  [________] VND                                       │
+│  Chọn nhân viên được quyền upload ảnh:                              │
+│  (Staff chỉ xem được ảnh do chính mình upload)                     │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │ Nhân viên                                     Được upload   │   │
+│  │ ☑ Lê Văn C (NV001) - Staff                      [☑]       │   │
+│  │ ☑ Phạm Thị D (NV002) - Staff                    [☑]       │   │
+│  │ ☐ Hoàng Văn E (NV003) - Staff                   [☐]       │   │
+│  └──────────────────────────────────────────────────────────────┘   │
 │                                                                      │
-│          [HỦY]                    [TẠO ALBUM]                       │
+│          [HỦY]                    [TẠO ĐỊA ĐIỂM]                    │
 │                                                                      │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-### 15.3 Chi tiết Album — Quản lý ảnh
+### 15.3 Chi tiết Địa Điểm — Quản lý ảnh
 
 ```
 ┌──────────┬───────────────────────────────────────────────────────────┐
-│  MENU    │  📷 Bà Nà Hills 20/02        [Publish] [Archive] [Sửa]   │
+│  MENU    │  � Bà Nà Hills 20/02        [Publish] [Archive] [Sửa]   │
 │          │  📍 Bà Nà Hills · 📅 20/02 · 📷 150 ảnh · 👤 2 Staff    │
+│          │                                                           │
+│          │  ⓘ Staff chỉ xem được ảnh do chính mình upload.          │
+│          │     Admin/Manager xem được tất cả ảnh.                   │
 │          │                                                           │
 │          │  Tab: [Tất cả ảnh] [Đã index] [Lỗi] [Thống kê]          │
 │          │                                                           │
@@ -1339,11 +1368,13 @@ if (remaining <= 0) {
 
 | Action | API Endpoint | Ghi chú |
 |--------|--------------|---------|
-| List albums | `GET /api/v1/tags?type=album` | Query tags với type='album' |
-| Create album | `POST /api/v1/tags` | Body: `{type: 'album', ...}` |
-| Update album | `PUT /api/v1/tags/{id}` | Update tag fields |
-| Delete album | `DELETE /api/v1/tags/{id}` | Admin System only |
-| Assign staff | `POST /api/v1/tags/{id}/users` | Assign staff to album |
+| List locations | `GET /api/v1/locations` | Danh sách địa điểm |
+| Create location | `POST /api/v1/locations` | Body: `{name, address, date, ...}` |
+| Update location | `PUT /api/v1/locations/{id}` | Update location fields |
+| Delete location | `DELETE /api/v1/locations/{id}` | Admin System only |
+| Assign staff | `POST /api/v1/locations/{id}/staff` | Gán staff vào địa điểm |
+| Get staff | `GET /api/v1/locations/{id}/staff` | Danh sách staff được gán |
+| Remove staff | `DELETE /api/v1/locations/{id}/staff/{staffId}` | Gỡ staff khỏi địa điểm |
 
 ---
 
@@ -1356,15 +1387,15 @@ if (remaining <= 0) {
 │  MENU    │  📁 FOLDER                                  [+ Tạo folder]│
 │          │                                                           │
 │          │  ┌──────────────────────────────────────────────────────┐│
-│          │  │ Tên Folder        │Albums │Ảnh   │Created  │Actions ││
+│          │  │ Tên Folder        │ĐĐ    │Ảnh   │Created  │Actions ││
 │          │  ├───────────────────┼───────┼──────┼─────────┼────────┤│
 │          │  │ Bà Nà Hills 2026  │   5   │ 750  │ Jan 2026│ ✏️ 🗑  ││
 │          │  │ Hội An Collection │   3   │ 420  │ Jan 2026│ ✏️ 🗑  ││
 │          │  │ Đà Nẵng Beach     │   8   │ 1200 │ Feb 2026│ ✏️ 🗑  ││
 │          │  └──────────────────────────────────────────────────────┘│
 │          │                                                           │
-│          │  Lưu ý: Folder dùng để nhóm albums, tương ứng với folder │
-│          │  trên server lưu trữ ảnh gốc.                            │
+│          │  Lưu ý: Folder dùng để nhóm địa điểm, tương ứng với     │
+│          │  folder trên server lưu trữ ảnh gốc.                     │
 │          │                                                           │
 └──────────┴───────────────────────────────────────────────────────────┘
 ```
@@ -1382,7 +1413,7 @@ if (remaining <= 0) {
 
 ## 17. UPLOAD ẢNH (STAFF)
 
-> **Quan trọng:** Staff chỉ có thể upload vào album được phân công và gắn tag. KHÔNG thể tạo album mới.
+> **Quan trọng:** Staff chỉ có thể upload vào Địa Điểm được phân công. Staff chỉ xem ảnh do chính mình upload. KHÔNG thể tạo Địa Điểm mới.
 
 ### 17.1 Wireframe
 
@@ -1390,9 +1421,10 @@ if (remaining <= 0) {
 ┌──────────┬───────────────────────────────────────────────────────────┐
 │  MENU    │  📸 UPLOAD ẢNH                                           │
 │          │                                                           │
-│          │  Album: [Bà Nà Hills 20/02 ▼]  (chỉ hiện album được assign)│
+│          │  Địa Điểm: [Bà Nà Hills 20/02 ▼]  (chỉ hiện ĐĐ được assign)
 │          │                                                           │
-│          │  ⚠️ Bạn chỉ có thể upload vào album được phân công.      │
+│          │  ⚠️ Bạn chỉ có thể upload vào Địa Điểm được phân công.  │
+│          │     Bạn chỉ xem được ảnh do chính mình upload.           │
 │          │                                                           │
 │          │  ┌──────────────────────────────────────────────────────┐│
 │          │  │                                                      ││
@@ -1419,7 +1451,7 @@ if (remaining <= 0) {
 │          │                                                           │
 │          │  Upload: 25/100 · Processing: 15 · Indexed: 10           │
 │          │                                                           │
-│          │  ── ẢNH ĐÃ UPLOAD TRONG ALBUM NÀY ─────────────────────  │
+│          │  ── ẢNH ĐÃ UPLOAD TRONG ĐỊA ĐIỂM NÀY ──────────────────  │
 │          │  (Grid thumbnails, click để gắn tag)                     │
 │          │                                                           │
 │          │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐          │
@@ -1475,8 +1507,8 @@ if (remaining <= 0) {
 
 | Action | API Endpoint | Ghi chú |
 |--------|--------------|---------|
-| Upload photo | `POST /api/v1/photos/upload` | Multipart, include album_id |
-| Get assigned albums | `GET /api/v1/users/me/albums` | Albums staff được assign |
+| Upload photo | `POST /api/v1/photos/upload` | Multipart, include location_id |
+| Get assigned locations | `GET /api/v1/users/me/locations` | Locations staff được assign (v2) |
 | Add tags | `POST /api/v1/photos/{id}/tags` | Body: `{tag_ids: [...]}` |
 | Remove tag | `DELETE /api/v1/photos/{id}/tags/{tag_id}` | Remove one tag |
 
@@ -1601,18 +1633,28 @@ if (remaining <= 0) {
 │                                                                      │
 │  Khách: 09xx xxx 789                                                 │
 │  Email: k***@gmail.com (nếu có)                                     │
-│  Loại: Combo 5 ảnh HD · Album: Bà Nà Hills                         │
+│  Loại: Combo 5 ảnh HD                                               │
 │  Tổng: 200,000đ · Cổng: VNPay · TT: 24/02 14:32                    │
 │                                                                      │
-│  ⏰ Thời gian còn lại: 71:45:23                                     │
-│  Link hết hạn: 27/02 14:32                                          │
-│  Downloads: 2/5                                                      │
+│  ── Ảnh đã mua (5 ảnh) ──────────────────────────────────────────── │
+│  (Lấy từ album đơn hàng ORD-123, ảnh đã được DI CHUYỂN từ ĐĐ gốc) │
 │                                                                      │
 │  Ảnh: [thumb] [thumb] [thumb] [thumb] [thumb]                       │
 │                                                                      │
-│  Trạng thái: ✅ PAID → DELIVERED                                    │
+│  ── Link tải ảnh ────────────────────────────────────────────────── │
+│  Link: https://dl.photopro.vn/d/abc123xyz                           │
+│  Hết hạn: 27/02 14:32                                               │
+│  Đã tải: 2/5 lần                                                    │
+│  Trạng thái: [Còn hiệu lực 🟢]                                     │
 │                                                                      │
-│  [Hoàn tiền]  [Gia hạn link]                                        │
+│  [📋 Copy link]  [🔄 Tạo link mới]  [📧 Gửi lại email]            │
+│                                                                      │
+│  ⓘ Album đơn hàng được lưu trữ vĩnh viễn.                          │
+│    Ảnh đã mua được di chuyển hẳn sang album này,                    │
+│    không còn tồn tại trong Địa Điểm gốc.                            │
+│    Link tải có giới hạn thời gian và số lần tải.                    │
+│                                                                      │
+│  [Hoàn tiền]  [Gia hạn link]  [In hóa đơn]                         │
 │                                                                      │
 └──────────────────────────────────────────────────────────────────────┘
 ```
@@ -1647,7 +1689,7 @@ if (remaining <= 0) {
 │          │  └─────────────────────────────────────────────────┘     │
 │          │                                                           │
 │          │  ┌─────────────────────┐  ┌─────────────────────┐        │
-│          │  │ 📊 Theo Album      │  │ 🥧 Theo sản phẩm   │        │
+│          │  │ 📊 Theo Địa Điểm  │  │ 🥧 Theo sản phẩm   │        │
 │          │  │                     │  │                     │        │
 │          │  │ Bà Nà    ████ 35% │  │ HD Digital  ████ 65%│        │
 │          │  │ Hội An   ███  25% │  │ Print 10x15 ██  20%│        │
@@ -1655,8 +1697,8 @@ if (remaining <= 0) {
 │          │  │ Other    ██   20% │  │                     │        │
 │          │  └─────────────────────┘  └─────────────────────┘        │
 │          │                                                           │
-│          │  ── CHI TIẾT THEO ALBUM ─────────────────────────────── │
-│          │  │ Album           │ Ảnh bán │ Doanh thu │ Combo │      │
+│          │  ── CHI TIẾT THEO ĐỊA ĐIỂM ──────────────────────────── │
+│          │  │ Địa Điểm        │ Ảnh bán │ Doanh thu │ Combo │      │
 │          │  ├─────────────────┼─────────┼───────────┼───────┤      │
 │          │  │ Bà Nà Hills     │   450   │  15.8M    │  85%  │      │
 │          │  │ Hội An Night    │   320   │  11.2M    │  78%  │      │
@@ -1683,15 +1725,18 @@ if (remaining <= 0) {
 ┌──────────┬───────────────────────────────────────────────────────────┐
 │  MENU    │  👤 NHÂN VIÊN                         [+ Tạo tài khoản]  │
 │          │                                                           │
-│          │  ┌────────────────────────────────────────────────────┐  │
-│          │  │ Tên            │Email           │Role       │TT│Act│  │
-│          │  ├────────────────┼────────────────┼───────────┼──┼───┤  │
-│          │  │ Nguyễn Admin   │admin@co.vn     │Admin Sys  │✅│✏️ │  │
-│          │  │ Trần Sales     │sales@co.vn     │Admin Sales│✅│✏️🔒│  │
-│          │  │ Lê Quản lý     │mgr@co.vn       │Manager    │✅│✏️🔒│  │
-│          │  │ Phạm Văn A     │a@co.vn         │Staff      │✅│✏️🔒│  │
-│          │  │ Hoàng Thị B    │b@co.vn         │Staff      │❌│✏️🔓│  │
-│          │  └────────────────────────────────────────────────────┘  │
+│          │  ┌──────────────────────────────────────────────────────┐│
+│          │  │ Tên            │Vai trò     │Mã NV  │Địa điểm │TT│Act│ │
+│          │  ├────────────────┼────────────┼───────┼─────────┼──┼───┤│
+│          │  │ Nguyễn Admin   │Admin Sys   │ —     │ —       │✅│✏️ ││
+│          │  │ Trần Sales     │Admin Sales │ —     │ —       │✅│✏️🔒││
+│          │  │ Lê Quản lý     │Manager     │ —     │ —       │✅│✏️🔒││
+│          │  │ Phạm Văn A     │Staff       │NV001  │ Bà Nà, HộiAn │✅│✏️🔒││
+│          │  │ Hoàng Thị B    │Staff       │NV002  │ Cầu Rồng│❌│✏️🔓││
+│          │  └──────────────────────────────────────────────────────┘│
+│          │                                                           │
+│          │  Lưu ý: Cột Mã NV và Địa điểm chỉ hiện cho role Staff.  │
+│          │  Non-staff hiển thị "—" ở các cột này.                    │
 │          │                                                           │
 └──────────┴───────────────────────────────────────────────────────────┘
 ```
@@ -1706,15 +1751,25 @@ if (remaining <= 0) {
 │  Tên *       [________________________]                             │
 │  Email *     [________________________]                             │
 │  SĐT        [________________________]                             │
-│  Role *      [Admin Sales ▼]                                        │
+│  Role *      [Staff ▼]                                              │
 │                                                                      │
 │  Roles:                                                              │
 │  • Admin System — Toàn quyền                                        │
 │  • Admin Sales — Quản lý nghiệp vụ, không quản lý hệ thống          │
 │  • Manager — Chỉ xem thống kê (read-only)                           │
-│  • Staff — Chỉ upload ảnh + gắn tag (KHÔNG tạo album)               │
+│  • Staff — Upload ảnh, xem thống kê cá nhân, chỉ xem ảnh do mình up│
 │                                                                      │
 │  Mật khẩu *  [________] (auto-generate option)                      │
+│                                                                      │
+│  ─── Thông tin Staff (chỉ hiện khi vai trò = Staff) ─────────────── │
+│                                                                      │
+│  Mã nhân viên * [NV003    ] (tự sinh, có thể sửa)                   │
+│                                                                      │
+│  Địa điểm được upload:                                              │
+│  ☑ Bà Nà Hills 20/02                                                │
+│  ☑ Hội An 19/02                                                     │
+│  ☐ Cầu Rồng 18/02                                                   │
+│  ☐ Sơn Trà 17/02                                                    │
 │                                                                      │
 │          [HỦY]                        [TẠO TÀI KHOẢN]               │
 │                                                                      │
@@ -1723,7 +1778,67 @@ if (remaining <= 0) {
 
 ---
 
-## 22. CẤU HÌNH HỆ THỐNG
+## 22. THỐNG KÊ NHÂN VIÊN
+
+> **Mới — v2:** Trang thống kê hiệu suất nhân viên (Staff Statistics)
+> Admin/Manager: Xem bảng tất cả staff + click vào để mở modal chi tiết.
+> Staff: Xem trực tiếp trang thống kê của chính mình.
+
+### 22.1 Bảng thống kê (Admin/Manager)
+
+```
+┌──────────┬───────────────────────────────────────────────────────────┐
+│  MENU    │  📈 THỐNG KÊ NHÂN VIÊN                       [Xuất Excel]│
+│          │                                                           │
+│          │  [Tìm kiếm...] [Lọc trạng thái ▼] [Khoảng thời gian ▼]  │
+│          │                                                           │
+│          │  ┌────┬────────────┬─────────┬────────┬────────┬────────┐│
+│          │  │ #  │ Nhân viên  │ Mã NV   │ Ảnh UP │ Ảnh bán│DT tháng││
+│          │  ├────┼────────────┼─────────┼────────┼────────┼────────┤│
+│          │  │ 1  │[Av] Lê C   │ NV001   │ 2,800  │ 1,200  │ 12M   ││
+│          │  │ 2  │[Av] Phạm D │ NV002   │ 2,450  │  980   │ 9.8M  ││
+│          │  │ 3  │[Av] Hoàng E│ NV003   │ 1,800  │  720   │ 7.2M  ││
+│          │  └────┴────────────┴─────────┴────────┴────────┴────────┘│
+│          │  → Click vào row → Mở Modal chi tiết                     │
+│          │                                                           │
+└──────────┴───────────────────────────────────────────────────────────┘
+```
+
+### 22.2 Modal chi tiết Staff / Trang Staff tự xem
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Thống kê: Lê Văn C (NV001)                              [✕]   │
+├─────────────────────────────────────────────────────────────────┤
+│ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐               │
+│ │ Ảnh UP  │ │ Ảnh bán │ │ Tỉ lệ   │ │ Tổng DT │               │
+│ │ 2,800   │ │ 1,200   │ │ 42.8%   │ │ 60M     │               │
+│ └─────────┘ └─────────┘ └─────────┘ └─────────┘               │
+│                                                                 │
+│ Doanh thu: [Ngày] [Tháng] [Năm]                                │
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │            📊 Biểu đồ doanh thu 7 ngày                     │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│ Địa điểm được phân công:                                        │
+│ [Bà Nà Hills] [Hội An] [Cầu Rồng]                               │
+│                                                                 │
+│ Upload gần nhất: 03/03/2026                                     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 22.3 API Mapping
+
+| Action | API Endpoint | Ghi chú |
+|--------|--------------|---------|
+| List stats | `GET /api/v1/staff/statistics` | Danh sách thống kê tất cả staff |
+| Detail | `GET /api/v1/staff/statistics/:staffId` | Chi tiết 1 staff |
+| My stats | `GET /api/v1/staff/statistics/me` | Thống kê staff đang đăng nhập |
+| Revenue | `GET /api/v1/staff/statistics/:staffId/revenue?period=day\|month\|year` | Doanh thu theo khoảng thời gian |
+
+---
+
+## 23. CẤU HÌNH HỆ THỐNG
 
 **(Admin System only)**
 
@@ -1775,6 +1890,23 @@ if (remaining <= 0) {
 │          │    ● Beach Bright (tông sáng, biển)                      │
 │          │    ○ Minimal Clean (tối giản)                            │
 │          │                                                           │
+│          │  ── TÙY CHỈNH MÀU SẮC (v2 — Color Picker) ────────────  │
+│          │                                                           │
+│          │  Preset nhanh:                                            │
+│          │  [🟢 Xanh lá] [🔵 Xanh dương] [🟣 Tím] [🔴 Đỏ]        │
+│          │  [Teal] [Slate Dark] [Nâu]                                │
+│          │                                                           │
+│          │  Hoặc chọn màu tùy chỉnh:                                │
+│          │  Màu chính (Primary): [🎨] [#1a6b4e] Preview: [████]     │
+│          │  Màu nhấn (Accent):   [🎨] [#d4870e] Preview: [████]     │
+│          │                                                           │
+│          │  Xem trước:                                               │
+│          │  ┌────────────────────────────────────────────────────┐  │
+│          │  │ [Nút Primary] [Nút Accent] [Badge] [Link]        │  │
+│          │  │ Text trên nền primary | Text trên nền accent      │  │
+│          │  └────────────────────────────────────────────────────┘  │
+│          │  ⓘ Màu sắc áp dụng cho cả Frontend và Dashboard        │
+│          │                                                           │
 │          │  ══════════════════════════════════════════════════════  │
 │          │  ⚙️ CẤU HÌNH ADMIN TÙY CHỈNH (QUAN TRỌNG)                │
 │          │  ══════════════════════════════════════════════════════  │
@@ -1782,9 +1914,9 @@ if (remaining <= 0) {
 │          │  ── THỜI HẠN LƯU TRỮ ẢNH ───────────────────────────────  │
 │          │  ┌────────────────────────────────────────────────────┐  │
 │          │  │ Ảnh chưa bán: [__30__] ngày  (min 7, max 365)      │  │
-│          │  │ ☑ Bật auto-delete                                  │  │
-│          │  │ ☐ Chỉ xóa ảnh chưa bán                             │  │
-│          │  │ ⚠️ Hết hạn → TỰ ĐỘNG XÓA ẢNH                       │  │
+│          │  │ ⓘ Ảnh chưa bán sẽ tự động bị xóa sau thời hạn.    │  │
+│          │  │   Ảnh đã mua được di chuyển vào album đơn hàng     │  │
+│          │  │   và lưu trữ vĩnh viễn.                            │  │
 │          │  └────────────────────────────────────────────────────┘  │
 │          │                                                           │
 │          │  ── THỜI HẠN LINK DOWNLOAD ─────────────────────────────  │
@@ -1792,7 +1924,8 @@ if (remaining <= 0) {
 │          │  │ Link tồn tại: [__168__] giờ  (= 7 ngày)            │  │
 │          │  │ (min 24, max 720 = 30 ngày)                        │  │
 │          │  │ Số lượt tải tối đa: [__5__] lần                    │  │
-│          │  │ ⚠️ Hết hạn → LINK MẤT + XÓA ẢNH ĐÃ MUA             │  │
+│          │  │ ⓘ Link hết hạn → Khách không tải được nữa          │  │
+│          │  │   Nhưng album đơn hàng VẪN CÒN trên hệ thống      │  │
 │          │  └────────────────────────────────────────────────────┘  │
 │          │                                                           │
 │          │  ── GÓI GIÁ (Bundle Pricing) ───────────────────────────  │
@@ -1811,39 +1944,39 @@ if (remaining <= 0) {
 
 ---
 
-## 23. PHÂN QUYỀN THEO ROLE — TÓM TẮT UI
+## 23. PHÂN QUYỀN THEO ROLE — TÓM TẮT UI (CẬP NHẬT v2)
 
 | Trang Dashboard | Admin System | Admin Sales | Manager | Staff |
 |----------------|:------------:|:-----------:|:-------:|:-----:|
-| Home (KPI + overview) | Full | Full | Chỉ KPI | Albums mình |
+| Home (KPI + overview) | Full | Full | Chỉ KPI | Thống kê cá nhân + ĐĐ mình |
 | Folder list + CRUD | Full + DELETE | Full (no DELETE) | ❌ | ❌ |
-| Album list + CRUD | Full + DELETE | Full (no DELETE) | ❌ | ❌ |
-| Album detail + photos | Full | Full | ❌ | Chỉ album mình (read+tag) |
-| Upload ảnh | ✅ | ✅ | ❌ | ✅ (album được assign) |
-| Gắn tag cho ảnh | ✅ | ✅ | ❌ | ✅ (album được assign) |
+| Địa Điểm list + CRUD | Full + DELETE | Full (no DELETE) | ✅ (read) | ✅ (chỉ ĐĐ được gán) |
+| Địa Điểm detail + ảnh | Full | Full | ✅ (read) | Chỉ ảnh mình upload |
+| Upload ảnh | ✅ | ✅ | ❌ | ✅ (ĐĐ được assign) |
 | Gói giá (Bundle Pricing) | ✅ | ✅ | ❌ | ❌ |
 | Đơn hàng | ✅ | ✅ | ❌ | ❌ |
 | Thống kê doanh thu | Full + export | Full + export | Read-only | ❌ |
+| Thống kê nhân viên | Full | Full | Read-only | Chỉ của mình |
 | Nhân viên | Full | ❌ | ❌ | ❌ |
-| Cấu hình hệ thống | Full (retention, TTL, bundles) | ❌ | ❌ | ❌ |
+| Cấu hình hệ thống | Full (retention, TTL, color) | ❌ | ❌ | ❌ |
 
 ---
 
-## 24. TECH STACK FRONTEND
+## 25. TECH STACK FRONTEND
 
-### 24.1 Website (Next.js)
+### 25.1 Website (Next.js)
 
 ```
 photopro-web/
 ├── app/                        # Next.js App Router
 │   ├── layout.tsx              # Root layout (theme, fonts, metadata)
 │   ├── page.tsx                # Trang Intro
-│   ├── albums/
-│   │   └── page.tsx            # Danh sách album
-│   ├── album/[slug]/
-│   │   ├── page.tsx            # Chi tiết album + gallery
+│   ├── locations/                  # Danh sách địa điểm (v2 — đổi từ albums)
+│   │   └── page.tsx            # Danh sách địa điểm
+│   ├── location/[slug]/
+│   │   ├── page.tsx            # Chi tiết địa điểm + gallery
 │   │   └── face-search/
-│   │       └── page.tsx        # Quét mặt trong album
+│   │       └── page.tsx        # Quét mặt trong địa điểm
 │   ├── face-search/
 │   │   └── page.tsx            # Quét mặt toàn site
 │   ├── cart/page.tsx           # Giỏ hàng
@@ -1868,7 +2001,7 @@ photopro-web/
     └── globals.css             # Tailwind + theme variables
 ```
 
-### 24.2 Dashboard (React + Vite)
+### 25.2 Dashboard (React + Vite)
 
 ```
 photopro-dashboard/
@@ -1879,22 +2012,21 @@ photopro-dashboard/
 │   │   ├── Login.tsx
 │   │   ├── Dashboard.tsx       # Home
 │   │   ├── Folders.tsx         # Folder management
-│   │   ├── Albums.tsx          # Album (tag type=album) management
-│   │   ├── AlbumDetail.tsx     # Photos inside album
+│   │   ├── Locations.tsx       # Địa Điểm (was Albums) management
+│   │   ├── LocationDetail.tsx  # Photos inside Địa Điểm
 │   │   ├── Upload.tsx          # Staff upload
-│   │   ├── TagPhotos.tsx       # Tag management for photos
-│   │   ├── Pricing.tsx         # Default prices
-│   │   ├── Combos.tsx          # Combo management
-│   │   ├── Orders.tsx          # Order list + detail
+│   │   ├── Pricing.tsx         # Bundle pricing
+│   │   ├── Orders.tsx          # Order list + detail (ảnh từ album ĐH)
 │   │   ├── Statistics.tsx      # Revenue charts
-│   │   ├── Users.tsx           # Staff management
-│   │   └── SystemConfig.tsx    # System settings
+│   │   ├── StaffStats.tsx      # Staff statistics (mới — v2)
+│   │   ├── Users.tsx           # Staff management (+ Mã NV, Địa điểm)
+│   │   └── SystemConfig.tsx    # System settings (+ color picker, simplified retention)
 │   ├── components/
 │   │   ├── ui/                 # shadcn/ui
 │   │   ├── layout/             # Sidebar, Header, Breadcrumb
 │   │   ├── charts/             # Revenue chart, pie chart
 │   │   ├── tables/             # DataTable (sorting, filter, pagination)
-│   │   └── forms/              # Album form, Pricing form, User form
+│   │   └── forms/              # Location form, Pricing form, User form (v2)
 │   ├── hooks/
 │   │   ├── useAuth.ts          # JWT auth + role check
 │   │   ├── usePermission.ts    # UI permission gates
@@ -1907,7 +2039,7 @@ photopro-dashboard/
 │       └── index.ts            # TypeScript types
 ```
 
-### 24.3 Dependencies chính
+### 25.3 Dependencies chính
 
 ```json
 {
@@ -1948,15 +2080,19 @@ photopro-dashboard/
 | Điểm | Chi tiết |
 |------|----------|
 | QR Code | **Site-level** duy nhất, dẫn đến `{subdomain}.photopro.vn` |
-| Album | Tag với `type='album'`, KHÔNG có bảng albums riêng |
-| Staff | Chỉ upload + gắn tag, KHÔNG tạo album mới |
+| Địa Điểm | Tag với `type='location'` (đổi tên từ Album). Staff chỉ xem ảnh do mình upload. |
+| Album đơn hàng | Tag với `type='order'`, tự tạo khi thanh toán. Ảnh DI CHUYỂN từ Địa Điểm. Lưu vĩnh viễn. |
+| Staff | Upload ảnh vào ĐĐ được phân công. Xem thống kê cá nhân. Có Mã NV + Địa điểm. |
 | Phone | **Bắt buộc** ở checkout |
 | Email | **Tùy chọn** (checkbox toggle) |
 | Countdown | 168h (7 ngày) mặc định, Admin cấu hình (min 24h, max 720h) |
 | Download limit | 5 lượt mặc định |
 | Bundle Pricing | 20k/1 ảnh, 50k/3 ảnh, 100k/8 ảnh (Admin tùy chỉnh) |
 | Auto-pack | Hệ thống tự tính gói tối ưu khi khách chọn ảnh |
-| Retention | Ảnh chưa bán: 30 ngày mặc định (Admin cấu hình 7-365) |
+| Retention | Ảnh chưa bán: 30 ngày mặc định (Admin cấu hình 7-365). Hết hạn → tự xóa. |
+| Ảnh đã mua | Di chuyển sang album đơn hàng. Lưu vĩnh viễn. Không còn trong Địa Điểm gốc. |
+| Face search | Hỗ trợ lọc theo ngày chụp (optional). Chỉ tìm ảnh `status = 'available'`. |
+| Color picker | 7 preset + nhập HEX tùy chỉnh cho Primary & Accent (v2) |
 
 ## B. Trạng thái đơn hàng
 
@@ -1974,7 +2110,7 @@ photopro-dashboard/
 | admin_system | Toàn quyền hệ thống |
 | admin_sales | Quản lý nghiệp vụ (không quản lý user/settings) |
 | manager | Chỉ xem thống kê (read-only) |
-| staff | Chỉ upload + gắn tag (KHÔNG tạo album) |
+| staff | Upload ảnh vào Địa Điểm được phân công, xem thống kê cá nhân, chỉ xem ảnh do mình upload |
 | customer | Khách hàng mua ảnh |
 
 ---

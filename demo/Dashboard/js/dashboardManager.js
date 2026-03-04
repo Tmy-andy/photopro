@@ -7,7 +7,7 @@ class DashboardManager {
       id: 1,
       name: 'Admin System',
       email: 'admin@photopro.vn',
-      role: 'admin-system', // admin-system | admin-sales | manager
+      role: 'admin-system', // admin-system | admin-sales | manager | staff
       avatar: 'AS'
     };
     
@@ -70,9 +70,10 @@ class DashboardManager {
   
   hasPermission(requiredRole) {
     const hierarchy = {
-      'admin-system': 3,
-      'admin-sales': 2,
-      'manager': 1
+      'admin-system': 4,
+      'admin-sales': 3,
+      'manager': 2,
+      'staff': 1
     };
     
     return hierarchy[this.currentUser.role] >= hierarchy[requiredRole];
@@ -85,7 +86,8 @@ class DashboardManager {
       const roleNames = {
         'admin-system': 'Admin System',
         'admin-sales': 'Admin Sales',
-        'manager': 'Manager'
+        'manager': 'Manager',
+        'staff': 'Nhân viên'
       };
       roleElement.textContent = roleNames[this.currentUser.role] || this.currentUser.role;
     }
@@ -114,30 +116,58 @@ class DashboardManager {
     return response.json();
   }
   
-  // Albums
-  async getAlbums(filters = {}) {
+  // Albums → Locations (Địa Điểm)
+  async getLocations(filters = {}) {
     const params = new URLSearchParams(filters);
-    return this.apiCall(`/albums?${params}`);
+    return this.apiCall(`/locations?${params}`);
   }
   
-  async createAlbum(data) {
-    return this.apiCall('/albums', {
+  async createLocation(data) {
+    return this.apiCall('/locations', {
       method: 'POST',
       body: JSON.stringify(data)
     });
   }
   
-  async updateAlbum(id, data) {
-    return this.apiCall(`/albums/${id}`, {
+  async updateLocation(id, data) {
+    return this.apiCall(`/locations/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data)
     });
   }
   
-  async deleteAlbum(id) {
-    return this.apiCall(`/albums/${id}`, {
+  async deleteLocation(id) {
+    return this.apiCall(`/locations/${id}`, {
       method: 'DELETE'
     });
+  }
+
+  async getLocationStaffAssignments(locationId) {
+    return this.apiCall(`/locations/${locationId}/staff`);
+  }
+
+  async updateLocationStaffAssignments(locationId, assignments) {
+    return this.apiCall(`/locations/${locationId}/staff`, {
+      method: 'PUT',
+      body: JSON.stringify({ assignments })
+    });
+  }
+
+  // Legacy Albums (kept for backward compat)
+  async getAlbums(filters = {}) {
+    return this.getLocations(filters);
+  }
+  
+  async createAlbum(data) {
+    return this.createLocation(data);
+  }
+  
+  async updateAlbum(id, data) {
+    return this.updateLocation(id, data);
+  }
+  
+  async deleteAlbum(id) {
+    return this.deleteLocation(id);
   }
   
   // Orders
@@ -215,6 +245,20 @@ class DashboardManager {
   async getDashboardStats() {
     return this.apiCall('/stats/dashboard');
   }
+
+  // Staff Statistics (Thống kê NV)
+  async getStaffStats(filters = {}) {
+    const params = new URLSearchParams(filters);
+    return this.apiCall(`/stats/staff?${params}`);
+  }
+
+  async getStaffStatsDetail(staffId) {
+    return this.apiCall(`/stats/staff/${staffId}`);
+  }
+
+  async getStaffRevenueChart(staffId, period = '7days') {
+    return this.apiCall(`/stats/staff/${staffId}/revenue?period=${period}`);
+  }
   
   // Settings
   async getSettings() {
@@ -225,6 +269,13 @@ class DashboardManager {
     return this.apiCall('/settings', {
       method: 'PUT',
       body: JSON.stringify(data)
+    });
+  }
+
+  async updateBrandColors(primary, accent) {
+    return this.apiCall('/settings/brand-colors', {
+      method: 'PUT',
+      body: JSON.stringify({ primary_color: primary, accent_color: accent })
     });
   }
   
