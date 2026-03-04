@@ -1,9 +1,10 @@
 # PHOTOPRO — ĐẶC TẢ CHI TIẾT FRONTEND & DASHBOARD
 
-> **Phiên bản:** 2.2 (cập nhật theo spec-v2)  
+> **Phiên bản:** 2.3 (cập nhật login redesign, sidebar visibility)  
 > **Cập nhật:** 04/03/2026  
 > **Mục đích:** Tài liệu đặc tả chi tiết giao diện người dùng cho Website khách hàng và Dashboard quản trị  
 > **Tham chiếu:** `photopro-spec-v2.md` (v2.1) — Xem chi tiết các thay đổi A1-A6, B1, C1, C2  
+> **Changelog:** Xem `CHANGELOG.md` để biết lịch sử thay đổi chi tiết  
 
 ---
 
@@ -1153,40 +1154,154 @@ if (remaining <= 0) {
 | Hệ thống | ✅ | ❌ | ❌ | ❌ |
 | Hồ sơ cá nhân | ✅ | ✅ | ✅ | ✅ |
 
+### 12.3 Sidebar Visibility — `data-role` attribute (v2.3)
+
+Mục **Hệ thống** trong sidebar sử dụng attribute `data-role="admin-system"` trên thẻ `.nav-section` bao ngoài.  
+`DashboardManager.js` kiểm tra `localStorage('photopro_user').role` và ẩn toàn bộ section nếu role ≠ `admin-system`.
+
+```html
+<div class="nav-section" data-role="admin-system">
+  <div class="nav-section-title">Hệ thống</div>
+  <a href="pages/settings.html" class="nav-link">
+    <i data-lucide="settings"></i> Cài đặt
+  </a>
+</div>
+```
+
+**Áp dụng trên tất cả 9 trang:** index, locations, orders, staff, settings, pricing, revenue, staff-stats, profile.
+
+### 12.4 Staff Sidebar (v2.3)
+
+Staff role sử dụng sidebar riêng biệt (swap qua JS khi detect role = staff):
+
+| Section | Menu items |
+|---------|-----------|
+| Logo | "PhotoPro Staff" |
+| Công việc | Upload Ảnh (`staff-upload.html`), Thống kê của tôi (`staff-stats.html`) |
+| Tài khoản | Hồ sơ (`profile.html`), Đăng xuất |
+
 ---
 
 ## 13. TRANG LOGIN
 
-### 13.1 Wireframe
+> **Cập nhật v2.3:** Redesign hoàn toàn — Split-screen layout, thêm demo accounts
+
+### 13.1 Wireframe — Split-Screen Layout
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                                                                      │
-│              [Logo]                                                  │
-│              PHOTOPRO DASHBOARD                                      │
-│                                                                      │
-│              ┌──────────────────────────────┐                       │
-│              │                              │                       │
-│              │  Email                       │                       │
-│              │  [________________________] │                       │
-│              │                              │                       │
-│              │  Mật khẩu                    │                       │
-│              │  [________________________] │                       │
-│              │                              │                       │
-│              │  ☐ Ghi nhớ đăng nhập         │                       │
-│              │                              │                       │
-│              │  [    ĐĂNG NHẬP    ]         │                       │
-│              │                              │                       │
-│              │  Quên mật khẩu?              │                       │
-│              │                              │                       │
-│              └──────────────────────────────┘                       │
-│                                                                      │
-│              Hỗ trợ: support@company.com                            │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────┬──────────────────────────────────────┐
+│                              │                                      │
+│   BRANDING PANEL             │   LOGIN FORM PANEL                   │
+│   (flex: 1, gradient xanh)  │   (520px, nền trắng)                │
+│                              │                                      │
+│   ┌─ Logo ─────────────┐    │   ┌─ Header ──────────────────────┐  │
+│   │ [📷] PhotoPro      │    │   │  Đăng nhập                    │  │
+│   └─────────────────────┘    │   │  Chào mừng bạn quay lại!     │  │
+│                              │   └──────────────────────────────┘  │
+│   Quản lý ảnh                │                                      │
+│   chuyên nghiệp              │   ┌─ Form ───────────────────────┐  │
+│                              │   │  Email                       │  │
+│   Nền tảng quản lý và bán   │   │  [📧 admin@photopro.vn_____] │  │
+│   ảnh du lịch hàng đầu...   │   │                               │  │
+│                              │   │  Mật khẩu                    │  │
+│   ┌─ Features ──────────┐   │   │  [🔒 ••••••••_________ 👁]   │  │
+│   │ ☁️ Upload nhanh chóng│   │   │                               │  │
+│   │ 📊 Thống kê chi tiết │   │   │  ☐ Ghi nhớ    Quên mật khẩu?│  │
+│   │ 📍 Đa địa điểm      │   │   │                               │  │
+│   └──────────────────────┘   │   │  [      ĐĂNG NHẬP      ]     │  │
+│                              │   └───────────────────────────────┘  │
+│   ○ ○ ○  (floating shapes)  │                                      │
+│                              │   ── TÀI KHOẢN DEMO ──────────────  │
+│                              │                                      │
+│                              │   ┌──────────────┐ ┌──────────────┐ │
+│                              │   │🛡 Admin System│ │💼 Admin Sales│ │
+│                              │   │  Toàn quyền  │ │  Bán hàng    │ │
+│                              │   └──────────────┘ └──────────────┘ │
+│                              │   ┌──────────────┐ ┌──────────────┐ │
+│                              │   │👥 Manager     │ │📷 Nhân viên  │ │
+│                              │   │  Vận hành    │ │  Upload      │ │
+│                              │   └──────────────┘ └──────────────┘ │
+│                              │                                      │
+│   © 2026 PhotoPro            │   Điều khoản · Chính sách · Hỗ trợ  │
+│                              │                                      │
+└──────────────────────────────┴──────────────────────────────────────┘
 ```
 
-### 13.2 API Mapping
+### 13.2 Chi tiết Panel trái — Branding
+
+| Thành phần | Mô tả |
+|-----------|-------|
+| Logo | Icon camera + "PhotoPro", nền `rgba(255,255,255,0.15)` với backdrop-blur |
+| Tagline | H1: "Quản lý ảnh chuyên nghiệp" + paragraph giới thiệu |
+| Features | 3 items: Upload nhanh, Thống kê chi tiết, Đa địa điểm — mỗi item có icon box |
+| Background | Gradient `160deg: #0a4d36 → #1a6b4e → #145a3e` |
+| Floating shapes | 3 circles trắng `opacity: 0.07`, animation `floatShape` 15-25s |
+| Footer | "© 2026 PhotoPro · Đà Nẵng, Việt Nam" |
+
+### 13.3 Chi tiết Panel phải — Form
+
+| Thành phần | Mô tả |
+|-----------|-------|
+| Header | H2: "Đăng nhập" + subtitle |
+| Email input | Icon `mail`, placeholder: `admin@photopro.vn` |
+| Password input | Icon `lock`, nút toggle `eye/eye-off` |
+| Remember me | Checkbox + label "Ghi nhớ đăng nhập" |
+| Forgot password | Link "Quên mật khẩu?" |
+| Error message | Box đỏ nhạt với icon `alert-circle`, animation `shake` |
+| Submit button | "Đăng Nhập", loading state: spinner + "Đang xử lý..." |
+| Footer | Links: Điều khoản · Chính sách · Hỗ trợ |
+
+### 13.4 Demo Accounts (Grid 2×2)
+
+| Nút | Email | Password | Role | Icon | Màu |
+|-----|-------|----------|------|------|-----|
+| Admin System | `admin@photopro.vn` | `admin123` | `admin-system` | `shield-check` | Xanh lá `#1a6b4e` |
+| Admin Sales | `sales@photopro.vn` | `sales123` | `admin-sales` | `briefcase` | Xanh dương `#2563eb` |
+| Manager | `manager@photopro.vn` | `manager123` | `manager` | `users` | Cam `#d4870e` |
+| Nhân viên | `staff@photopro.vn` | `staff123` | `staff` | `camera` | Tím `#7c3aed` |
+
+**Hành vi khi click demo button:**
+1. Fill email + password vào form
+2. Highlight nút được chọn (border primary)
+3. Flash inputs xanh lá 600ms
+4. Ẩn error message (nếu có)
+
+### 13.5 Redirect Logic
+
+| Điều kiện | Hành vi |
+|-----------|---------|
+| Login role = `staff` | Redirect → `pages/staff-upload.html` |
+| Login role ≠ `staff` | Redirect → `index.html` |
+| `rememberMe = true` (on load) | Auto-redirect theo role |
+| Login thất bại | Hiện error box + shake animation |
+
+### 13.6 localStorage Structure
+
+```json
+{
+  "key": "photopro_user",
+  "value": {
+    "username": "admin@photopro.vn",
+    "role": "admin-system",
+    "name": "Admin System",
+    "employee_code": null,
+    "locations": [],
+    "loginTime": "2026-03-04T10:30:00.000Z",
+    "rememberMe": true
+  }
+}
+```
+
+**Staff có thêm:** `employee_code: "NV001"`, `locations: ["Bà Nà Hills", "Hội An"]`
+
+### 13.7 Responsive
+
+| Breakpoint | Thay đổi |
+|-----------|---------|
+| ≤ 1024px | Ẩn panel trái, form panel full width, hiện mobile logo |
+| ≤ 480px | Padding nhỏ hơn, demo grid 1 cột |
+
+### 13.8 API Mapping
 
 | Action | API Endpoint | Response |
 |--------|--------------|----------|

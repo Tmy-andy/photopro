@@ -1,11 +1,12 @@
 # PHOTOPRO — Bố cục & Chức năng Front-end Toàn diện
 
-> **Phiên bản:** 2.0 (cập nhật theo spec-v2)  
+> **Phiên bản:** 2.1 (cập nhật login redesign, sidebar visibility, staff UX)  
 > **Cập nhật:** 04/03/2026  
 > **Thiết kế trung tính** — Phù hợp mọi loại hình doanh nghiệp du lịch  
 > **Không dùng theme cố định** — Doanh nghiệp tự chọn màu sắc (7 preset + Custom HEX)  
 > **Kỹ thuật:** Thuần HTML + CSS Variables + Mock Data JSON  
 > **Tham chiếu:** `photopro-spec-v2.md` (v2.1) — Xem chi tiết các thay đổi A1-A6, B1, C1, C2  
+> **Changelog:** Xem `CHANGELOG.md` để biết lịch sử thay đổi chi tiết  
 
 ---
 
@@ -16,9 +17,11 @@
 3. [Customer Storefront — 6 trang](#3-customer-storefront)
 4. [Staff Portal — 4 trang](#4-staff-portal)
 5. [Admin Dashboard — 7+ trang (cập nhật v2)](#5-admin-dashboard)
-6. [Shared Components](#6-shared-components)
-7. [Mock Data Structure](#7-mock-data-structure)
-8. [Responsive Design](#8-responsive-design)
+6. [Trang Login — Split-screen (mới v2.1)](#6-trang-login)
+7. [Shared Components](#7-shared-components)
+8. [Mock Data Structure](#8-mock-data-structure)
+9. [Responsive Design](#9-responsive-design)
+10. [Cấu trúc Folder — Monorepo](#10-cấu-trúc-folder--monorepo)
 
 ---
 
@@ -514,9 +517,121 @@ Staff chỉ xem ảnh do chính mình upload vào Địa Điểm.
 
 ---
 
-## 6. SHARED COMPONENTS
+## 6. TRANG LOGIN
 
-### 6.1 Gallery Components
+> **Mới v2.1:** Redesign hoàn toàn — Split-screen layout thay thế card centered cũ.
+
+### 6.1 Layout — Split-screen
+
+```
+┌──────────────────────────────────┬──────────────────────────────────┐
+│                                  │                                  │
+│   BRANDING PANEL                 │   LOGIN FORM PANEL               │
+│   (flex: 1)                      │   (width: 520px)                 │
+│   Background: gradient xanh đậm │   Background: trắng              │
+│                                  │                                  │
+│   ┌── Logo ──────────┐           │   ┌── Header ──────────────┐     │
+│   │ [📷] PhotoPro    │           │   │  H2: "Đăng nhập"       │     │
+│   └──────────────────┘           │   │  P: "Chào mừng..."     │     │
+│                                  │   └────────────────────────┘     │
+│   H1: "Quản lý ảnh              │                                  │
+│        chuyên nghiệp"           │   ┌── Form ─────────────────┐    │
+│                                  │   │ Email: [📧 ___________] │    │
+│   P: mô tả ngắn...              │   │ Pass:  [🔒 _____ 👁]   │    │
+│                                  │   │                         │    │
+│   ┌── 3 Feature items ─────┐    │   │ ☐ Ghi nhớ  Quên MK?    │    │
+│   │ ☁️ Upload nhanh chóng  │    │   │                         │    │
+│   │ 📊 Thống kê chi tiết   │    │   │ [    ĐĂNG NHẬP    ]    │    │
+│   │ 📍 Đa địa điểm        │    │   └─────────────────────────┘    │
+│   └─────────────────────────┘    │                                  │
+│                                  │   ── TÀI KHOẢN DEMO ──          │
+│   ○ ○ ○ floating shapes         │                                  │
+│         (animated)               │   ┌─────────┐ ┌─────────┐       │
+│                                  │   │🛡 Admin  │ │💼 Sales │       │
+│                                  │   │ System   │ │         │       │
+│   ────────────────────────       │   └─────────┘ └─────────┘       │
+│   © 2026 PhotoPro · Đà Nẵng     │   ┌─────────┐ ┌─────────┐       │
+│                                  │   │👥Manager │ │📷 Staff │       │
+│                                  │   └─────────┘ └─────────┘       │
+│                                  │                                  │
+│                                  │   Điều khoản · Chính sách · HT  │
+└──────────────────────────────────┴──────────────────────────────────┘
+```
+
+### 6.2 Panel trái — Branding
+
+| Thành phần | Chi tiết |
+|-----------|---------|
+| Background | `linear-gradient(160deg, #0a4d36, #1a6b4e, #145a3e)` |
+| Floating shapes | 3 circles trắng `opacity: 0.07`, animation `floatShape` 15-25s infinite |
+| Logo | Icon `camera` 30px + text "PhotoPro" bold 24px, box `rgba(255,255,255,0.15)` backdrop-blur |
+| Tagline | H1 34px "Quản lý ảnh chuyên nghiệp" + paragraph 15px giới thiệu |
+| Features | 3 items với icon box 44×44px: Upload nhanh, Thống kê chi tiết, Đa địa điểm |
+| Footer | "© 2026 PhotoPro · Đà Nẵng, Việt Nam", `opacity: 0.45` |
+
+### 6.3 Panel phải — Form
+
+| Thành phần | Chi tiết |
+|-----------|---------|
+| Width | `520px` fixed, `flex-shrink: 0`, background `#fff` |
+| Inner | `max-width: 380px`, centered |
+| Email | Input với icon `mail`, placeholder `admin@photopro.vn` |
+| Password | Input với icon `lock`, toggle button `eye/eye-off` |
+| Checkbox | "Ghi nhớ đăng nhập", `accent-color: var(--primary)` |
+| Link | "Quên mật khẩu?", color primary |
+| Error | Box đỏ nhạt `#fef2f2`, border `#fecaca`, animation `shake 0.4s` |
+| Button | Full-width, `var(--primary)`, hover: `translateY(-1px)` + shadow |
+| Loading | Spinner CSS + "Đang xử lý..." |
+| Success | Background → `#16a34a` + icon check |
+
+### 6.4 Demo Accounts — Grid 2×2
+
+| Nút | Email | Password | Role | Icon | Màu nền |
+|-----|-------|----------|------|------|---------|
+| Admin System | `admin@photopro.vn` | `admin123` | `admin-system` | `shield-check` | `#e8f5f0` / `#1a6b4e` |
+| Admin Sales | `sales@photopro.vn` | `sales123` | `admin-sales` | `briefcase` | `#eff6ff` / `#2563eb` |
+| Manager | `manager@photopro.vn` | `manager123` | `manager` | `users` | `#fef3e8` / `#d4870e` |
+| Nhân viên | `staff@photopro.vn` | `staff123` | `staff` | `camera` | `#f5f3ff` / `#7c3aed` |
+
+**Click behavior:** Fill form → highlight button → flash inputs green 600ms
+
+### 6.5 Redirect & Auth
+
+| Điều kiện | Hành vi |
+|-----------|---------|
+| Staff login | → `pages/staff-upload.html` |
+| Other roles | → `index.html` |
+| `rememberMe` on page load | Auto-redirect theo role |
+| Thất bại | Error box + shake + focus password |
+
+### 6.6 Responsive
+
+| Breakpoint | Thay đổi |
+|-----------|---------|
+| ≤ 1024px | Ẩn panel trái, form panel 100% width, hiện mobile logo (icon + text) |
+| ≤ 480px | Padding `24px 20px`, demo grid 1 cột, H2 `22px` |
+
+### 6.7 Sidebar Visibility — `data-role` (v2.1)
+
+> Áp dụng cho **tất cả 9 trang admin** (index, locations, orders, staff, settings, pricing, revenue, staff-stats, profile)
+
+```html
+<!-- Mục "Hệ thống" trong sidebar -->
+<div class="nav-section" data-role="admin-system">
+  <div class="nav-section-title">Hệ thống</div>
+  <a href="pages/settings.html">Cài đặt</a>
+</div>
+```
+
+- `DashboardManager.js` kiểm tra `localStorage('photopro_user').role`
+- Nếu role ≠ `admin-system` → ẩn toàn bộ `[data-role="admin-system"]`
+- Roles bị ẩn: `admin-sales`, `manager`, `staff`
+
+---
+
+## 7. SHARED COMPONENTS
+
+### 7.1 Gallery Components
 
 | Component | Mô tả |
 |-----------|-------|
@@ -524,7 +639,7 @@ Staff chỉ xem ảnh do chính mình upload vào Địa Điểm.
 | `PhotoCard` | Placeholder → lazy image, watermark overlay, checkbox, similarity badge, warning badge |
 | `PhotoLightbox` | Full-screen preview với watermark, disable right-click |
 
-### 6.2 Upload Components
+### 7.2 Upload Components
 
 | Component | Mô tả |
 |-----------|-------|
@@ -532,7 +647,7 @@ Staff chỉ xem ảnh do chính mình upload vào Địa Điểm.
 | `UploadProgress` | Per-file progress bar, status (uploading/done/error), retry |
 | `BatchUploader` | Queue 20 files, parallel upload, auto-retry |
 
-### 6.3 Search & Filter Components (cập nhật v2)
+### 7.3 Search & Filter Components (cập nhật v2)
 
 | Component | Mô tả |
 |-----------|-------|
@@ -541,7 +656,7 @@ Staff chỉ xem ảnh do chính mình upload vào Địa Điểm.
 | `TagBadge` | Status badge (PUBLISHED/READY/DRAFT/etc.) |
 | `LocationBadge` | Badge hiển thị tên Địa Điểm được phân công |
 
-### 6.4 Payment Components
+### 7.4 Payment Components
 
 | Component | Mô tả |
 |-----------|-------|
@@ -549,7 +664,7 @@ Staff chỉ xem ảnh do chính mình upload vào Địa Điểm.
 | `PaymentMethod` | Radio card, icon, tên, mô tả |
 | `CartSummary` | Photo count + package + total |
 
-### 6.5 Data Display
+### 7.5 Data Display
 
 | Component | Mô tả |
 |-----------|-------|
@@ -559,7 +674,7 @@ Staff chỉ xem ảnh do chính mình upload vào Địa Điểm.
 | `Countdown` | JetBrains Mono, 3 unit boxes (h:m:s), realtime |
 | `ProgressBar` | Thin bar, fill color, percentage |
 
-### 6.6 Form Components
+### 7.6 Form Components
 
 | Component | Mô tả |
 |-----------|-------|
@@ -569,7 +684,7 @@ Staff chỉ xem ảnh do chính mình upload vào Địa Điểm.
 
 ---
 
-## 7. MOCK DATA STRUCTURE
+## 8. MOCK DATA STRUCTURE
 
 Tất cả mock data được lưu trong 1 object JSON:
 
@@ -614,7 +729,7 @@ Tất cả mock data được lưu trong 1 object JSON:
 
 ---
 
-## 8. RESPONSIVE DESIGN
+## 9. RESPONSIVE DESIGN
 
 ### Breakpoints
 
@@ -637,9 +752,9 @@ Tất cả mock data được lưu trong 1 object JSON:
 
 ---
 
-## 9. CẤU TRÚC FOLDER — MONOREPO
+## 10. CẤU TRÚC FOLDER — MONOREPO
 
-### 9.1 Tổng quan Monorepo
+### 10.1 Tổng quan Monorepo
 
 ```
 photopro/                          ← Monorepo root
@@ -677,7 +792,7 @@ photopro/                          ← Monorepo root
 
 ---
 
-### 9.2 Customer Storefront — Next.js 14 App Router
+### 10.2 Customer Storefront — Next.js 14 App Router
 
 ```
 apps/storefront/
@@ -802,7 +917,7 @@ apps/storefront/
 
 ---
 
-### 9.3 Staff Portal — React + Vite
+### 10.3 Staff Portal — React + Vite
 
 ```
 apps/staff-portal/
@@ -875,7 +990,7 @@ apps/staff-portal/
 
 ---
 
-### 9.4 Admin Dashboard — React + Vite
+### 10.4 Admin Dashboard — React + Vite
 
 ```
 apps/admin-dashboard/
@@ -994,7 +1109,7 @@ apps/admin-dashboard/
 
 ---
 
-### 9.5 Shared Packages
+### 10.5 Shared Packages
 
 ```
 packages/
