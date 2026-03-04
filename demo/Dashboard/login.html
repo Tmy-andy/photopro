@@ -4,420 +4,887 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng Nhập - PhotoPro Dashboard</title>
-  
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  
-  <!-- Styles -->
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/components.css">
-</head>
-<body>
+  <style>
+    /* ===== RESET FOR LOGIN ===== */
+    body.login-page {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      background: #f0f2f5;
+      overflow-x: hidden;
+    }
 
-<div class="login-container">
-  <div class="login-card">
-    <!-- Logo & Title -->
-    <div class="login-header">
-      <div class="login-logo">
-        <i data-lucide="camera" style="width: 48px; height: 48px;"></i>
-      </div>
-      <h1>PhotoPro Dashboard</h1>
-      <p>Đăng nhập để quản lý hệ thống</p>
+    /* ===== LAYOUT: SPLIT SCREEN ===== */
+    .login-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ===== LEFT PANEL: BRANDING ===== */
+    .login-brand {
+      flex: 1;
+      background: linear-gradient(160deg, #0a4d36 0%, #1a6b4e 40%, #145a3e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 48px;
+    }
+
+    .brand-bg-shapes {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .bg-shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.07;
+      background: #fff;
+    }
+
+    .shape-1 {
+      width: 420px;
+      height: 420px;
+      top: -120px;
+      right: -80px;
+      animation: floatShape 20s ease-in-out infinite;
+    }
+
+    .shape-2 {
+      width: 320px;
+      height: 320px;
+      bottom: -60px;
+      left: -80px;
+      animation: floatShape 25s ease-in-out infinite reverse;
+    }
+
+    .shape-3 {
+      width: 200px;
+      height: 200px;
+      top: 45%;
+      left: 55%;
+      animation: floatShape 18s ease-in-out infinite 3s;
+    }
+
+    @keyframes floatShape {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(25px, -18px) scale(1.04); }
+      66% { transform: translate(-18px, 12px) scale(0.96); }
+    }
+
+    .brand-content {
+      position: relative;
+      z-index: 1;
+      color: #fff;
+      max-width: 460px;
+      width: 100%;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 56px;
+    }
+
+    .brand-logo-icon {
+      width: 52px;
+      height: 52px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-logo-icon.small {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #e8f5f0;
+      color: #1a6b4e;
+      backdrop-filter: none;
+      border: none;
+    }
+
+    .brand-logo-text {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-hero h1 {
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin: 0 0 16px 0;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-hero p {
+      font-size: 15px;
+      line-height: 1.7;
+      opacity: 0.78;
+      margin: 0 0 48px 0;
+    }
+
+    .brand-features {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 56px;
+    }
+
+    .brand-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .brand-feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-feature strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .brand-feature span {
+      font-size: 13px;
+      opacity: 0.65;
+    }
+
+    .brand-footer {
+      padding-top: 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .brand-footer p {
+      margin: 0;
+      font-size: 13px;
+      opacity: 0.45;
+    }
+
+    /* ===== RIGHT PANEL: FORM ===== */
+    .login-form-panel {
+      width: 520px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      padding: 48px;
+      overflow-y: auto;
+    }
+
+    .login-form-inner {
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .mobile-logo {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .mobile-logo .brand-logo-text {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    /* Form Header */
+    .login-form-header {
+      margin-bottom: 32px;
+    }
+
+    .login-form-header h2 {
+      font-size: 26px;
+      font-weight: 800;
+      margin: 0 0 8px 0;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .login-form-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Form Elements */
+    .login-form .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+      background: var(--surface-alt);
+      color: var(--text);
+      box-sizing: border-box;
+    }
+
+    .form-input.has-icon {
+      padding-left: 42px;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(26, 107, 78, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+      z-index: 1;
+    }
+
+    .password-toggle:hover {
+      color: var(--primary);
+    }
+
+    /* Form Row */
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .link-forgot {
+      font-size: 13px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .link-forgot:hover {
+      opacity: 0.75;
+      text-decoration: underline;
+    }
+
+    /* Error */
+    .login-error {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      color: #dc2626;
+      font-size: 13px;
+      margin-bottom: 16px;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    /* Login Button */
+    .btn-login {
+      width: 100%;
+      padding: 12px 24px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-login:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(26, 107, 78, 0.3);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .btn-login .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== DEMO ACCOUNTS ===== */
+    .demo-section {
+      margin-top: 32px;
+    }
+
+    .demo-divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .demo-divider::before,
+    .demo-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .demo-divider span {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-weight: 600;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .demo-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .demo-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .demo-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .demo-btn-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .demo-btn-icon.clr-green { background: #e8f5f0; color: #1a6b4e; }
+    .demo-btn-icon.clr-blue { background: #eff6ff; color: #2563eb; }
+    .demo-btn-icon.clr-orange { background: #fef3e8; color: #d4870e; }
+    .demo-btn-icon.clr-purple { background: #f5f3ff; color: #7c3aed; }
+
+    .demo-btn-info strong {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1px;
+    }
+
+    .demo-btn-info span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    .login-form-footer {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .login-form-footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .login-form-footer a:hover {
+      color: var(--primary);
+    }
+
+    .login-form-footer .sep {
+      margin: 0 6px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .login-brand {
+        display: none;
+      }
+      .login-form-panel {
+        width: 100%;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #f4f8f6 0%, #fff 30%);
+      }
+      .mobile-logo {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-form-panel {
+        padding: 24px 20px;
+      }
+      .login-form-header h2 {
+        font-size: 22px;
+      }
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="login-page">
+
+<div class="login-wrapper">
+  <!-- ========== LEFT PANEL: BRANDING ========== -->
+  <div class="login-brand">
+    <div class="brand-bg-shapes">
+      <div class="bg-shape shape-1"></div>
+      <div class="bg-shape shape-2"></div>
+      <div class="bg-shape shape-3"></div>
     </div>
 
-    <!-- Login Form -->
-    <form id="loginForm" class="login-form">
-      <div class="form-group">
-        <label for="username" class="form-label">
-          <i data-lucide="user" style="width: 16px; height: 16px;"></i>
-          Tên đăng nhập hoặc Email
-        </label>
-        <input 
-          type="text" 
-          id="username" 
-          class="form-input" 
-          placeholder="admin@photopro.vn"
-          required
-          autocomplete="username"
-        >
+    <div class="brand-content">
+      <div class="brand-logo">
+        <div class="brand-logo-icon">
+          <i data-lucide="camera" style="width: 30px; height: 30px;"></i>
+        </div>
+        <span class="brand-logo-text">PhotoPro</span>
       </div>
 
-      <div class="form-group">
-        <label for="password" class="form-label">
-          <i data-lucide="lock" style="width: 16px; height: 16px;"></i>
-          Mật khẩu
-        </label>
-        <div style="position: relative;">
-          <input 
-            type="password" 
-            id="password" 
-            class="form-input" 
-            placeholder="••••••••"
-            required
-            autocomplete="current-password"
-          >
-          <button 
-            type="button" 
-            class="password-toggle"
-            onclick="togglePasswordVisibility()"
-            aria-label="Toggle password visibility"
-          >
-            <i data-lucide="eye" id="eyeIcon"></i>
-          </button>
+      <div class="brand-hero">
+        <h1>Quản lý ảnh chuyên nghiệp</h1>
+        <p>Nền tảng quản lý và bán ảnh du lịch chuyên nghiệp cho các doanh nghiệp du lịch, khu vui chơi giải trí. <br>Upload, quản lý đơn hàng, theo dõi doanh thu — tất cả trong một hệ thống.</p>
+      </div>
+
+      <div class="brand-features">
+        <div class="brand-feature">
+          <div class="brand-feature-icon">
+            <i data-lucide="upload-cloud" style="width: 20px; height: 20px;"></i>
+          </div>
+          <div>
+            <strong>Upload nhanh chóng</strong>
+            <span>Tải lên hàng nghìn ảnh mỗi ngày</span>
+          </div>
+        </div>
+        <div class="brand-feature">
+          <div class="brand-feature-icon">
+            <i data-lucide="bar-chart-3" style="width: 20px; height: 20px;"></i>
+          </div>
+          <div>
+            <strong>Thống kê chi tiết</strong>
+            <span>Doanh thu, hiệu suất theo thời gian thực</span>
+          </div>
+        </div>
+        <div class="brand-feature">
+          <div class="brand-feature-icon">
+            <i data-lucide="map-pin" style="width: 20px; height: 20px;"></i>
+          </div>
+          <div>
+            <strong>Đa địa điểm</strong>
+            <span>Quản lý nhiều điểm chụp cùng lúc</span>
+          </div>
         </div>
       </div>
 
-      <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-          <input type="checkbox" id="rememberMe">
-          <span style="font-size: 14px;">Ghi nhớ đăng nhập</span>
-        </label>
-        <a href="#" class="link" style="font-size: 14px;">Quên mật khẩu?</a>
+      <div class="brand-footer">
+        <p>&copy; 2026 PhotoPro &middot; Hồ Chí Minh, Việt Nam</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== RIGHT PANEL: LOGIN FORM ========== -->
+  <div class="login-form-panel">
+    <div class="login-form-inner">
+
+      <!-- Mobile Logo -->
+      <div class="mobile-logo">
+        <div class="brand-logo-icon small">
+          <i data-lucide="camera" style="width: 22px; height: 22px;"></i>
+        </div>
+        <span class="brand-logo-text">PhotoPro</span>
       </div>
 
-      <button type="submit" class="btn btn-primary btn-block">
-        <i data-lucide="log-in"></i>
-        Đăng Nhập
-      </button>
+      <div class="login-form-header">
+        <h2>Đăng nhập</h2>
+        <p>Chào mừng bạn quay lại! Vui lòng nhập thông tin.</p>
+      </div>
+
+      <form id="loginForm" class="login-form" autocomplete="on">
+        <div class="form-group">
+          <label for="username" class="form-label">Email</label>
+          <div class="input-wrapper">
+            <i data-lucide="mail" class="input-icon"></i>
+            <input
+              type="text"
+              id="username"
+              class="form-input has-icon"
+              placeholder="admin@photopro.vn"
+              required
+              autocomplete="username"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Mật khẩu</label>
+          <div class="input-wrapper">
+            <i data-lucide="lock" class="input-icon"></i>
+            <input
+              type="password"
+              id="password"
+              class="form-input has-icon"
+              placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+              required
+              autocomplete="current-password"
+            >
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility()" aria-label="Hiện/ẩn mật khẩu">
+              <i data-lucide="eye" id="eyeIcon" style="width: 18px; height: 18px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="rememberMe">
+            <span>Ghi nhớ đăng nhập</span>
+          </label>
+          <a href="#" class="link-forgot">Quên mật khẩu?</a>
+        </div>
+
+        <!-- Error message -->
+        <div class="login-error" id="loginError" style="display: none;">
+          <i data-lucide="alert-circle" style="width: 16px; height: 16px; flex-shrink: 0;"></i>
+          <span id="loginErrorText">Tên đăng nhập hoặc mật khẩu không đúng!</span>
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn">
+          <span class="btn-login-text">Đăng Nhập</span>
+          <span class="btn-login-loader" style="display: none;">
+            <span class="spinner"></span> Đang xử lý...
+          </span>
+        </button>
+      </form>
 
       <!-- Demo Accounts -->
-      <div class="demo-accounts">
-        <div style="text-align: center; margin: 20px 0 16px 0; color: var(--text-secondary); font-size: 14px;">
-          <i data-lucide="info" style="width: 14px; height: 14px; vertical-align: middle;"></i>
-          Tài khoản demo
+      <div class="demo-section">
+        <div class="demo-divider">
+          <span>Tài khoản demo</span>
         </div>
-        <div class="demo-account-list">
-          <button type="button" class="demo-account-btn" onclick="fillDemoAccount('admin-system')">
-            <i data-lucide="shield-check"></i>
-            <div>
+        <div class="demo-grid">
+          <button type="button" class="demo-btn" onclick="fillDemoAccount('admin-system', this)">
+            <div class="demo-btn-icon clr-green">
+              <i data-lucide="shield-check" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div class="demo-btn-info">
               <strong>Admin System</strong>
               <span>Toàn quyền hệ thống</span>
             </div>
           </button>
-          <button type="button" class="demo-account-btn" onclick="fillDemoAccount('admin-sales')">
-            <i data-lucide="briefcase"></i>
-            <div>
+          <button type="button" class="demo-btn" onclick="fillDemoAccount('admin-sales', this)">
+            <div class="demo-btn-icon clr-blue">
+              <i data-lucide="briefcase" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div class="demo-btn-info">
               <strong>Admin Sales</strong>
               <span>Quản lý bán hàng</span>
             </div>
           </button>
-          <button type="button" class="demo-account-btn" onclick="fillDemoAccount('manager')">
-            <i data-lucide="users"></i>
-            <div>
+          <button type="button" class="demo-btn" onclick="fillDemoAccount('manager', this)">
+            <div class="demo-btn-icon clr-orange">
+              <i data-lucide="users" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div class="demo-btn-info">
               <strong>Manager</strong>
               <span>Quản lý vận hành</span>
             </div>
           </button>
-          <button type="button" class="demo-account-btn" onclick="fillDemoAccount('staff')">
-            <i data-lucide="camera"></i>
-            <div>
+          <button type="button" class="demo-btn" onclick="fillDemoAccount('staff', this)">
+            <div class="demo-btn-icon clr-purple">
+              <i data-lucide="camera" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div class="demo-btn-info">
               <strong>Nhân viên</strong>
-              <span>Upload & xem thống kê</span>
+              <span>Chụp & upload ảnh</span>
             </div>
           </button>
         </div>
       </div>
-    </form>
 
-    <!-- Footer -->
-    <div class="login-footer">
-      <p>© 2026 PhotoPro. All rights reserved.</p>
-      <div style="display: flex; gap: 16px; justify-content: center; margin-top: 8px;">
-        <a href="#" class="link">Điều khoản</a>
-        <a href="#" class="link">Chính sách</a>
-        <a href="#" class="link">Hỗ trợ</a>
+      <!-- Footer -->
+      <div class="login-form-footer">
+        <a href="#">Điều khoản</a>
+        <span class="sep">&middot;</span>
+        <a href="#">Chính sách</a>
+        <span class="sep">&middot;</span>
+        <a href="#">Hỗ trợ</a>
       </div>
+
     </div>
   </div>
 </div>
 
-<style>
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: 'Be Vietnam Pro', sans-serif;
-}
-
-.login-container {
-  width: 100%;
-  max-width: 480px;
-  padding: 20px;
-}
-
-.login-card {
-  background: var(--surface);
-  border-radius: 16px;
-  box-shadow: var(--shadow-xl);
-  overflow: hidden;
-}
-
-.login-header {
-  text-align: center;
-  padding: 40px 40px 32px 40px;
-  background: linear-gradient(135deg, var(--primary) 0%, #0f5840 100%);
-  color: white;
-}
-
-.login-logo {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 16px auto;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-}
-
-.login-header h1 {
-  margin: 0 0 8px 0;
-  font-size: 28px;
-  font-weight: 700;
-}
-
-.login-header p {
-  margin: 0;
-  opacity: 0.9;
-  font-size: 15px;
-}
-
-.login-form {
-  padding: 32px 40px;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-secondary);
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s;
-}
-
-.password-toggle:hover {
-  color: var(--primary);
-}
-
-.demo-accounts {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-}
-
-.demo-account-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.demo-account-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: var(--surface-elevated);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: left;
-  width: 100%;
-}
-
-.demo-account-btn:hover {
-  background: var(--surface-alt);
-  border-color: var(--primary);
-  transform: translateY(-1px);
-}
-
-.demo-account-btn i {
-  color: var(--primary);
-  flex-shrink: 0;
-}
-
-.demo-account-btn div {
-  flex: 1;
-}
-
-.demo-account-btn strong {
-  display: block;
-  color: var(--text-primary);
-  font-size: 14px;
-  margin-bottom: 2px;
-}
-
-.demo-account-btn span {
-  display: block;
-  color: var(--text-secondary);
-  font-size: 13px;
-}
-
-.login-footer {
-  padding: 24px 40px;
-  text-align: center;
-  background: var(--surface-elevated);
-  border-top: 1px solid var(--border);
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.login-footer p {
-  margin: 0;
-}
-
-@media (max-width: 640px) {
-  .login-header {
-    padding: 32px 24px 24px 24px;
-  }
-  
-  .login-form {
-    padding: 24px;
-  }
-  
-  .login-footer {
-    padding: 20px 24px;
-  }
-  
-  .login-header h1 {
-    font-size: 24px;
-  }
-}
-</style>
-
 <script>
-// Initialize Lucide Icons
-lucide.createIcons();
-
-// Toggle Password Visibility
-function togglePasswordVisibility() {
-  const passwordInput = document.getElementById('password');
-  const eyeIcon = document.getElementById('eyeIcon');
-  
-  if (passwordInput.type === 'password') {
-    passwordInput.type = 'text';
-    eyeIcon.setAttribute('data-lucide', 'eye-off');
-  } else {
-    passwordInput.type = 'password';
-    eyeIcon.setAttribute('data-lucide', 'eye');
-  }
-  
+  // ===== Init Icons =====
   lucide.createIcons();
-}
 
-// Fill Demo Account
-function fillDemoAccount(role) {
-  const usernameInput = document.getElementById('username');
-  const passwordInput = document.getElementById('password');
-  
-  const accounts = {
-    'admin-system': {
-      username: 'admin@photopro.vn',
-      password: 'admin123'
-    },
-    'admin-sales': {
-      username: 'sales@photopro.vn',
-      password: 'sales123'
-    },
-    'manager': {
-      username: 'manager@photopro.vn',
-      password: 'manager123'
-    },
-    'staff': {
-      username: 'staff@photopro.vn',
-      password: 'staff123'
-    }
-  };
-  
-  const account = accounts[role];
-  if (account) {
-    usernameInput.value = account.username;
-    passwordInput.value = account.password;
-    
-    // Add animation
-    usernameInput.style.background = 'var(--success-light)';
-    passwordInput.style.background = 'var(--success-light)';
-    
-    setTimeout(() => {
-      usernameInput.style.background = '';
-      passwordInput.style.background = '';
-    }, 500);
-  }
-}
-
-// Handle Login Form Submit
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
-  const rememberMe = document.getElementById('rememberMe').checked;
-  
-  // Simple validation for demo
-  const validAccounts = {
-    'admin@photopro.vn': { password: 'admin123', role: 'admin-system', name: 'Admin System' },
-    'sales@photopro.vn': { password: 'sales123', role: 'admin-sales', name: 'Admin Sales' },
-    'manager@photopro.vn': { password: 'manager123', role: 'manager', name: 'Manager' },
-    'staff@photopro.vn': { password: 'staff123', role: 'staff', name: 'Nguyễn Văn A', employee_code: 'NV001', locations: ['Bà Nà Hills', 'Hội An'] }
-  };
-  
-  const account = validAccounts[username];
-  
-  if (account && account.password === password) {
-    // Save to localStorage
-    const userData = {
-      username: username,
-      role: account.role,
-      name: account.name,
-      employee_code: account.employee_code || null,
-      locations: account.locations || [],
-      loginTime: new Date().toISOString(),
-      rememberMe: rememberMe
-    };
-    
-    localStorage.setItem('photopro_user', JSON.stringify(userData));
-    
-    // Show success message
-    alert('Đăng nhập thành công! Đang chuyển hướng...');
-    
-    // Redirect based on role
-    if (account.role === 'staff') {
-      window.location.href = 'pages/staff-upload.html';
+  // ===== Toggle Password =====
+  function togglePasswordVisibility() {
+    const pwd = document.getElementById('password');
+    const icon = document.getElementById('eyeIcon');
+    if (pwd.type === 'password') {
+      pwd.type = 'text';
+      icon.setAttribute('data-lucide', 'eye-off');
     } else {
-      window.location.href = 'index.html';
+      pwd.type = 'password';
+      icon.setAttribute('data-lucide', 'eye');
     }
-  } else {
-    alert('Tên đăng nhập hoặc mật khẩu không đúng!');
+    lucide.createIcons();
   }
-});
 
-// Check if already logged in
-window.addEventListener('load', function() {
-  const userData = localStorage.getItem('photopro_user');
-  if (userData) {
-    const user = JSON.parse(userData);
-    if (user.rememberMe) {
-      // Auto redirect to dashboard
-      window.location.href = 'index.html';
-    }
+  // ===== Fill Demo Account =====
+  function fillDemoAccount(role, btnEl) {
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const errorEl = document.getElementById('loginError');
+    errorEl.style.display = 'none';
+
+    const accounts = {
+      'admin-system': { username: 'admin@photopro.vn', password: 'admin123' },
+      'admin-sales':  { username: 'sales@photopro.vn', password: 'sales123' },
+      'manager':      { username: 'manager@photopro.vn', password: 'manager123' },
+      'staff':        { username: 'staff@photopro.vn', password: 'staff123' }
+    };
+
+    const acc = accounts[role];
+    if (!acc) return;
+
+    usernameInput.value = acc.username;
+    passwordInput.value = acc.password;
+
+    // Highlight selected button
+    document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+
+    // Flash green on inputs
+    [usernameInput, passwordInput].forEach(el => {
+      el.style.borderColor = '#16a34a';
+      el.style.boxShadow = '0 0 0 3px rgba(22, 163, 74, 0.12)';
+    });
+
+    setTimeout(() => {
+      [usernameInput, passwordInput].forEach(el => {
+        el.style.borderColor = '';
+        el.style.boxShadow = '';
+      });
+    }, 600);
   }
-});
+
+  // ===== Login Submit =====
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
+    const loginBtn = document.getElementById('loginBtn');
+    const errorEl = document.getElementById('loginError');
+
+    // Show loading state
+    loginBtn.querySelector('.btn-login-text').style.display = 'none';
+    loginBtn.querySelector('.btn-login-loader').style.display = 'inline';
+    loginBtn.disabled = true;
+    errorEl.style.display = 'none';
+
+    // Simulate API call
+    setTimeout(function() {
+      const validAccounts = {
+        'admin@photopro.vn':   { password: 'admin123', role: 'admin-system', name: 'Admin System' },
+        'sales@photopro.vn':   { password: 'sales123', role: 'admin-sales', name: 'Admin Sales' },
+        'manager@photopro.vn': { password: 'manager123', role: 'manager', name: 'Manager' },
+        'staff@photopro.vn':   { password: 'staff123', role: 'staff', name: 'Nguyễn Văn A', employee_code: 'NV001', locations: ['Bà Nà Hills', 'Hội An'] }
+      };
+
+      const account = validAccounts[username];
+
+      if (account && account.password === password) {
+        // Build user data
+        const userData = {
+          username: username,
+          role: account.role,
+          name: account.name,
+          employee_code: account.employee_code || null,
+          locations: account.locations || [],
+          loginTime: new Date().toISOString(),
+          rememberMe: rememberMe
+        };
+
+        localStorage.setItem('photopro_user', JSON.stringify(userData));
+
+        // Success animation
+        loginBtn.style.background = '#16a34a';
+        loginBtn.querySelector('.btn-login-loader').innerHTML =
+          '<i data-lucide="check" style="width:18px;height:18px;vertical-align:middle;"></i> Thành công!';
+        lucide.createIcons();
+
+        setTimeout(function() {
+          if (account.role === 'staff') {
+            window.location.href = 'pages/staff-upload.html';
+          } else {
+            window.location.href = 'index.html';
+          }
+        }, 600);
+
+      } else {
+        // Error state
+        errorEl.style.display = 'flex';
+        loginBtn.querySelector('.btn-login-text').style.display = 'inline';
+        loginBtn.querySelector('.btn-login-loader').style.display = 'none';
+        loginBtn.disabled = false;
+        document.getElementById('password').focus();
+      }
+    }, 800);
+  });
+
+  // ===== Auto-redirect if remembered =====
+  window.addEventListener('load', function() {
+    const stored = localStorage.getItem('photopro_user');
+    if (stored) {
+      try {
+        const user = JSON.parse(stored);
+        if (user.rememberMe) {
+          if (user.role === 'staff') {
+            window.location.href = 'pages/staff-upload.html';
+          } else {
+            window.location.href = 'index.html';
+          }
+        }
+      } catch(e) {}
+    }
+  });
 </script>
 
 </body>
